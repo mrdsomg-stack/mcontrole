@@ -1,398 +1,300 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FinanceFlow — Gestão Financeira</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg: #0b0f1a;
-      --surface: #111827;
-      --surface2: #1a2235;
-      --surface3: #1f2d42;
-      --border: rgba(255,255,255,0.07);
-      --accent: #00e5a0;
-      --accent2: #0099ff;
-      --accent3: #ff6b6b;
-      --accent4: #f59e0b;
-      --text: #f0f4f8;
-      --text2: #8a9ab5;
-      --radius: 16px;
-      --radius-sm: 10px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinanceFlow</title>
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+<style>
+:root {
+  --bg:#0b0f1a;
+  --surface:#111827;
+  --surface2:#1a2235;
+  --border:rgba(255,255,255,0.07);
+  --accent:#00e5a0;
+  --text:#f0f4f8;
+  --text2:#8a9ab5;
+}
 
-    body::before {
-      content: ''; position: fixed; inset: 0;
-      background: radial-gradient(ellipse 80% 60% at 20% -10%, rgba(0,229,160,0.06) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 100%, rgba(0,153,255,0.06) 0%, transparent 60%);
-      pointer-events: none; z-index: 0;
-    }
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:sans-serif;
+}
 
-    header {
-      position: sticky; top: 0; z-index: 100; background: rgba(11,15,26,0.85); backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 64px;
-    }
-    .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+header {
+  display:flex;
+  justify-content:space-between;
+  padding:15px 25px;
+  border-bottom:1px solid var(--border);
+}
 
-    nav { display: flex; gap: 4px; }
-    nav button { background: none; border: none; color: var(--text2); font-size: .9rem; font-weight: 500; padding: 8px 18px; border-radius: 8px; cursor: pointer; transition: all .2s; }
-    nav button.active { color: var(--accent); background: rgba(0,229,160,0.1); }
+nav button {
+  background:none;
+  border:none;
+  color:var(--text2);
+  margin:0 5px;
+  cursor:pointer;
+}
 
-    main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
-    .page { display: none; animation: fadeUp .4s ease; }
-    .page.active { display: block; }
+nav button.active {
+  color:var(--accent);
+}
 
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+main { padding:20px; }
 
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); margin-bottom: 24px; }
+.page { display:none; }
+.page.active { display:block; }
 
-    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
-    .section-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.6rem; }
-    
-    /* Planilha Style Table */
-    .finance-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    .table-header-row { background: var(--surface3); }
-    .table-header-row td { padding: 12px; font-family: 'Syne', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; color: var(--text2); text-align: center; }
-    .table-row { border-bottom: 1px solid var(--border); }
-    .table-row td { padding: 12px; font-size: 0.95rem; }
-    .td-label { color: var(--text); }
-    .td-value { text-align: right; font-family: 'Syne', sans-serif; font-weight: 600; }
-    .table-subtotal { background: rgba(0, 229, 160, 0.05); }
-    .table-subtotal td { padding: 14px 12px; font-weight: 800; border-top: 2px solid var(--border); }
+.card {
+  background:var(--surface);
+  padding:20px;
+  border-radius:10px;
+  border:1px solid var(--border);
+}
 
-    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: var(--radius-sm); font-size: .9rem; font-weight: 500; cursor: pointer; border: none; transition: all .2s; }
-    .btn-primary { background: var(--accent); color: #0b0f1a; }
-    .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
-    .btn-danger { background: rgba(255,107,107,0.1); color: var(--accent3); border: 1px solid rgba(255,107,107,0.2); }
-    .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+/* tabela */
+.tabela-mensal {
+  width:100%;
+  border-collapse:collapse;
+}
 
-    .month-selector { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; justify-content: center; background: var(--surface); padding: 15px; border-radius: 50px; border: 1px solid var(--border); }
-    .month-selector input { background: transparent; border: none; color: var(--accent); font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; outline: none; cursor: pointer; }
+.tabela-mensal th,
+.tabela-mensal td {
+  padding:10px;
+  border-bottom:1px solid var(--border);
+}
 
-    .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: .2s; }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
-    .modal { background: var(--surface); padding: 32px; border-radius: var(--radius); width: 100%; max-width: 450px; }
-    .form-group { margin-bottom: 18px; }
-    .form-group label { display: block; font-size: .8rem; color: var(--text2); margin-bottom: 8px; text-transform: uppercase; }
-    .form-group input, .form-group select { width: 100%; padding: 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); outline: none; }
+.tabela-mensal th {
+  color:var(--text2);
+  text-align:left;
+}
 
-    .cc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-    #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--accent2); color: white; padding: 12px 25px; border-radius: 50px; opacity: 0; transition: .3s; z-index: 1000; }
-  </style>
+.tabela-mensal tr:hover {
+  background:var(--surface2);
+}
+
+input, select {
+  padding:8px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  color:white;
+}
+</style>
 </head>
+
 <body>
 
-  <header>
-    <div class="logo">Finance<span>Flow</span></div>
-    <nav>
-      <button class="active" onclick="showPage('panorama')">📊 Panorama</button>
-      <button onclick="showPage('cartoes')">💳 Cartões</button>
-    </nav>
-  </header>
+<header>
+  <div>FinanceFlow</div>
+  <nav>
+    <button class="active" onclick="showPage('cartoes')">Cartões</button>
+    <button onclick="showPage('mensal')">Mensal</button>
+  </nav>
+</header>
 
-  <main>
-    <!-- PANORAMA -->
-    <div class="page active" id="page-panorama">
-      <div class="month-selector">
-        <span style="font-size: 0.8rem; color: var(--text2); text-transform: uppercase;">Mês de Referência:</span>
-        <input type="month" id="panorama-mes" onchange="updateView(this.value)">
-      </div>
+<main>
 
-      <!-- SEÇÃO GANHOS -->
-      <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-          <h3 style="font-family: 'Syne';">💰 Ganhos (Salário & Extras)</h3>
-          <button class="btn btn-secondary btn-sm" onclick="openModal('modal-salario')">✏️ Editar</button>
-        </div>
-        <table class="finance-table">
-          <tr class="table-header-row"><td colspan="2">Entradas</td></tr>
-          <tr class="table-row">
-            <td class="td-label">Salário Líquido</td>
-            <td class="td-value" id="val-salario">R$ 0,00</td>
-          </tr>
-          <tr class="table-subtotal">
-            <td style="color: var(--accent);">TOTAL DISPONÍVEL</td>
-            <td class="td-value" id="subtotal-ganhos" style="color: var(--accent);">R$ 0,00</td>
-          </tr>
-        </table>
-      </div>
+<!-- CARTÕES -->
+<div class="page active" id="page-cartoes">
 
-      <!-- SEÇÃO FATURAS -->
-      <div class="card">
-        <h3 style="font-family: 'Syne'; margin-bottom: 15px;">💳 Pagamentos de Faturas</h3>
-        <table class="finance-table">
-          <tr class="table-header-row"><td colspan="2">Cartões de Crédito</td></tr>
-          <tbody id="table-body-faturas">
-            <!-- Gerado via JS -->
-          </tbody>
-          <tr class="table-subtotal">
-            <td style="color: var(--accent3);">TOTAL FATURAS</td>
-            <td class="td-value" id="subtotal-faturas" style="color: var(--accent3);">R$ 0,00</td>
-          </tr>
-        </table>
-      </div>
-
-      <!-- SEÇÃO GUARDAR/GASTOS -->
-      <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-          <h3 style="font-family: 'Syne';">🏠 Despesas Fixas & Retido</h3>
-          <button class="btn btn-primary btn-sm" onclick="openModal('modal-nova-outra-despesa')">+ Adicionar</button>
-        </div>
-        <table class="finance-table">
-          <tr class="table-header-row"><td colspan="2">Contas e Reservas</td></tr>
-          <tbody id="table-body-outras">
-            <!-- Gerado via JS -->
-          </tbody>
-          <tr class="table-subtotal">
-            <td style="color: var(--accent4);">TOTAL DESPESAS</td>
-            <td class="td-value" id="subtotal-outras" style="color: var(--accent4);">R$ 0,00</td>
-          </tr>
-        </table>
-      </div>
-
-      <!-- RESUMO FINAL (RETIDO) -->
-      <div class="card" style="background: linear-gradient(135deg, var(--surface), var(--surface2)); border: 1px solid var(--accent);">
-        <table class="finance-table">
-          <tr class="table-subtotal" style="background: transparent; border: none;">
-            <td style="font-size: 1.2rem; letter-spacing: 1px;">SOBRA FINAL (RETIDO)</td>
-            <td class="td-value" id="total-final" style="font-size: 1.8rem; color: var(--accent);">R$ 0,00</td>
-          </tr>
-        </table>
-      </div>
-    </div>
-
-    <!-- CARTÕES -->
-    <div class="page" id="page-cartoes">
-      <div class="section-header">
-        <h2 class="section-title">Meus Cartões</h2>
-        <button class="btn btn-primary" onclick="openModal('modal-novo-cartao')">+ Novo Cartão</button>
-      </div>
-      <div class="cc-grid" id="cartoes-grid"></div>
-      
-      <div id="detail-panel" style="display:none; margin-top:30px;">
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h3 id="detail-card-name">Despesas do Cartão</h3>
-            <button class="btn btn-primary btn-sm" onclick="openModal('modal-nova-despesa')">+ Nova Compra</button>
-          </div>
-          <div id="detail-list"></div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- MODALS (Mesma lógica do anterior) -->
-  <div class="modal-overlay" id="modal-salario">
-    <div class="modal">
-      <h3 style="margin-bottom:20px">Definir Salário</h3>
-      <div class="form-group"><label>Valor Mensal</label><input type="number" id="in-salario" step="0.01"></div>
-      <div style="display:flex; gap:10px; justify-content:flex-end">
-        <button class="btn btn-secondary" onclick="closeModal('modal-salario')">Cancelar</button>
-        <button class="btn btn-primary" onclick="saveSalario()">Salvar</button>
-      </div>
-    </div>
+  <div class="card">
+    <h3>Novo Cartão</h3>
+    <input id="nome-cartao" placeholder="Nome">
+    <input id="limite-cartao" type="number" placeholder="Limite">
+    <button onclick="addCartao()">Adicionar</button>
   </div>
 
-  <div class="modal-overlay" id="modal-novo-cartao">
-    <div class="modal">
-      <h3 style="margin-bottom:20px">Novo Cartão</h3>
-      <div class="form-group"><label>Nome (Ex: Nubank)</label><input type="text" id="nc-nome"></div>
-      <div style="display:flex; gap:10px; justify-content:flex-end">
-        <button class="btn btn-secondary" onclick="closeModal('modal-novo-cartao')">Cancelar</button>
-        <button class="btn btn-primary" onclick="addCartao()">Criar</button>
-      </div>
-    </div>
+  <div class="card" style="margin-top:20px">
+    <h3>Cartões</h3>
+    <div id="lista-cartoes"></div>
   </div>
 
-  <div class="modal-overlay" id="modal-nova-despesa">
-    <div class="modal">
-      <h3 style="margin-bottom:20px">Nova Compra</h3>
-      <div class="form-group"><label>Descrição</label><input type="text" id="nd-desc"></div>
-      <div class="form-group"><label>Valor Total</label><input type="number" id="nd-valor" step="0.01"></div>
-      <div class="form-group"><label>Parcelas</label><input type="number" id="nd-parc" value="1"></div>
-      <div style="display:flex; gap:10px; justify-content:flex-end">
-        <button class="btn btn-secondary" onclick="closeModal('modal-nova-despesa')">Cancelar</button>
-        <button class="btn btn-primary" onclick="addDespesa()">Adicionar</button>
-      </div>
-    </div>
+  <div class="card" style="margin-top:20px">
+    <h3>Despesas</h3>
+    <input id="desc" placeholder="Descrição">
+    <input id="valor" type="number" placeholder="Valor">
+    <select id="parcelas">
+      <option value="1">1x</option>
+      <option value="2">2x</option>
+      <option value="3">3x</option>
+      <option value="6">6x</option>
+      <option value="12">12x</option>
+    </select>
+    <button onclick="addDespesa()">Adicionar</button>
   </div>
 
-  <div class="modal-overlay" id="modal-nova-outra-despesa">
-    <div class="modal">
-      <h3 style="margin-bottom:20px">Nova Despesa Fixa</h3>
-      <div class="form-group"><label>Nome (Ex: Aluguel)</label><input type="text" id="od-nome"></div>
-      <div class="form-group"><label>Valor</label><input type="number" id="od-valor" step="0.01"></div>
-      <div style="display:flex; gap:10px; justify-content:flex-end">
-        <button class="btn btn-secondary" onclick="closeModal('modal-nova-outra-despesa')">Cancelar</button>
-        <button class="btn btn-primary" onclick="addOutraDespesa()">Salvar</button>
-      </div>
-    </div>
+</div>
+
+<!-- MENSAL -->
+<div class="page" id="page-mensal">
+
+  <div style="margin-bottom:15px">
+    <input type="month" id="mes-input" onchange="changeMes(this.value)">
   </div>
 
-  <div id="toast"></div>
+  <div class="card">
+    <table class="tabela-mensal">
+      <thead>
+        <tr>
+          <th>Descrição</th>
+          <th>Cartão</th>
+          <th>Parcela</th>
+          <th>Valor</th>
+        </tr>
+      </thead>
+      <tbody id="mensal-body"></tbody>
+    </table>
+  </div>
 
-  <script>
-    let state = {
-      salario: 0,
-      cartoes: [],
-      outras: [],
-      mes: new Date().toISOString().slice(0, 7),
-      selectedId: null
-    };
+</div>
 
-    function init() {
-      const saved = localStorage.getItem('fflow_v3');
-      if (saved) state = JSON.parse(saved);
-      document.getElementById('panorama-mes').value = state.mes;
-      render();
-    }
+</main>
 
-    function save() {
-      localStorage.setItem('fflow_v3', JSON.stringify(state));
-      render();
-    }
+<script>
 
-    function fmt(v) { return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+let state = {
+  cartoes: [],
+  selectedCartaoId: null,
+  mesAtual: new Date().toISOString().slice(0,7)
+};
 
-    function showPage(id) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-      document.getElementById('page-' + id).classList.add('active');
-      event.currentTarget.classList.add('active');
-    }
+function save(){
+  localStorage.setItem('ff', JSON.stringify(state));
+}
 
-    function updateView(val) { state.mes = val; save(); }
+function load(){
+  const s = localStorage.getItem('ff');
+  if(s) state = JSON.parse(s);
+}
 
-    function openModal(id) { document.getElementById(id).classList.add('open'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+load();
 
-    // Logica de Ganhos
-    function saveSalario() {
-      state.salario = parseFloat(document.getElementById('in-salario').value) || 0;
-      closeModal('modal-salario');
-      save();
-    }
+/* NAV */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
 
-    // Logica Cartões
-    function addCartao() {
-      const nome = document.getElementById('nc-nome').value;
-      if (!nome) return;
-      state.cartoes.push({ id: Date.now(), nome, despesas: [] });
-      closeModal('modal-novo-cartao');
-      save();
-    }
+  document.getElementById('page-'+id).classList.add('active');
+  event.target.classList.add('active');
 
-    function addDespesa() {
-      const c = state.cartoes.find(x => x.id === state.selectedId);
-      const desc = document.getElementById('nd-desc').value;
-      const valor = parseFloat(document.getElementById('nd-valor').value);
-      const parc = parseInt(document.getElementById('nd-parc').value);
-      if (!desc || !valor) return;
-      c.despesas.push({ id: Date.now(), desc, valor, parc, data: state.mes });
-      closeModal('modal-nova-despesa');
-      save();
-    }
+  if(id==='mensal'){
+    document.getElementById('mes-input').value = state.mesAtual;
+    renderMensal();
+  }
+}
 
-    function addOutraDespesa() {
-      const nome = document.getElementById('od-nome').value;
-      const valor = parseFloat(document.getElementById('od-valor').value);
-      if (!nome || !valor) return;
-      state.outras.push({ id: Date.now(), nome, valor });
-      closeModal('modal-nova-outra-despesa');
-      save();
-    }
+/* FORMAT */
+function fmt(v){
+  return 'R$ ' + v.toFixed(2);
+}
 
-    function calcCartaoNoMes(cartao, mesRef) {
-      let total = 0;
-      const [refY, refM] = mesRef.split('-').map(Number);
-      cartao.despesas.forEach(d => {
-        const [compY, compM] = d.data.split('-').map(Number);
-        const diff = (refY - compY) * 12 + (refM - compM);
-        if (diff >= 0 && diff < d.parc) total += (d.valor / d.parc);
-      });
-      return total;
-    }
+/* CARTAO */
+function addCartao(){
+  const nome = document.getElementById('nome-cartao').value;
+  const limite = parseFloat(document.getElementById('limite-cartao').value);
 
-    function render() {
-      // Panorama - Ganhos
-      document.getElementById('val-salario').textContent = fmt(state.salario);
-      document.getElementById('subtotal-ganhos').textContent = fmt(state.salario);
+  if(!nome || !limite) return;
 
-      // Panorama - Faturas
-      const fatBody = document.getElementById('table-body-faturas');
-      fatBody.innerHTML = '';
-      let totalFaturas = 0;
-      state.cartoes.forEach(c => {
-        const v = calcCartaoNoMes(c, state.mes);
-        totalFaturas += v;
-        fatBody.innerHTML += `<tr class="table-row"><td class="td-label">${c.nome}</td><td class="td-value">${fmt(v)}</td></tr>`;
-      });
-      document.getElementById('subtotal-faturas').textContent = fmt(totalFaturas);
+  state.cartoes.push({
+    id:Date.now(),
+    nome,
+    limite,
+    despesas:[]
+  });
 
-      // Panorama - Outras
-      const outBody = document.getElementById('table-body-outras');
-      outBody.innerHTML = '';
-      let totalOutras = 0;
-      state.outras.forEach(o => {
-        totalOutras += o.valor;
-        outBody.innerHTML += `<tr class="table-row">
-          <td class="td-label">${o.nome} <button onclick="removeOutra(${o.id})" style="background:none; border:none; cursor:pointer; font-size:0.7rem; color:var(--accent3); margin-left:10px">remover</button></td>
-          <td class="td-value">${fmt(o.valor)}</td>
-        </tr>`;
-      });
-      document.getElementById('subtotal-outras').textContent = fmt(totalOutras);
+  save();
+  renderCartoes();
+}
 
-      // Total Final
-      document.getElementById('total-final').textContent = fmt(state.salario - totalFaturas - totalOutras);
+function renderCartoes(){
+  const el = document.getElementById('lista-cartoes');
 
-      // Grid Cartões
-      const grid = document.getElementById('cartoes-grid');
-      grid.innerHTML = '';
-      state.cartoes.forEach(c => {
-        grid.innerHTML += `
-          <div class="card" style="cursor:pointer; border: 1px solid ${state.selectedId === c.id ? 'var(--accent)' : 'var(--border)'}" onclick="selectCartao(${c.id})">
-            <h3 style="margin-bottom:10px">${c.nome}</h3>
-            <p style="color:var(--text2); font-size:0.8rem">Fatura este mês: <b>${fmt(calcCartaoNoMes(c, state.mes))}</b></p>
-            <button onclick="removeCartao(${c.id})" class="btn btn-danger btn-sm" style="margin-top:15px">Excluir Cartão</button>
-          </div>
-        `;
-      });
+  el.innerHTML = state.cartoes.map(c=>`
+    <div onclick="selectCartao(${c.id})" style="cursor:pointer;padding:5px">
+      ${c.nome} (Limite: ${fmt(c.limite)})
+    </div>
+  `).join('');
+}
 
-      if (state.selectedId) renderDetail();
-    }
+function selectCartao(id){
+  state.selectedCartaoId = id;
+}
 
-    function selectCartao(id) { state.selectedId = id; render(); }
+/* DESPESA */
+function addDespesa(){
+  const c = state.cartoes.find(x=>x.id===state.selectedCartaoId);
+  if(!c) return alert('Selecione um cartão');
 
-    function renderDetail() {
-      const c = state.cartoes.find(x => x.id === state.selectedId);
-      document.getElementById('detail-panel').style.display = 'block';
-      document.getElementById('detail-card-name').textContent = 'Compras: ' + c.nome;
-      const list = document.getElementById('detail-list');
-      list.innerHTML = c.despesas.map(d => `
-        <div class="expense-item">
-          <div class="expense-info">
-            <div class="expense-desc">${d.desc}</div>
-            <div class="expense-meta">Início: ${d.data} | ${d.parc}x de ${fmt(d.valor/d.parc)}</div>
-          </div>
-          <div class="expense-value">${fmt(d.valor)}</div>
-          <button class="btn btn-danger btn-sm" onclick="removeDespesa(${d.id})">✕</button>
-        </div>
-      `).join('');
-    }
+  const desc = document.getElementById('desc').value;
+  const valor = parseFloat(document.getElementById('valor').value);
+  const parcelas = parseInt(document.getElementById('parcelas').value);
 
-    function removeOutra(id) { state.outras = state.outras.filter(x => x.id !== id); save(); }
-    function removeCartao(id) { state.cartoes = state.cartoes.filter(x => x.id !== id); state.selectedId = null; save(); }
-    function removeDespesa(id) {
-      const c = state.cartoes.find(x => x.id === state.selectedId);
-      c.despesas = c.despesas.filter(d => d.id !== id);
-      save();
-    }
+  c.despesas.push({
+    id:Date.now(),
+    desc,
+    valor,
+    parcelas,
+    data:new Date().toISOString()
+  });
 
-    init();
-  </script>
+  save();
+}
+
+/* MENSAL */
+function changeMes(v){
+  state.mesAtual = v;
+  save();
+  renderMensal();
+}
+
+function renderMensal(){
+  const tbody = document.getElementById('mensal-body');
+  let total = 0;
+  let linhas = [];
+
+  state.cartoes.forEach(c=>{
+    c.despesas.forEach(d=>{
+      const inicio = new Date(d.data);
+
+      for(let i=0;i<d.parcelas;i++){
+        const data = new Date(inicio);
+        data.setMonth(data.getMonth()+i);
+
+        const mes = data.toISOString().slice(0,7);
+
+        if(mes===state.mesAtual){
+          const v = d.valor/d.parcelas;
+          total += v;
+
+          linhas.push(`
+            <tr>
+              <td>${d.desc}</td>
+              <td>${c.nome}</td>
+              <td>${i+1}/${d.parcelas}</td>
+              <td>${fmt(v)}</td>
+            </tr>
+          `);
+        }
+      }
+    });
+  });
+
+  linhas.push(`
+    <tr style="font-weight:bold">
+      <td colspan="3">TOTAL</td>
+      <td>${fmt(total)}</td>
+    </tr>
+  `);
+
+  tbody.innerHTML = linhas.join('');
+}
+
+/* INIT */
+renderCartoes();
+
+</script>
+
 </body>
 </html>
