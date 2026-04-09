@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinanceFlow — Gestão Financeira</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0f1a;
+      --surface: #111827;
+      --surface2: #1a2235;
+      --surface3: #1f2d42;
+      --border: rgba(255,255,255,0.07);
+      --accent: #00e5a0;
+      --accent2: #0099ff;
+      --accent3: #ff6b6b;
+      --accent4: #f59e0b;
+      --text: #f0f4f8;
+      --text2: #8a9ab5;
+      --text3: #4a5c74;
+      --card-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* BG texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% -10%, rgba(0,229,160,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(0,153,255,0.06) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(11,15,26,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 1.3rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .logo span { font-weight: 400; opacity: .6; }
+
+    nav { display: flex; gap: 4px; }
+    nav button {
+      background: none; border: none;
+      color: var(--text2); font-family: 'DM Sans', sans-serif;
+      font-size: .9rem; font-weight: 500;
+      padding: 8px 18px; border-radius: 8px;
+      cursor: pointer; transition: all .2s;
+    }
+    nav button:hover { color: var(--text); background: var(--surface2); }
+    nav button.active {
+      color: var(--accent);
+      background: rgba(0,229,160,0.1);
+    }
+
+    /* ── LAYOUT ── */
+    main {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    .page { display: none; animation: fadeUp .4s ease; }
+    .page.active { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SECTION TITLE ── */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 1.6rem;
+      letter-spacing: -0.5px;
+    }
+    .section-title small {
+      display: block;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400; font-size: .85rem;
+      color: var(--text2); margin-top: 2px;
+    }
+
+    /* ── BUTTON ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem; font-weight: 500;
+      cursor: pointer; border: none; transition: all .2s;
+    }
+    .btn-primary {
+      background: var(--accent); color: #0b0f1a;
+    }
+    .btn-primary:hover { background: #00ffb3; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,229,160,0.3); }
+    .btn-secondary {
+      background: var(--surface2); color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: var(--surface3); }
+    .btn-danger { background: rgba(255,107,107,0.12); color: var(--accent3); border: 1px solid rgba(255,107,107,0.2); }
+    .btn-danger:hover { background: rgba(255,107,107,0.2); }
+    .btn-sm { padding: 6px 14px; font-size: .82rem; }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--card-shadow);
+    }
+
+    /* ── GRID ── */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity .2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      width: 100%; max-width: 480px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+      transform: scale(.96) translateY(10px);
+      transition: transform .25s ease;
+    }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+    .modal-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 1.25rem;
+      margin-bottom: 24px;
+    }
+    .modal-footer {
+      display: flex; gap: 10px; justify-content: flex-end;
+      margin-top: 24px; padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── FORM ── */
+    .form-group { margin-bottom: 18px; }
+    .form-group label {
+      display: block; font-size: .82rem;
+      font-weight: 500; color: var(--text2);
+      margin-bottom: 7px; letter-spacing: .3px;
+      text-transform: uppercase;
+    }
+    .form-group input, .form-group select {
+      width: 100%; padding: 11px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .95rem;
+      outline: none; transition: border-color .2s;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,229,160,0.1);
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    /* ── CREDIT CARD VISUAL ── */
+    .cc-card {
+      background: linear-gradient(135deg, var(--surface2), var(--surface3));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all .25s;
+    }
+    .cc-card::before {
+      content: '';
+      position: absolute;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      top: -60px; right: -60px;
+      opacity: .15;
+    }
+    .cc-card::after {
+      content: '';
+      position: absolute;
+      width: 150px; height: 150px;
+      border-radius: 50%;
+      bottom: -40px; left: -30px;
+      opacity: .1;
+    }
+    .cc-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.15); }
+
+    .cc-card[data-color="green"]::before  { background: #00e5a0; }
+    .cc-card[data-color="green"]::after   { background: #00e5a0; }
+    .cc-card[data-color="blue"]::before   { background: #0099ff; }
+    .cc-card[data-color="blue"]::after    { background: #0099ff; }
+    .cc-card[data-color="purple"]::before { background: #8b5cf6; }
+    .cc-card[data-color="purple"]::after  { background: #8b5cf6; }
+    .cc-card[data-color="orange"]::before { background: #f59e0b; }
+    .cc-card[data-color="orange"]::after  { background: #f59e0b; }
+    .cc-card[data-color="pink"]::before   { background: #ec4899; }
+    .cc-card[data-color="pink"]::after    { background: #ec4899; }
+
+    .cc-chip {
+      width: 36px; height: 26px;
+      background: linear-gradient(135deg, #d4a843, #f0cc6e);
+      border-radius: 5px; margin-bottom: 20px;
+    }
+    .cc-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 1.1rem;
+      letter-spacing: .5px; margin-bottom: 4px;
+    }
+    .cc-limit-label { font-size: .75rem; color: var(--text2); margin-bottom: 4px; }
+    .cc-bar-wrap {
+      height: 5px; background: rgba(255,255,255,0.1);
+      border-radius: 99px; margin: 10px 0 6px;
+      overflow: hidden;
+    }
+    .cc-bar-fill {
+      height: 100%; border-radius: 99px;
+      transition: width .5s ease;
+    }
+    .cc-amounts {
+      display: flex; justify-content: space-between;
+      font-size: .8rem;
+    }
+    .cc-used { font-weight: 600; }
+    .cc-available { color: var(--text2); }
+
+    .cc-card-actions {
+      display: flex; gap: 8px; margin-top: 16px;
+      position: relative; z-index: 1;
+    }
+
+    /* ── EXPENSE LIST ── */
+    .expense-item {
+      display: flex; align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 14px;
+    }
+    .expense-item:last-child { border-bottom: none; }
+    .expense-icon {
+      width: 38px; height: 38px;
+      background: var(--surface2);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .expense-info { flex: 1; min-width: 0; }
+    .expense-desc {
+      font-weight: 500; font-size: .92rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .expense-meta { font-size: .78rem; color: var(--text2); margin-top: 2px; }
+    .expense-value { font-weight: 600; color: var(--accent3); white-space: nowrap; }
+    .expense-parcel { font-size: .78rem; color: var(--text2); text-align: right; }
+
+    /* ── STAT CARDS ── */
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+    }
+    .stat-label { font-size: .8rem; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
+    .stat-value { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.7rem; }
+    .stat-sub { font-size: .82rem; color: var(--text2); margin-top: 4px; }
+
+    /* ── BADGE ── */
+    .badge {
+      display: inline-block;
+      padding: 3px 10px; border-radius: 99px;
+      font-size: .75rem; font-weight: 600;
+    }
+    .badge-green { background: rgba(0,229,160,0.12); color: var(--accent); }
+    .badge-red   { background: rgba(255,107,107,0.12); color: var(--accent3); }
+    .badge-yellow{ background: rgba(245,158,11,0.12); color: var(--accent4); }
+    .badge-blue  { background: rgba(0,153,255,0.12); color: var(--accent2); }
+
+    /* ── PANORAMA ── */
+    .balance-hero {
+      background: linear-gradient(135deg, rgba(0,229,160,0.08), rgba(0,153,255,0.08));
+      border: 1px solid rgba(0,229,160,0.15);
+      border-radius: var(--radius);
+      padding: 36px;
+      margin-bottom: 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 20px; flex-wrap: wrap;
+    }
+    .balance-main { }
+    .balance-label { font-size: .85rem; color: var(--text2); margin-bottom: 8px; }
+    .balance-amount {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 2.8rem;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .balance-meta { font-size: .85rem; color: var(--text2); margin-top: 6px; }
+
+    .balance-breakdown { display: flex; gap: 28px; flex-wrap: wrap; }
+    .bd-item { text-align: center; }
+    .bd-value { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.2rem; }
+    .bd-label { font-size: .75rem; color: var(--text2); margin-top: 2px; }
+
+    /* ── OTHER EXPENSE ── */
+    .other-expense-item {
+      display: flex; align-items: center;
+      padding: 14px 0; gap: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .other-expense-item:last-child { border-bottom: none; }
+
+    /* ── COLOR PICKER ── */
+    .color-picker { display: flex; gap: 10px; flex-wrap: wrap; }
+    .color-option {
+      width: 28px; height: 28px; border-radius: 50%;
+      cursor: pointer; border: 3px solid transparent;
+      transition: all .15s;
+    }
+    .color-option.selected { border-color: white; transform: scale(1.15); }
+
+    /* ── EMPTY STATE ── */
+    .empty {
+      text-align: center; padding: 48px 20px;
+      color: var(--text2);
+    }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: .5; }
+    .empty h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; margin-bottom: 6px; color: var(--text); }
+    .empty p { font-size: .88rem; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); padding: 12px 22px;
+      border-radius: 99px; font-size: .88rem; font-weight: 500;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      opacity: 0; transition: all .3s; z-index: 999;
+      pointer-events: none;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── DETAIL PANEL ── */
+    .detail-panel {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .detail-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .detail-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 1.1rem;
+    }
+
+    /* Salary edit */
+    .salary-display {
+      display: flex; align-items: center; gap: 14px;
+    }
+    .salary-value {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 1.5rem;
+    }
+
+    @media (max-width: 640px) {
+      header { padding: 0 16px; }
+      main { padding: 24px 16px 60px; }
+      nav button { padding: 8px 12px; font-size: .82rem; }
+      .balance-amount { font-size: 2rem; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Finance<span>Flow</span></div>
+    <nav>
+      <button class="active" onclick="showPage('cartoes')">💳 Cartões</button>
+      <button onclick="showPage('panorama')">📊 Panorama</button>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ═══════════════ CARTÕES ═══════════════ -->
+    <div class="page active" id="page-cartoes">
+      <div class="section-header">
+        <div class="section-title">
+          Cartões de Crédito
+          <small>Gerencie seus cartões e despesas</small>
+        </div>
+        <button class="btn btn-primary" onclick="openModal('modal-novo-cartao')">
+          + Novo Cartão
+        </button>
+      </div>
+
+      <div class="grid-2" id="cartoes-grid">
+        <!-- cards rendered here -->
+      </div>
+
+      <div id="cartoes-empty" class="empty" style="display:none">
+        <div class="empty-icon">💳</div>
+        <h3>Nenhum cartão cadastrado</h3>
+        <p>Clique em "Novo Cartão" para começar</p>
+      </div>
+
+      <div id="detail-panel-wrap" style="display:none">
+        <div class="detail-panel">
+          <div class="detail-header">
+            <div class="detail-title" id="detail-card-name">—</div>
+            <button class="btn btn-primary btn-sm" onclick="openModal('modal-nova-despesa')">+ Despesa</button>
+          </div>
+          <div id="detail-expenses-list">
+            <div class="empty" style="padding:24px 0">
+              <div class="empty-icon">🧾</div>
+              <h3>Nenhuma despesa ainda</h3>
+              <p>Adicione uma despesa neste cartão</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ PANORAMA ═══════════════ -->
+    <div class="page" id="page-panorama">
+      <div class="section-header">
+        <div class="section-title">
+          Panorama Geral
+          <small>Visão completa das suas finanças</small>
+        </div>
+        <button class="btn btn-primary" onclick="openModal('modal-nova-outra-despesa')">+ Outra Despesa</button>
+      </div>
+
+      <!-- balance hero -->
+      <div class="balance-hero">
+        <div class="balance-main">
+          <div class="balance-label">Saldo disponível estimado</div>
+          <div class="balance-amount" id="saldo-disponivel">R$ 0,00</div>
+          <div class="balance-meta" id="balance-meta-text">Salário − todas as despesas do mês</div>
+        </div>
+        <div class="balance-breakdown">
+          <div class="bd-item">
+            <div class="bd-value" id="bd-salario" style="color:var(--accent)">R$ 0,00</div>
+            <div class="bd-label">Salário</div>
+          </div>
+          <div class="bd-item">
+            <div class="bd-value" id="bd-cartoes" style="color:var(--accent3)">R$ 0,00</div>
+            <div class="bd-label">Cartões (mês)</div>
+          </div>
+          <div class="bd-item">
+            <div class="bd-value" id="bd-outras" style="color:var(--accent4)">R$ 0,00</div>
+            <div class="bd-label">Outras despesas</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- salary row -->
+      <div class="card" style="margin-bottom:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div>
+            <div style="font-size:.8rem;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Salário mensal</div>
+            <div class="salary-display">
+              <div class="salary-value" id="salario-display">Não definido</div>
+              <span class="badge badge-green" id="salario-badge" style="display:none">✓ definido</span>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="openModal('modal-salario')">✏️ Editar salário</button>
+        </div>
+      </div>
+
+      <!-- stat cards -->
+      <div class="grid-4" style="margin-bottom:28px">
+        <div class="stat-card">
+          <div class="stat-label">Total cartões (mês)</div>
+          <div class="stat-value" id="stat-total-cartoes" style="color:var(--accent3)">R$ 0,00</div>
+          <div class="stat-sub" id="stat-cartoes-sub">0 despesas ativas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Outras despesas</div>
+          <div class="stat-value" id="stat-total-outras" style="color:var(--accent4)">R$ 0,00</div>
+          <div class="stat-sub" id="stat-outras-sub">0 itens</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total comprometido</div>
+          <div class="stat-value" id="stat-comprometido" style="color:var(--accent2)">R$ 0,00</div>
+          <div class="stat-sub">cartões + outras</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">% do salário</div>
+          <div class="stat-value" id="stat-percent">0%</div>
+          <div class="stat-sub">comprometido</div>
+        </div>
+      </div>
+
+      <!-- outras despesas list -->
+      <div class="card">
+        <div class="detail-header">
+          <div class="detail-title">Outras Despesas Fixas / Extras</div>
+        </div>
+        <div id="outras-despesas-list">
+          <div class="empty" style="padding:24px 0">
+            <div class="empty-icon">📋</div>
+            <h3>Nenhuma outra despesa</h3>
+            <p>Aluguel, contas, assinaturas, etc.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- cartoes resumo no panorama -->
+      <div class="card" style="margin-top:20px">
+        <div class="detail-header">
+          <div class="detail-title">Resumo dos Cartões</div>
+        </div>
+        <div id="panorama-cartoes-list">
+          <div class="empty" style="padding:24px 0">
+            <div class="empty-icon">💳</div>
+            <h3>Nenhum cartão cadastrado</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ═══ MODAL: NOVO CARTÃO ═══ -->
+  <div class="modal-overlay" id="modal-novo-cartao">
+    <div class="modal">
+      <div class="modal-title">➕ Novo Cartão de Crédito</div>
+      <div class="form-group">
+        <label>Nome do cartão</label>
+        <input type="text" id="nc-nome" placeholder="Ex: Nubank, Itaú, C6..." />
+      </div>
+      <div class="form-group">
+        <label>Limite (R$)</label>
+        <input type="number" id="nc-limite" placeholder="5000" min="0" step="0.01" />
+      </div>
+      <div class="form-group">
+        <label>Cor</label>
+        <div class="color-picker" id="nc-color-picker">
+          <div class="color-option selected" data-color="green" style="background:#00e5a0" onclick="selectColor(this)"></div>
+          <div class="color-option" data-color="blue" style="background:#0099ff" onclick="selectColor(this)"></div>
+          <div class="color-option" data-color="purple" style="background:#8b5cf6" onclick="selectColor(this)"></div>
+          <div class="color-option" data-color="orange" style="background:#f59e0b" onclick="selectColor(this)"></div>
+          <div class="color-option" data-color="pink" style="background:#ec4899" onclick="selectColor(this)"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modal-novo-cartao')">Cancelar</button>
+        <button class="btn btn-primary" onclick="addCartao()">Adicionar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: NOVA DESPESA ═══ -->
+  <div class="modal-overlay" id="modal-nova-despesa">
+    <div class="modal">
+      <div class="modal-title">🧾 Nova Despesa no Cartão</div>
+      <div class="form-group">
+        <label>Descrição</label>
+        <input type="text" id="nd-desc" placeholder="Ex: Supermercado, Netflix, Viagem..." />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Valor total (R$)</label>
+          <input type="number" id="nd-valor" placeholder="0,00" min="0" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label>Parcelas</label>
+          <select id="nd-parcelas">
+            <option value="1">1× (à vista)</option>
+            <option value="2">2×</option>
+            <option value="3">3×</option>
+            <option value="4">4×</option>
+            <option value="5">5×</option>
+            <option value="6">6×</option>
+            <option value="7">7×</option>
+            <option value="8">8×</option>
+            <option value="9">9×</option>
+            <option value="10">10×</option>
+            <option value="11">11×</option>
+            <option value="12">12×</option>
+            <option value="18">18×</option>
+            <option value="24">24×</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Categoria</label>
+        <select id="nd-categoria">
+          <option value="🛒">🛒 Mercado / Alimentação</option>
+          <option value="🏠">🏠 Casa / Moradia</option>
+          <option value="🚗">🚗 Transporte</option>
+          <option value="💊">💊 Saúde</option>
+          <option value="🎮">🎮 Lazer / Entretenimento</option>
+          <option value="👗">👗 Vestuário</option>
+          <option value="📱">📱 Tecnologia</option>
+          <option value="✈️">✈️ Viagem</option>
+          <option value="📚">📚 Educação</option>
+          <option value="💰">💰 Outros</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modal-nova-despesa')">Cancelar</button>
+        <button class="btn btn-primary" onclick="addDespesa()">Adicionar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: SALÁRIO ═══ -->
+  <div class="modal-overlay" id="modal-salario">
+    <div class="modal">
+      <div class="modal-title">💵 Definir Salário</div>
+      <div class="form-group">
+        <label>Salário mensal líquido (R$)</label>
+        <input type="number" id="sal-valor" placeholder="0,00" min="0" step="0.01" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modal-salario')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveSalario()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: OUTRA DESPESA ═══ -->
+  <div class="modal-overlay" id="modal-nova-outra-despesa">
+    <div class="modal">
+      <div class="modal-title">📋 Nova Despesa Avulsa</div>
+      <div class="form-group">
+        <label>Descrição</label>
+        <input type="text" id="od-desc" placeholder="Ex: Aluguel, Luz, Academia..." />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Valor (R$)</label>
+          <input type="number" id="od-valor" placeholder="0,00" min="0" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label>Categoria</label>
+          <select id="od-categoria">
+            <option value="🏠">🏠 Moradia</option>
+            <option value="💡">💡 Utilidades</option>
+            <option value="📱">📱 Assinatura</option>
+            <option value="🚗">🚗 Transporte</option>
+            <option value="💊">💊 Saúde</option>
+            <option value="📚">📚 Educação</option>
+            <option value="🎮">🎮 Lazer</option>
+            <option value="💰">💰 Outros</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modal-nova-outra-despesa')">Cancelar</button>
+        <button class="btn btn-primary" onclick="addOutraDespesa()">Adicionar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    // ── STATE ──
+    let state = {
+      cartoes: [],
+      salario: 0,
+      outrasDespesas: [],
+      selectedCartaoId: null,
+      selectedColor: 'green'
+    };
+
+    function load() {
+      const saved = localStorage.getItem('financeflow');
+      if (saved) state = { ...state, ...JSON.parse(saved) };
+    }
+    function save() {
+      localStorage.setItem('financeflow', JSON.stringify(state));
+    }
+
+    load();
+
+    // ── NAVIGATION ──
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      document.getElementById('page-' + id).classList.add('active');
+      event.currentTarget.classList.add('active');
+      if (id === 'panorama') renderPanorama();
+    }
+
+    // ── MODAL ──
+    function openModal(id) {
+      document.getElementById(id).classList.add('open');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+    document.querySelectorAll('.modal-overlay').forEach(o => {
+      o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+    });
+
+    // ── TOAST ──
+    function toast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    // ── COLOR ──
+    function selectColor(el) {
+      document.querySelectorAll('.color-option').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      state.selectedColor = el.dataset.color;
+    }
+
+    // ── FORMAT ──
+    function fmt(v) {
+      return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // ── CARTÃO ──
+    function addCartao() {
+      const nome = document.getElementById('nc-nome').value.trim();
+      const limite = parseFloat(document.getElementById('nc-limite').value);
+      if (!nome) { toast('⚠️ Informe o nome do cartão'); return; }
+      if (!limite || limite <= 0) { toast('⚠️ Informe um limite válido'); return; }
+      state.cartoes.push({
+        id: Date.now(),
+        nome,
+        limite,
+        color: state.selectedColor,
+        despesas: []
+      });
+      save();
+      closeModal('modal-novo-cartao');
+      document.getElementById('nc-nome').value = '';
+      document.getElementById('nc-limite').value = '';
+      renderCartoes();
+      toast('✅ Cartão "' + nome + '" adicionado!');
+    }
+
+    function deleteCartao(id) {
+      if (!confirm('Excluir este cartão e todas as despesas?')) return;
+      state.cartoes = state.cartoes.filter(c => c.id !== id);
+      if (state.selectedCartaoId === id) {
+        state.selectedCartaoId = null;
+        document.getElementById('detail-panel-wrap').style.display = 'none';
+      }
+      save(); renderCartoes(); toast('🗑️ Cartão removido');
+    }
+
+    function selectCartao(id) {
+      state.selectedCartaoId = id;
+      renderCartoes();
+      renderDetailPanel();
+    }
+
+    function getUsado(cartao) {
+      return cartao.despesas.reduce((s, d) => s + d.valor / d.parcelas, 0);
+    }
+
+    function renderCartoes() {
+      const grid = document.getElementById('cartoes-grid');
+      const empty = document.getElementById('cartoes-empty');
+      grid.innerHTML = '';
+      if (state.cartoes.length === 0) {
+        empty.style.display = 'block';
+        document.getElementById('detail-panel-wrap').style.display = 'none';
+        return;
+      }
+      empty.style.display = 'none';
+
+      const colorMap = { green:'#00e5a0', blue:'#0099ff', purple:'#8b5cf6', orange:'#f59e0b', pink:'#ec4899' };
+
+      state.cartoes.forEach(c => {
+        const usado = getUsado(c);
+        const pct = Math.min(100, (usado / c.limite) * 100);
+        const cor = colorMap[c.color] || '#00e5a0';
+        const isSelected = state.selectedCartaoId === c.id;
+        const div = document.createElement('div');
+        div.className = 'cc-card';
+        div.dataset.color = c.color;
+        div.style.border = isSelected ? `1px solid ${cor}` : '';
+        div.style.boxShadow = isSelected ? `0 0 0 3px ${cor}22, var(--card-shadow)` : '';
+        div.innerHTML = `
+          <div class="cc-chip"></div>
+          <div class="cc-name">${c.nome}</div>
+          <div class="cc-limit-label">Limite: ${fmt(c.limite)}</div>
+          <div class="cc-bar-wrap">
+            <div class="cc-bar-fill" style="width:${pct}%;background:${pct>85?'#ff6b6b':pct>60?'#f59e0b':cor}"></div>
+          </div>
+          <div class="cc-amounts">
+            <span class="cc-used" style="color:${pct>85?'#ff6b6b':pct>60?'#f59e0b':cor}">${fmt(usado)} usados</span>
+            <span class="cc-available">${fmt(c.limite - usado)} disponível</span>
+          </div>
+          <div class="cc-card-actions">
+            <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();selectCartao(${c.id})">
+              📋 Despesas (${c.despesas.length})
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteCartao(${c.id})">🗑️</button>
+          </div>
+        `;
+        div.addEventListener('click', () => selectCartao(c.id));
+        grid.appendChild(div);
+      });
+
+      if (state.selectedCartaoId) renderDetailPanel();
+    }
+
+    // ── DETAIL PANEL ──
+    function renderDetailPanel() {
+      const cartao = state.cartoes.find(c => c.id === state.selectedCartaoId);
+      if (!cartao) { document.getElementById('detail-panel-wrap').style.display = 'none'; return; }
+      document.getElementById('detail-panel-wrap').style.display = 'block';
+      document.getElementById('detail-card-name').textContent = '💳 ' + cartao.nome;
+
+      const list = document.getElementById('detail-expenses-list');
+      if (cartao.despesas.length === 0) {
+        list.innerHTML = `<div class="empty" style="padding:24px 0">
+          <div class="empty-icon">🧾</div>
+          <h3>Nenhuma despesa ainda</h3>
+          <p>Clique em "+ Despesa" para adicionar</p>
+        </div>`;
+        return;
+      }
+
+      list.innerHTML = cartao.despesas.map(d => {
+        const parcelamento = d.parcelas > 1 ? `${d.parcelas}× de ${fmt(d.valor / d.parcelas)}` : 'À vista';
+        return `<div class="expense-item">
+          <div class="expense-icon">${d.categoria}</div>
+          <div class="expense-info">
+            <div class="expense-desc">${d.desc}</div>
+            <div class="expense-meta">${parcelamento}</div>
+          </div>
+          <div>
+            <div class="expense-value">${fmt(d.valor)}</div>
+            <div class="expense-parcel">${d.parcelas > 1 ? fmt(d.valor/d.parcelas) + '/mês' : ''}</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="deleteDespesa(${cartao.id},${d.id})">✕</button>
+        </div>`;
+      }).join('');
+    }
+
+    // ── DESPESA ──
+    function addDespesa() {
+      const cartao = state.cartoes.find(c => c.id === state.selectedCartaoId);
+      if (!cartao) { toast('⚠️ Selecione um cartão primeiro'); return; }
+      const desc = document.getElementById('nd-desc').value.trim();
+      const valor = parseFloat(document.getElementById('nd-valor').value);
+      const parcelas = parseInt(document.getElementById('nd-parcelas').value);
+      const categoria = document.getElementById('nd-categoria').value;
+      if (!desc) { toast('⚠️ Informe a descrição'); return; }
+      if (!valor || valor <= 0) { toast('⚠️ Informe um valor válido'); return; }
+      cartao.despesas.push({ id: Date.now(), desc, valor, parcelas, categoria });
+      save();
+      closeModal('modal-nova-despesa');
+      document.getElementById('nd-desc').value = '';
+      document.getElementById('nd-valor').value = '';
+      renderCartoes();
+      renderDetailPanel();
+      toast('✅ Despesa adicionada!');
+    }
+
+    function deleteDespesa(cartaoId, despId) {
+      const cartao = state.cartoes.find(c => c.id === cartaoId);
+      if (!cartao) return;
+      cartao.despesas = cartao.despesas.filter(d => d.id !== despId);
+      save(); renderCartoes(); renderDetailPanel();
+      toast('🗑️ Despesa removida');
+    }
+
+    // ── SALÁRIO ──
+    function saveSalario() {
+      const v = parseFloat(document.getElementById('sal-valor').value);
+      if (!v || v < 0) { toast('⚠️ Valor inválido'); return; }
+      state.salario = v;
+      save();
+      closeModal('modal-salario');
+      renderPanorama();
+      toast('✅ Salário salvo!');
+    }
+
+    // ── OUTRAS DESPESAS ──
+    function addOutraDespesa() {
+      const desc = document.getElementById('od-desc').value.trim();
+      const valor = parseFloat(document.getElementById('od-valor').value);
+      const categoria = document.getElementById('od-categoria').value;
+      if (!desc) { toast('⚠️ Informe a descrição'); return; }
+      if (!valor || valor <= 0) { toast('⚠️ Valor inválido'); return; }
+      state.outrasDespesas.push({ id: Date.now(), desc, valor, categoria });
+      save();
+      closeModal('modal-nova-outra-despesa');
+      document.getElementById('od-desc').value = '';
+      document.getElementById('od-valor').value = '';
+      renderPanorama();
+      toast('✅ Despesa adicionada!');
+    }
+
+    function deleteOutraDespesa(id) {
+      state.outrasDespesas = state.outrasDespesas.filter(d => d.id !== id);
+      save(); renderPanorama(); toast('🗑️ Despesa removida');
+    }
+
+    // ── PANORAMA ──
+    function renderPanorama() {
+      // salary
+      const salEl = document.getElementById('salario-display');
+      const salBadge = document.getElementById('salario-badge');
+      if (state.salario > 0) {
+        salEl.textContent = fmt(state.salario);
+        salBadge.style.display = 'inline-block';
+      } else {
+        salEl.textContent = 'Não definido';
+        salBadge.style.display = 'none';
+      }
+
+      // totals
+      const totalCartoes = state.cartoes.reduce((s, c) => s + getUsado(c), 0);
+      const totalOutras = state.outrasDespesas.reduce((s, d) => s + d.valor, 0);
+      const totalGeral = totalCartoes + totalOutras;
+      const saldo = state.salario - totalGeral;
+      const pct = state.salario > 0 ? Math.round((totalGeral / state.salario) * 100) : 0;
+
+      document.getElementById('saldo-disponivel').textContent = fmt(saldo);
+      document.getElementById('bd-salario').textContent = fmt(state.salario);
+      document.getElementById('bd-cartoes').textContent = fmt(totalCartoes);
+      document.getElementById('bd-outras').textContent = fmt(totalOutras);
+
+      document.getElementById('stat-total-cartoes').textContent = fmt(totalCartoes);
+      const totalDespCartoes = state.cartoes.reduce((s, c) => s + c.despesas.length, 0);
+      document.getElementById('stat-cartoes-sub').textContent = totalDespCartoes + ' despesa(s) ativa(s)';
+      document.getElementById('stat-total-outras').textContent = fmt(totalOutras);
+      document.getElementById('stat-outras-sub').textContent = state.outrasDespesas.length + ' item(s)';
+      document.getElementById('stat-comprometido').textContent = fmt(totalGeral);
+      document.getElementById('stat-percent').textContent = pct + '%';
+
+      // color balance
+      const saldoEl = document.getElementById('saldo-disponivel');
+      saldoEl.style.background = saldo >= 0
+        ? 'linear-gradient(135deg,var(--accent),var(--accent2))'
+        : 'linear-gradient(135deg,#ff6b6b,#ff9999)';
+      saldoEl.style['-webkit-background-clip'] = 'text';
+      saldoEl.style['-webkit-text-fill-color'] = 'transparent';
+
+      // outras despesas list
+      const odList = document.getElementById('outras-despesas-list');
+      if (state.outrasDespesas.length === 0) {
+        odList.innerHTML = `<div class="empty" style="padding:24px 0">
+          <div class="empty-icon">📋</div>
+          <h3>Nenhuma outra despesa</h3>
+          <p>Aluguel, contas, assinaturas, etc.</p>
+        </div>`;
+      } else {
+        odList.innerHTML = state.outrasDespesas.map(d => `
+          <div class="other-expense-item">
+            <div class="expense-icon">${d.categoria}</div>
+            <div class="expense-info">
+              <div class="expense-desc">${d.desc}</div>
+            </div>
+            <div class="expense-value">${fmt(d.valor)}</div>
+            <button class="btn btn-danger btn-sm" onclick="deleteOutraDespesa(${d.id})">✕</button>
+          </div>`).join('');
+      }
+
+      // panorama cartoes
+      const pcList = document.getElementById('panorama-cartoes-list');
+      if (state.cartoes.length === 0) {
+        pcList.innerHTML = `<div class="empty" style="padding:24px 0">
+          <div class="empty-icon">💳</div><h3>Nenhum cartão cadastrado</h3>
+        </div>`;
+      } else {
+        const colorMap = { green:'#00e5a0', blue:'#0099ff', purple:'#8b5cf6', orange:'#f59e0b', pink:'#ec4899' };
+        pcList.innerHTML = state.cartoes.map(c => {
+          const usado = getUsado(c);
+          const pct2 = Math.min(100, (usado / c.limite) * 100);
+          const cor = colorMap[c.color] || '#00e5a0';
+          return `<div class="other-expense-item">
+            <div class="expense-icon">💳</div>
+            <div class="expense-info">
+              <div class="expense-desc">${c.nome}</div>
+              <div class="expense-meta">${c.despesas.length} despesa(s) · limite ${fmt(c.limite)}</div>
+              <div class="cc-bar-wrap" style="margin-top:6px;width:180px">
+                <div class="cc-bar-fill" style="width:${pct2}%;background:${pct2>85?'#ff6b6b':pct2>60?'#f59e0b':cor}"></div>
+              </div>
+            </div>
+            <div>
+              <div class="expense-value">${fmt(usado)}</div>
+              <div class="expense-parcel" style="color:var(--text2)">${fmt(c.limite-usado)} livre</div>
+            </div>
+          </div>`;
+        }).join('');
+      }
+    }
+
+    // ── INIT ──
+    renderCartoes();
+    renderPanorama();
+  </script>
+</body>
+</html>
