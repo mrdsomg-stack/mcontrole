@@ -561,17 +561,20 @@ function usadoMes(cartao, y, m){
   return despesasAtivas(cartao,y,m).reduce((s,d)=>s+d.valor/d.parcelas,0);
 }
 
-// Limite comprometido TOTAL = tudo que ainda está devendo em parcelas futuras
-// a partir do mês atual (inclusive). Reflete quanto do limite está bloqueado.
-function limiteComprometido(cartao){
+// Limite comprometido no mês Y/M:
+// Soma as parcelas restantes SOMENTE das compras que JÁ COMEÇARAM até Y/M.
+// Compras futuras (inicio > alvo) não bloqueiam o limite deste mês.
+function limiteComprometido(cartao, y, m){
   if(!cartao.despesas) return 0;
-  const hoje = abs(S.cy, S.cm);
+  y = y ?? S.cy; m = m ?? S.cm;
+  const alvo = abs(y, m);
   return cartao.despesas.reduce((s,d)=>{
     const inicio = abs(d.anoInicio, d.mesInicio);
     const fim    = inicio + d.parcelas - 1;
-    if(fim < hoje) return s;               // já quitada
+    if(inicio > alvo) return s;  // compra ainda não aconteceu neste mês
+    if(fim < alvo)    return s;  // compra já quitada antes deste mês
     const parcelaMes = d.valor / d.parcelas;
-    const parcelasRestantes = fim - Math.max(hoje, inicio) + 1;
+    const parcelasRestantes = fim - alvo + 1; // parcelas deste mês em diante
     return s + parcelaMes * parcelasRestantes;
   }, 0);
 }
