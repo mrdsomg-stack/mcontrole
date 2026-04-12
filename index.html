@@ -260,13 +260,14 @@
       </div>
       <div class="bh-bd">
         <div class="bd-i"><div class="bd-v" id="bd-sal" style="color:var(--accent)">R$ 0,00</div><div class="bd-l">Salário</div></div>
+        <div class="bd-i"><div class="bd-v" id="bd-renda" style="color:var(--accent)">R$ 0,00</div><div class="bd-l">Outros ganhos</div></div>
         <div class="bd-i"><div class="bd-v" id="bd-cc" style="color:var(--accent3)">R$ 0,00</div><div class="bd-l">Cartões</div></div>
-        <div class="bd-i"><div class="bd-v" id="bd-ot" style="color:var(--accent4)">R$ 0,00</div><div class="bd-l">Outras</div></div>
+        <div class="bd-i"><div class="bd-v" id="bd-ot" style="color:var(--accent4)">R$ 0,00</div><div class="bd-l">Outras desp.</div></div>
       </div>
     </div>
 
     <div class="card" style="margin-bottom:18px">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px">
         <div>
           <div style="font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Salário do mês</div>
           <div style="display:flex;align-items:center;gap:10px">
@@ -276,13 +277,20 @@
         </div>
         <button class="btn btn-secondary btn-sm" onclick="openModal('m-sal')">✏️ Editar salário</button>
       </div>
+      <div style="border-top:1px solid var(--border);padding-top:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px">
+          <div style="font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.5px">Outros ganhos do mês</div>
+          <button class="btn btn-secondary btn-sm" onclick="openModal('m-renda')">+ Adicionar ganho</button>
+        </div>
+        <div id="renda-list"></div>
+      </div>
     </div>
 
     <div class="g4" style="margin-bottom:22px">
+      <div class="sc"><div class="sc-lbl">Renda total</div><div class="sc-val" id="s-renda-tot" style="color:var(--accent)">R$ 0,00</div><div class="sc-sub" id="s-renda-sub">salário + ganhos</div></div>
       <div class="sc"><div class="sc-lbl">Cartões (mês)</div><div class="sc-val" id="s-cc" style="color:var(--accent3)">R$ 0,00</div><div class="sc-sub" id="s-cc-sub">0 despesas</div></div>
       <div class="sc"><div class="sc-lbl">Outras despesas</div><div class="sc-val" id="s-ot" style="color:var(--accent4)">R$ 0,00</div><div class="sc-sub" id="s-ot-sub">0 itens</div></div>
-      <div class="sc"><div class="sc-lbl">Total comprometido</div><div class="sc-val" id="s-tot" style="color:var(--accent2)">R$ 0,00</div><div class="sc-sub">cartões + outras</div></div>
-      <div class="sc"><div class="sc-lbl">% do salário</div><div class="sc-val" id="s-pct">0%</div><div class="sc-sub">comprometido</div></div>
+      <div class="sc"><div class="sc-lbl">% da renda</div><div class="sc-val" id="s-pct">0%</div><div class="sc-sub">comprometido</div></div>
     </div>
 
     <div class="card" style="margin-bottom:18px">
@@ -431,6 +439,20 @@
   </div>
 </div>
 
+<!-- MODAL: OUTRO GANHO -->
+<div class="mo" id="m-renda">
+  <div class="modal">
+    <div class="m-title">💰 Adicionar Ganho Extra</div>
+    <div id="m-renda-sub" style="font-size:.83rem;color:var(--text2);margin-bottom:16px">—</div>
+    <div class="fg"><label>Descrição</label><input type="text" id="renda-desc" placeholder="Ex: Freelance, 13º, Bônus..." /></div>
+    <div class="fg"><label>Valor (R$)</label><input type="number" id="renda-val" placeholder="0,00" min="0" step="0.01" /></div>
+    <div class="m-footer">
+      <button class="btn btn-secondary" onclick="closeModal('m-renda')">Cancelar</button>
+      <button class="btn btn-primary" onclick="addRenda()">Adicionar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: SALÁRIO -->
 <div class="mo" id="m-sal">
   <div class="modal">
@@ -515,7 +537,8 @@ function save(){ localStorage.setItem('ff4',JSON.stringify(S)); }
 
 function mdata(y,m){
   const k=mk(y,m);
-  if(!S.months[k]) S.months[k]={salario:0,od:[]};
+  if(!S.months[k]) S.months[k]={salario:0,od:[],outraRendas:[]};
+  else if(!S.months[k].outraRendas) S.months[k].outraRendas=[];
   return S.months[k];
 }
 function cur(){ return mdata(S.cy,S.cm); }
@@ -532,10 +555,25 @@ function despesasAtivas(cartao, y, m){
   });
 }
 
-// Valor comprometido de um cartão no mês atual
+// Valor cobrado no extrato do mês (só a parcela daquele mês)
 function usadoMes(cartao, y, m){
   y = y ?? S.cy; m = m ?? S.cm;
   return despesasAtivas(cartao,y,m).reduce((s,d)=>s+d.valor/d.parcelas,0);
+}
+
+// Limite comprometido TOTAL = tudo que ainda está devendo em parcelas futuras
+// a partir do mês atual (inclusive). Reflete quanto do limite está bloqueado.
+function limiteComprometido(cartao){
+  if(!cartao.despesas) return 0;
+  const hoje = abs(S.cy, S.cm);
+  return cartao.despesas.reduce((s,d)=>{
+    const inicio = abs(d.anoInicio, d.mesInicio);
+    const fim    = inicio + d.parcelas - 1;
+    if(fim < hoje) return s;               // já quitada
+    const parcelaMes = d.valor / d.parcelas;
+    const parcelasRestantes = fim - Math.max(hoje, inicio) + 1;
+    return s + parcelaMes * parcelasRestantes;
+  }, 0);
 }
 
 // Número da parcela atual para exibição (ex: "2/6")
@@ -643,8 +681,9 @@ function renderCartoes(){
 
   S.cartoes.forEach(c=>{
     if(!c.despesas) c.despesas=[];
-    const usado=usadoMes(c);
-    const pct=Math.min(100,(usado/c.limite)*100);
+    const comprometido=limiteComprometido(c);
+    const mesAtual=usadoMes(c);
+    const pct=Math.min(100,(comprometido/c.limite)*100);
     const cor=CHEX[c.color]||'#00e5a0';
     const nd=despesasAtivas(c,S.cy,S.cm).length;
     const isSel=S.selCartao===c.id;
@@ -658,8 +697,11 @@ function renderCartoes(){
       <div class="cc-lim">Limite: ${fmt(c.limite)}</div>
       <div class="cc-bar"><div class="cc-fill" style="width:${pct}%;background:${pct>85?'#ff6b6b':pct>60?'#f59e0b':cor}"></div></div>
       <div class="cc-amts">
-        <span class="cc-used" style="color:${pct>85?'#ff6b6b':pct>60?'#f59e0b':cor}">${fmt(usado)} usados</span>
-        <span class="cc-avail">${fmt(c.limite-usado)} disponível</span>
+        <span class="cc-used" style="color:${pct>85?'#ff6b6b':pct>60?'#f59e0b':cor}">${fmt(comprometido)} comprometido</span>
+        <span class="cc-avail">${fmt(c.limite-comprometido)} disponível</span>
+      </div>
+      <div style="font-size:.72rem;color:var(--text2);margin-top:4px;position:relative;z-index:1">
+        Este mês: ${fmt(mesAtual)}
       </div>
       <div class="cc-acts">
         <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();selCartao(${c.id})">📋 Ativas (${nd})</button>
@@ -815,23 +857,49 @@ function delOD(id){
   save(); renderPanorama(); toast('🗑️ Despesa removida');
 }
 
+// ══════════════════ OUTRAS RENDAS ══════════════════
+function addRenda(){
+  const desc=document.getElementById('renda-desc').value.trim();
+  const valor=parseFloat(document.getElementById('renda-val').value);
+  if(!desc){ toast('⚠️ Informe a descrição'); return; }
+  if(!valor||valor<=0){ toast('⚠️ Valor inválido'); return; }
+  const md=cur();
+  if(!md.outraRendas) md.outraRendas=[];
+  md.outraRendas.push({id:Date.now(),desc,valor});
+  save(); closeModal('m-renda');
+  document.getElementById('renda-desc').value='';
+  document.getElementById('renda-val').value='';
+  renderPanorama(); toast('✅ Ganho adicionado!');
+}
+
+function delRenda(id){
+  const md=cur();
+  md.outraRendas=(md.outraRendas||[]).filter(r=>r.id!==id);
+  save(); renderPanorama(); toast('🗑️ Ganho removido');
+}
+
 // ══════════════════ PANORAMA ══════════════════
 function renderPanorama(){
   const md=cur();
+  if(!md.outraRendas) md.outraRendas=[];
   const sal=md.salario||0;
+  const totRendas=md.outraRendas.reduce((s,r)=>s+r.valor,0);
+  const totalEntradas=sal+totRendas;
 
   document.getElementById('sal-display').textContent=sal>0?fmt(sal):'Não definido';
   document.getElementById('sal-badge').style.display=sal>0?'inline-block':'none';
   document.getElementById('m-sal-sub').textContent='Mês: '+lbl(ck());
+  document.getElementById('m-renda-sub').textContent='Mês: '+lbl(ck());
   const el=document.getElementById('sal-val'); if(el&&sal>0) el.value=sal;
 
   const totCC=S.cartoes.reduce((s,c)=>s+usadoMes(c),0);
   const totOD=md.od.reduce((s,d)=>s+d.valor,0);
   const totG=totCC+totOD;
-  const saldo=sal-totG;
-  const pct=sal>0?Math.round((totG/sal)*100):0;
+  const saldo=totalEntradas-totG;
+  const pct=totalEntradas>0?Math.round((totG/totalEntradas)*100):0;
 
   document.getElementById('bd-sal').textContent=fmt(sal);
+  document.getElementById('bd-renda').textContent=fmt(totRendas);
   document.getElementById('bd-cc').textContent=fmt(totCC);
   document.getElementById('bd-ot').textContent=fmt(totOD);
 
@@ -841,12 +909,26 @@ function renderPanorama(){
   sEl.style['-webkit-background-clip']='text'; sEl.style['-webkit-text-fill-color']='transparent';
 
   const nD=S.cartoes.reduce((s,c)=>s+despesasAtivas(c,S.cy,S.cm).length,0);
+  document.getElementById('s-renda-tot').textContent=fmt(totalEntradas);
+  document.getElementById('s-renda-sub').textContent=(sal>0?'salário':'sem salário')+(totRendas>0?' + '+md.outraRendas.length+' ganho(s)':'');
   document.getElementById('s-cc').textContent=fmt(totCC);
   document.getElementById('s-cc-sub').textContent=nD+' despesa(s) ativa(s)';
   document.getElementById('s-ot').textContent=fmt(totOD);
   document.getElementById('s-ot-sub').textContent=md.od.length+' item(s)';
-  document.getElementById('s-tot').textContent=fmt(totG);
   document.getElementById('s-pct').textContent=pct+'%';
+
+  // outras rendas list
+  const rl=document.getElementById('renda-list');
+  if(!md.outraRendas.length){
+    rl.innerHTML='<div style="font-size:.82rem;color:var(--text2);padding:4px 0">Nenhum ganho extra em '+lbl(ck())+'</div>';
+  } else {
+    rl.innerHTML=md.outraRendas.map(r=>`<div class="oe" style="padding:8px 0">
+      <div class="ei-icon">💰</div>
+      <div class="ei-info"><div class="ei-desc">${r.desc}</div></div>
+      <div class="ei-val" style="color:var(--accent)">${fmt(r.valor)}</div>
+      <button class="btn btn-danger btn-sm" onclick="delRenda(${r.id})">✕</button>
+    </div>`).join('');
+  }
 
   const odList=document.getElementById('od-list');
   odList.innerHTML=!md.od.length
@@ -906,13 +988,15 @@ function renderHistorico(){
   }
   cont.innerHTML=`<div class="hgrid">${keys.map(k=>{
     const [ky,km]=k.split('-').map(Number);
-    const md=S.months[k]||{salario:0,od:[]};
+    const md=S.months[k]||{salario:0,od:[],outraRendas:[]};
     const sal=md.salario||0;
+    const totRendasH=(md.outraRendas||[]).reduce((s,r)=>s+r.valor,0);
+    const totalEntradasH=sal+totRendasH;
     const totCC=S.cartoes.reduce((s,c)=>s+usadoMes(c,ky,km-1),0);
     const totOD=(md.od||[]).reduce((s,d)=>s+d.valor,0);
     const tot=totCC+totOD;
-    const saldo=sal-tot;
-    const pct=sal>0?Math.round((tot/sal)*100):null;
+    const saldo=totalEntradasH-tot;
+    const pct=totalEntradasH>0?Math.round((tot/totalEntradasH)*100):null;
     const isCur=k===mk(NOW.getFullYear(),NOW.getMonth());
     const isNav=k===ck();
     return `<div class="hcard${isNav?' cur':''}" onclick="jumpToMonth('${k}')">
@@ -922,7 +1006,7 @@ function renderHistorico(){
         ${isNav&&!isCur?'<span class="badge bg-blue">Vendo</span>':''}
       </div>
       <div class="hc-saldo" style="color:${saldo>=0&&sal>0?'var(--accent)':sal===0?'var(--text2)':'var(--accent3)'}">${sal>0?fmt(saldo):'—'}</div>
-      <div class="hc-det">Salário: ${sal>0?fmt(sal):'—'} · Cartões: ${fmt(totCC)}</div>
+      <div class="hc-det">Renda: ${totalEntradasH>0?fmt(totalEntradasH):'—'} · Cartões: ${fmt(totCC)}</div>
       <div class="hc-det">Outras: ${fmt(totOD)}${pct!==null?' · '+pct+'% comprometido':''}</div>
     </div>`;
   }).join('')}</div>`;
