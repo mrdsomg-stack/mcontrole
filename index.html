@@ -364,19 +364,24 @@
     <div class="fg"><label>Descrição</label><input type="text" id="nd-desc" placeholder="Ex: Supermercado, Netflix..." /></div>
     <div class="fr">
       <div class="fg"><label>Valor total (R$)</label><input type="number" id="nd-val" placeholder="0,00" min="0" step="0.01" /></div>
-      <div class="fg"><label>Parcelas</label>
-        <select id="nd-par">
-          <option value="1">1× (à vista)</option>
-          <option value="2">2×</option><option value="3">3×</option><option value="4">4×</option>
-          <option value="5">5×</option><option value="6">6×</option><option value="7">7×</option>
-          <option value="8">8×</option><option value="9">9×</option><option value="10">10×</option>
-          <option value="11">11×</option><option value="12">12×</option>
-          <option value="18">18×</option><option value="24">24×</option>
-        </select>
-      </div>
+      <div class="fg"><label>Mês de início</label><input type="month" id="nd-mes" /></div>
     </div>
-    <div class="fg"><label>Mês de início (1ª parcela)</label>
-      <input type="month" id="nd-mes" /></div>
+    <div class="fg"><label>Esta compra se repete / é parcelada?</label>
+      <select id="nd-repete" onchange="toggleCCRepeat('nd')">
+        <option value="0">Não — cobrança única</option>
+        <option value="N">Sim — parcelado (número fixo)</option>
+      </select>
+    </div>
+    <div id="nd-repeat-box" style="display:none" class="fg">
+      <label>Número de parcelas</label>
+      <select id="nd-par">
+        <option value="2">2×</option><option value="3">3×</option><option value="4">4×</option>
+        <option value="5">5×</option><option value="6">6×</option><option value="7">7×</option>
+        <option value="8">8×</option><option value="9">9×</option><option value="10">10×</option>
+        <option value="11">11×</option><option value="12">12×</option>
+        <option value="18">18×</option><option value="24">24×</option>
+      </select>
+    </div>
     <div class="fg"><label>Categoria</label>
       <select id="nd-cat">
         <option value="🛒">🛒 Mercado / Alimentação</option>
@@ -401,23 +406,28 @@
 <!-- MODAL: EDITAR DESPESA -->
 <div class="mo" id="m-ed">
   <div class="modal">
-    <div class="m-title">✏️ Editar Despesa</div>
+    <div class="m-title">✏️ Editar Despesa no Cartão</div>
     <div class="fg"><label>Descrição</label><input type="text" id="ed-desc" placeholder="Ex: Supermercado, Netflix..." /></div>
     <div class="fr">
       <div class="fg"><label>Valor total (R$)</label><input type="number" id="ed-val" placeholder="0,00" min="0" step="0.01" /></div>
-      <div class="fg"><label>Parcelas</label>
-        <select id="ed-par">
-          <option value="1">1× (à vista)</option>
-          <option value="2">2×</option><option value="3">3×</option><option value="4">4×</option>
-          <option value="5">5×</option><option value="6">6×</option><option value="7">7×</option>
-          <option value="8">8×</option><option value="9">9×</option><option value="10">10×</option>
-          <option value="11">11×</option><option value="12">12×</option>
-          <option value="18">18×</option><option value="24">24×</option>
-        </select>
-      </div>
+      <div class="fg"><label>Mês de início</label><input type="month" id="ed-mes" /></div>
     </div>
-    <div class="fg"><label>Mês de início (1ª parcela)</label>
-      <input type="month" id="ed-mes" /></div>
+    <div class="fg"><label>Esta compra se repete / é parcelada?</label>
+      <select id="ed-repete" onchange="toggleCCRepeat('ed')">
+        <option value="0">Não — cobrança única</option>
+        <option value="N">Sim — parcelado (número fixo)</option>
+      </select>
+    </div>
+    <div id="ed-repeat-box" style="display:none" class="fg">
+      <label>Número de parcelas</label>
+      <select id="ed-par">
+        <option value="2">2×</option><option value="3">3×</option><option value="4">4×</option>
+        <option value="5">5×</option><option value="6">6×</option><option value="7">7×</option>
+        <option value="8">8×</option><option value="9">9×</option><option value="10">10×</option>
+        <option value="11">11×</option><option value="12">12×</option>
+        <option value="18">18×</option><option value="24">24×</option>
+      </select>
+    </div>
     <div class="fg"><label>Categoria</label>
       <select id="ed-cat">
         <option value="🛒">🛒 Mercado / Alimentação</option>
@@ -482,9 +492,56 @@
         </select>
       </div>
     </div>
+    <div class="fg"><label>Mês de início</label><input type="month" id="od-mes" /></div>
+    <div class="fg"><label>Esta despesa se repete?</label>
+      <select id="od-repete" onchange="toggleODRepeat('od')">
+        <option value="0">Não — ocorre só neste mês</option>
+        <option value="N">Sim — por um número de meses</option>
+        <option value="-1">Sim — todo mês (indefinidamente)</option>
+      </select>
+    </div>
+    <div id="od-repeat-box" style="display:none" class="fg">
+      <label>Quantos meses se repete?</label>
+      <input type="number" id="od-nmeses" placeholder="Ex: 12" min="2" step="1" value="12" />
+    </div>
     <div class="m-footer">
       <button class="btn btn-secondary" onclick="closeModal('m-od')">Cancelar</button>
       <button class="btn btn-primary" onclick="addOutraDespesa()">Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: EDITAR OUTRA DESPESA -->
+<div class="mo" id="m-ed-od">
+  <div class="modal">
+    <div class="m-title">✏️ Editar Despesa Avulsa</div>
+    <div class="fg"><label>Descrição</label><input type="text" id="ed-od-desc" /></div>
+    <div class="fr">
+      <div class="fg"><label>Valor (R$)</label><input type="number" id="ed-od-val" min="0" step="0.01" /></div>
+      <div class="fg"><label>Categoria</label>
+        <select id="ed-od-cat">
+          <option value="🏠">🏠 Moradia</option><option value="💡">💡 Utilidades</option>
+          <option value="📱">📱 Assinatura</option><option value="🚗">🚗 Transporte</option>
+          <option value="💊">💊 Saúde</option><option value="📚">📚 Educação</option>
+          <option value="🎮">🎮 Lazer</option><option value="💰">💰 Outros</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg"><label>Mês de início</label><input type="month" id="ed-od-mes" /></div>
+    <div class="fg"><label>Esta despesa se repete?</label>
+      <select id="ed-od-repete" onchange="toggleODRepeat('ed-od')">
+        <option value="0">Não — ocorre só neste mês</option>
+        <option value="N">Sim — por um número de meses</option>
+        <option value="-1">Sim — todo mês (indefinidamente)</option>
+      </select>
+    </div>
+    <div id="ed-od-repeat-box" style="display:none" class="fg">
+      <label>Quantos meses se repete?</label>
+      <input type="number" id="ed-od-nmeses" placeholder="Ex: 12" min="2" step="1" value="12" />
+    </div>
+    <div class="m-footer">
+      <button class="btn btn-secondary" onclick="closeModal('m-ed-od')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEditOD()">Salvar alterações</button>
     </div>
   </div>
 </div>
@@ -494,13 +551,19 @@
 <script>
 // ══════════════════════════════════════════════════
 //  DESIGN
-//  Despesas ficam no cartão como objetos globais:
-//  { id, desc, valor, parcelas, cat, anoInicio, mesInicio }
-//  Uma despesa aparece no mês M se:
-//    offset = (M.ano*12+M.mes) - (anoInicio*12+mesInicio)
-//    0 <= offset < parcelas
-//  O valor cobrado naquele mês = valor / parcelas
-//  Salário e outras despesas continuam por mês.
+//  Despesas do cartão (global no cartão):
+//    { id, desc, valor, parcelas, cat, anoInicio, mesInicio }
+//    aparece no mês M se: inicio <= M <= inicio+parcelas-1
+//    valor do mês = valor / parcelas
+//
+//  Outras despesas (global em S.outrasDespesas):
+//    { id, desc, valor, cat, anoInicio, mesInicio, repeticoes }
+//    repeticoes=0 → só no mês de início (sem repetição)
+//    repeticoes=N → repete por N meses a partir do início
+//    repeticoes=-1 → repete indefinidamente
+//    aparece no mês M se: inicio <= M <= inicio+repeticoes-1 (ou sem fim se -1)
+//
+//  Salário e outras rendas continuam por mês (em S.months).
 // ══════════════════════════════════════════════════
 
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
@@ -513,10 +576,12 @@ function abs(y,m){ return y*12+m; }  // absolute month index
 
 const NOW = new Date();
 let S = {
-  cartoes: [],   // [{id,nome,limite,color,despesas:[{id,desc,valor,parcelas,cat,anoInicio,mesInicio}]}]
-  months:  {},   // {"YYYY-MM":{salario,od:[{id,desc,valor,cat}]}}
+  cartoes: [],          // [{id,nome,limite,color,despesas:[...]}]
+  months:  {},          // {"YYYY-MM":{salario,outraRendas,od:[]}} od kept for migration only
+  outrasDespesas: [],   // [{id,desc,valor,cat,anoInicio,mesInicio,repeticoes}]
   selCartao: null,
-  editDespId: null,   // id da despesa sendo editada
+  editDespId: null,
+  editODId: null,
   ncColor: 'green',
   ecColor: 'green',
   cy: NOW.getFullYear(),
@@ -538,7 +603,10 @@ function save(){ localStorage.setItem('ff4',JSON.stringify(S)); }
 function mdata(y,m){
   const k=mk(y,m);
   if(!S.months[k]) S.months[k]={salario:0,od:[],outraRendas:[]};
-  else if(!S.months[k].outraRendas) S.months[k].outraRendas=[];
+  else {
+    if(!S.months[k].outraRendas) S.months[k].outraRendas=[];
+    if(!S.months[k].od) S.months[k].od=[];
+  }
   return S.months[k];
 }
 function cur(){ return mdata(S.cy,S.cm); }
@@ -585,7 +653,40 @@ function numParcela(d, y, m){
   return abs(y,m) - abs(d.anoInicio,d.mesInicio) + 1;
 }
 
+// Outras despesas ativas num dado mês (y,m)
+function odAtivas(y, m){
+  y = y ?? S.cy; m = m ?? S.cm;
+  const alvo = abs(y, m);
+  if(!S.outrasDespesas) S.outrasDespesas=[];
+  return S.outrasDespesas.filter(d=>{
+    const inicio = abs(d.anoInicio, d.mesInicio);
+    if(alvo < inicio) return false;
+    if(d.repeticoes === -1) return true;            // indefinido
+    const fim = inicio + (d.repeticoes||1) - 1;
+    return alvo <= fim;
+  });
+}
+
+// Número do mês atual desta OD (ex: "2 de 6")
+function numParcelaOD(d){
+  return abs(S.cy,S.cm) - abs(d.anoInicio,d.mesInicio) + 1;
+}
+
 load();
+// migrate old per-month od entries into global outrasDespesas
+(function migrate(){
+  if(!S.outrasDespesas) S.outrasDespesas=[];
+  Object.entries(S.months||{}).forEach(([k,md])=>{
+    if(!md.od||!md.od.length) return;
+    const [y,m]=k.split('-').map(Number);
+    md.od.forEach(d=>{
+      if(S.outrasDespesas.find(x=>x.id===d.id)) return;
+      S.outrasDespesas.push({id:d.id,desc:d.desc,valor:d.valor,cat:d.cat,
+        anoInicio:y,mesInicio:m-1,repeticoes:1});
+    });
+    md.od=[];
+  });
+})();
 
 // ══════════════════ NAVIGATION ══════════════════
 function showPage(id,btn){
@@ -759,28 +860,37 @@ function renderDP(){
 }
 
 // ══════════════════ DESPESAS — ADICIONAR ══════════════════
+function toggleCCRepeat(ns){
+  const box=document.getElementById(ns+'-repeat-box');
+  const val=document.getElementById(ns+'-repete').value;
+  box.style.display=val==='N'?'block':'none';
+}
+
 function addDespesa(){
   const c=S.cartoes.find(c=>c.id===S.selCartao);
   if(!c){ toast('⚠️ Selecione um cartão'); return; }
   if(!c.despesas) c.despesas=[];
 
-  const desc    =document.getElementById('nd-desc').value.trim();
-  const valor   =parseFloat(document.getElementById('nd-val').value);
-  const parcelas=parseInt(document.getElementById('nd-par').value);
-  const cat     =document.getElementById('nd-cat').value;
-  const mesRef  =document.getElementById('nd-mes').value;  // "YYYY-MM"
+  const desc   =document.getElementById('nd-desc').value.trim();
+  const valor  =parseFloat(document.getElementById('nd-val').value);
+  const cat    =document.getElementById('nd-cat').value;
+  const mesRef =document.getElementById('nd-mes').value;
+  const repete =document.getElementById('nd-repete').value;
+  const parcelas=repete==='N'?parseInt(document.getElementById('nd-par').value)||1:1;
 
   if(!desc){ toast('⚠️ Informe a descrição'); return; }
   if(!valor||valor<=0){ toast('⚠️ Valor inválido'); return; }
 
-  const [anoI,mesI] = mesRef ? mesRef.split('-').map(Number) : [S.cy, S.cm+1];
-  const mesInicio   = mesRef ? mesI-1 : S.cm;
-  const anoInicio   = mesRef ? anoI   : S.cy;
+  const [anoI,mesI]=mesRef?mesRef.split('-').map(Number):[S.cy,S.cm+1];
+  const mesInicio=mesRef?mesI-1:S.cm;
+  const anoInicio=mesRef?anoI:S.cy;
 
   c.despesas.push({id:Date.now(),desc,valor,parcelas,cat,anoInicio,mesInicio});
   save(); closeModal('m-nd');
   document.getElementById('nd-desc').value='';
   document.getElementById('nd-val').value='';
+  document.getElementById('nd-repete').value='0';
+  document.getElementById('nd-repeat-box').style.display='none';
   renderAll(); toast('✅ Despesa adicionada!');
 }
 
@@ -795,11 +905,18 @@ function openEditDesp(cid, did){
 
   document.getElementById('ed-desc').value=d.desc;
   document.getElementById('ed-val').value=d.valor;
-  document.getElementById('ed-par').value=d.parcelas;
   document.getElementById('ed-cat').value=d.cat;
-  // set month field
-  const mesStr=mk(d.anoInicio,d.mesInicio);
-  document.getElementById('ed-mes').value=mesStr;
+  document.getElementById('ed-mes').value=mk(d.anoInicio,d.mesInicio);
+  const isParc=d.parcelas>1;
+  document.getElementById('ed-repete').value=isParc?'N':'0';
+  const box=document.getElementById('ed-repeat-box');
+  box.style.display=isParc?'block':'none';
+  if(isParc){
+    const sel=document.getElementById('ed-par');
+    // set closest option
+    const opts=[...sel.options].map(o=>+o.value);
+    sel.value=opts.includes(d.parcelas)?d.parcelas:opts.reduce((a,b)=>Math.abs(b-d.parcelas)<Math.abs(a-d.parcelas)?b:a);
+  }
   openModal('m-ed');
 }
 
@@ -809,11 +926,12 @@ function saveEditDesp(){
   const d=c.despesas.find(d=>d.id===S.editDespId);
   if(!d) return;
 
-  const desc    =document.getElementById('ed-desc').value.trim();
-  const valor   =parseFloat(document.getElementById('ed-val').value);
-  const parcelas=parseInt(document.getElementById('ed-par').value);
-  const cat     =document.getElementById('ed-cat').value;
-  const mesRef  =document.getElementById('ed-mes').value;
+  const desc   =document.getElementById('ed-desc').value.trim();
+  const valor  =parseFloat(document.getElementById('ed-val').value);
+  const cat    =document.getElementById('ed-cat').value;
+  const mesRef =document.getElementById('ed-mes').value;
+  const repete =document.getElementById('ed-repete').value;
+  const parcelas=repete==='N'?parseInt(document.getElementById('ed-par').value)||1:1;
 
   if(!desc){ toast('⚠️ Informe a descrição'); return; }
   if(!valor||valor<=0){ toast('⚠️ Valor inválido'); return; }
@@ -842,13 +960,29 @@ function saveSalario(){
 }
 
 // ══════════════════ OUTRAS DESPESAS ══════════════════
+function toggleODRepeat(src){
+  const box=document.getElementById(src+'-repeat-box');
+  const val=document.getElementById(src+'-repete').value;
+  box.style.display=val!=='0'?'block':'none';
+}
+
 function addOutraDespesa(){
-  const desc =document.getElementById('od-desc').value.trim();
-  const valor=parseFloat(document.getElementById('od-val').value);
-  const cat  =document.getElementById('od-cat').value;
+  if(!S.outrasDespesas) S.outrasDespesas=[];
+  const desc  =document.getElementById('od-desc').value.trim();
+  const valor =parseFloat(document.getElementById('od-val').value);
+  const cat   =document.getElementById('od-cat').value;
+  const mesRef=document.getElementById('od-mes').value;
+  const repVal=document.getElementById('od-repete').value;  // '0'|'N'|'-1'
+  const nMeses=repVal==='0'?1 : repVal==='-1'?-1 : parseInt(document.getElementById('od-nmeses').value)||1;
+
   if(!desc){ toast('⚠️ Informe a descrição'); return; }
   if(!valor||valor<=0){ toast('⚠️ Valor inválido'); return; }
-  cur().od.push({id:Date.now(),desc,valor,cat});
+
+  const [anoI,mesI]=mesRef?mesRef.split('-').map(Number):[S.cy,S.cm+1];
+  const mesInicio=mesRef?mesI-1:S.cm;
+  const anoInicio=mesRef?anoI:S.cy;
+
+  S.outrasDespesas.push({id:Date.now(),desc,valor,cat,anoInicio,mesInicio,repeticoes:nMeses});
   save(); closeModal('m-od');
   document.getElementById('od-desc').value='';
   document.getElementById('od-val').value='';
@@ -856,8 +990,43 @@ function addOutraDespesa(){
 }
 
 function delOD(id){
-  const md=cur(); md.od=md.od.filter(d=>d.id!==id);
+  if(!confirm('Remover esta despesa de todos os meses?')) return;
+  S.outrasDespesas=(S.outrasDespesas||[]).filter(d=>d.id!==id);
   save(); renderPanorama(); toast('🗑️ Despesa removida');
+}
+
+function openEditOD(id){
+  const d=(S.outrasDespesas||[]).find(x=>x.id===id);
+  if(!d) return;
+  S.editODId=id;
+  document.getElementById('ed-od-desc').value=d.desc;
+  document.getElementById('ed-od-val').value=d.valor;
+  document.getElementById('ed-od-cat').value=d.cat;
+  document.getElementById('ed-od-mes').value=mk(d.anoInicio,d.mesInicio);
+  const repSel=document.getElementById('ed-od-repete');
+  if(d.repeticoes===-1){ repSel.value='-1'; }
+  else if(d.repeticoes<=1){ repSel.value='0'; }
+  else { repSel.value='N'; document.getElementById('ed-od-nmeses').value=d.repeticoes; }
+  const box=document.getElementById('ed-od-repeat-box');
+  box.style.display=(d.repeticoes>1||d.repeticoes===-1)?'block':'none';
+  openModal('m-ed-od');
+}
+
+function saveEditOD(){
+  const d=(S.outrasDespesas||[]).find(x=>x.id===S.editODId);
+  if(!d) return;
+  const desc  =document.getElementById('ed-od-desc').value.trim();
+  const valor =parseFloat(document.getElementById('ed-od-val').value);
+  const cat   =document.getElementById('ed-od-cat').value;
+  const mesRef=document.getElementById('ed-od-mes').value;
+  const repVal=document.getElementById('ed-od-repete').value;
+  const nMeses=repVal==='0'?1 : repVal==='-1'?-1 : parseInt(document.getElementById('ed-od-nmeses').value)||1;
+  if(!desc){ toast('⚠️ Informe a descrição'); return; }
+  if(!valor||valor<=0){ toast('⚠️ Valor inválido'); return; }
+  const [anoI,mesI]=mesRef.split('-').map(Number);
+  d.desc=desc; d.valor=valor; d.cat=cat;
+  d.anoInicio=anoI; d.mesInicio=mesI-1; d.repeticoes=nMeses;
+  save(); closeModal('m-ed-od'); renderPanorama(); toast('✅ Despesa atualizada!');
 }
 
 // ══════════════════ OUTRAS RENDAS ══════════════════
@@ -896,7 +1065,7 @@ function renderPanorama(){
   const el=document.getElementById('sal-val'); if(el&&sal>0) el.value=sal;
 
   const totCC=S.cartoes.reduce((s,c)=>s+usadoMes(c),0);
-  const totOD=md.od.reduce((s,d)=>s+d.valor,0);
+  const totOD=odAtivas().reduce((s,d)=>s+d.valor,0);
   const totG=totCC+totOD;
   const saldo=totalEntradas-totG;
   const pct=totalEntradas>0?Math.round((totG/totalEntradas)*100):0;
@@ -904,7 +1073,7 @@ function renderPanorama(){
   document.getElementById('bd-sal').textContent=fmt(sal);
   document.getElementById('bd-renda').textContent=fmt(totRendas);
   document.getElementById('bd-cc').textContent=fmt(totCC);
-  document.getElementById('bd-ot').textContent=fmt(totOD);
+  document.getElementById('bd-ot').textContent=fmt(odAtivas().reduce((s,d)=>s+d.valor,0));
 
   const sEl=document.getElementById('saldo');
   sEl.textContent=fmt(saldo);
@@ -916,8 +1085,7 @@ function renderPanorama(){
   document.getElementById('s-renda-sub').textContent=(sal>0?'salário':'sem salário')+(totRendas>0?' + '+md.outraRendas.length+' ganho(s)':'');
   document.getElementById('s-cc').textContent=fmt(totCC);
   document.getElementById('s-cc-sub').textContent=nD+' despesa(s) ativa(s)';
-  document.getElementById('s-ot').textContent=fmt(totOD);
-  document.getElementById('s-ot-sub').textContent=md.od.length+' item(s)';
+  // s-ot and s-ot-sub are set dynamically after odAtivas render below
   document.getElementById('s-pct').textContent=pct+'%';
 
   // outras rendas list
@@ -933,15 +1101,30 @@ function renderPanorama(){
     </div>`).join('');
   }
 
+  const ativas=odAtivas();
   const odList=document.getElementById('od-list');
-  odList.innerHTML=!md.od.length
+  odList.innerHTML=!ativas.length
     ? `<div class="empty" style="padding:18px 0"><div class="empty-ico">📋</div><h3>Nenhuma despesa em ${lbl(ck())}</h3><p>Aluguel, contas, assinaturas…</p></div>`
-    : md.od.map(d=>`<div class="oe">
-        <div class="ei-icon">${d.cat}</div>
-        <div class="ei-info"><div class="ei-desc">${d.desc}</div></div>
-        <div class="ei-val">${fmt(d.valor)}</div>
-        <button class="btn btn-danger btn-sm" onclick="delOD(${d.id})">✕</button>
-      </div>`).join('');
+    : ativas.map(d=>{
+        const rep=d.repeticoes===-1?'∞ recorrente':d.repeticoes>1?`${numParcelaOD(d)} de ${d.repeticoes} meses`:'único mês';
+        return `<div class="oe">
+          <div class="ei-icon">${d.cat}</div>
+          <div class="ei-info">
+            <div class="ei-desc">${d.desc}</div>
+            <div class="ei-meta">${rep}</div>
+          </div>
+          <div class="ei-val">${fmt(d.valor)}</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <button class="btn btn-edit btn-sm" onclick="openEditOD(${d.id})">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="delOD(${d.id})">✕</button>
+          </div>
+        </div>`;
+      }).join('');
+
+  // update totOD to use odAtivas
+  const totODreal=ativas.reduce((s,d)=>s+d.valor,0);
+  document.getElementById('s-ot').textContent=fmt(totODreal);
+  document.getElementById('s-ot-sub').textContent=ativas.length+' item(s) ativos';
 
   const pcList=document.getElementById('pan-cc-list');
   pcList.innerHTML=!S.cartoes.length
@@ -968,16 +1151,23 @@ function renderPanorama(){
 
 // ══════════════════ HISTÓRICO ══════════════════
 function allMonthKeys(){
-  // union of months with explicit data AND months touched by parcelamentos
   const set=new Set(Object.keys(S.months));
+  // from credit card parcelas
   S.cartoes.forEach(c=>{
     (c.despesas||[]).forEach(d=>{
       for(let i=0;i<d.parcelas;i++){
-        let am=abs(d.anoInicio,d.mesInicio)+i;
-        let y=Math.floor(am/12), m=am%12;
-        set.add(mk(y,m));
+        const am=abs(d.anoInicio,d.mesInicio)+i;
+        set.add(mk(Math.floor(am/12),am%12));
       }
     });
+  });
+  // from outras despesas (cap indefinite at 24 months from today)
+  (S.outrasDespesas||[]).forEach(d=>{
+    const reps=d.repeticoes===-1?24:d.repeticoes||1;
+    for(let i=0;i<reps;i++){
+      const am=abs(d.anoInicio,d.mesInicio)+i;
+      set.add(mk(Math.floor(am/12),am%12));
+    }
   });
   return [...set].sort().reverse();
 }
@@ -996,7 +1186,7 @@ function renderHistorico(){
     const totRendasH=(md.outraRendas||[]).reduce((s,r)=>s+r.valor,0);
     const totalEntradasH=sal+totRendasH;
     const totCC=S.cartoes.reduce((s,c)=>s+usadoMes(c,ky,km-1),0);
-    const totOD=(md.od||[]).reduce((s,d)=>s+d.valor,0);
+    const totOD=odAtivas(ky,km-1).reduce((s,d)=>s+d.valor,0);
     const tot=totCC+totOD;
     const saldo=totalEntradasH-tot;
     const pct=totalEntradasH>0?Math.round((tot/totalEntradasH)*100):null;
@@ -1021,7 +1211,7 @@ function renderAll(){ updateMB(); renderCartoes(); renderDP(); renderPanorama();
 // Init: set month input defaults
 (function(){
   const mesAtual=mk(NOW.getFullYear(),NOW.getMonth());
-  ['nd-mes','ed-mes'].forEach(id=>{
+  ['nd-mes','ed-mes','od-mes','ed-od-mes'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.value=mesAtual;
   });
