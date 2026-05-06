@@ -122,6 +122,25 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .co{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;}
 .co.sel{border-color:white;transform:scale(1.15);}
 
+/* ── SCOPE SELECTOR (novo) ── */
+.scope-box{
+  background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);
+  padding:14px;margin-bottom:15px;
+}
+.scope-box-title{font-size:.72rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;}
+.scope-opts{display:flex;flex-direction:column;gap:7px;}
+.scope-opt{display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:9px 11px;border-radius:8px;
+  border:1px solid var(--border);transition:all .15s;background:var(--bg);}
+.scope-opt:hover{border-color:rgba(255,255,255,.13);background:var(--surface3);}
+.scope-opt.sel-scope{border-color:var(--accent);background:rgba(0,229,160,.06);}
+.scope-opt input[type=radio]{accent-color:var(--accent);margin-top:2px;flex-shrink:0;}
+.scope-opt-info{flex:1;}
+.scope-opt-label{font-size:.88rem;font-weight:500;color:var(--text);}
+.scope-opt-desc{font-size:.75rem;color:var(--text2);margin-top:2px;}
+/* override badge */
+.ovr-badge{display:inline-block;padding:2px 7px;border-radius:99px;font-size:.68rem;font-weight:600;
+  background:rgba(245,158,11,.15);color:var(--accent4);margin-left:6px;vertical-align:middle;}
+
 /* ── CC CARD ── */
 .cc{background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid var(--border);
   border-radius:16px;padding:22px;position:relative;overflow:hidden;cursor:pointer;transition:all .25s;}
@@ -371,22 +390,16 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 
 <main>
   <div style="max-width:680px;margin:0 auto">
-
-    <!-- Saldo hero -->
     <div class="cc-hero">
       <div class="cc-hero-label">Saldo da conta corrente</div>
       <div class="cc-hero-amount" id="cc-saldo-total">R$ 0,00</div>
       <div style="font-size:.82rem;color:var(--text2);margin-top:6px" id="cc-saldo-meta">Nenhum item cadastrado</div>
     </div>
-
-    <!-- Actions -->
     <div class="sec-hdr">
       <div class="sec-title">Composição do Saldo <small>Itens que formam o saldo total</small></div>
       <button class="btn btn-primary" onclick="openModal('m-cc-item')">+ Adicionar item</button>
     </div>
-
     <div id="cc-items-list"></div>
-
   </div>
 </main>
 
@@ -521,6 +534,37 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
         <option value="📚">📚 Educação</option><option value="💰">💰 Outros</option>
       </select>
     </div>
+
+    <!-- ── NOVO: escopo de alteração de valor (só aparece em parceladas/recorrentes) ── -->
+    <div id="ed-scope-box" style="display:none">
+      <div class="scope-box">
+        <div class="scope-box-title">📌 Escopo da alteração de valor</div>
+        <div class="scope-opts">
+          <label class="scope-opt sel-scope" id="scope-opt-mes">
+            <input type="radio" name="ed-scope" value="mes" checked onchange="updateScopeUI()"/>
+            <div class="scope-opt-info">
+              <div class="scope-opt-label">Só este mês</div>
+              <div class="scope-opt-desc" id="scope-desc-mes">Altera apenas o valor de <strong>—</strong></div>
+            </div>
+          </label>
+          <label class="scope-opt" id="scope-opt-forward">
+            <input type="radio" name="ed-scope" value="forward" onchange="updateScopeUI()"/>
+            <div class="scope-opt-info">
+              <div class="scope-opt-label">Este mês em diante</div>
+              <div class="scope-opt-desc" id="scope-desc-forward">Altera <strong>—</strong> e todos os meses futuros. Meses passados não são tocados.</div>
+            </div>
+          </label>
+          <label class="scope-opt" id="scope-opt-all">
+            <input type="radio" name="ed-scope" value="all" onchange="updateScopeUI()"/>
+            <div class="scope-opt-info">
+              <div class="scope-opt-label">Todos os meses (base)</div>
+              <div class="scope-opt-desc">Altera o valor base da despesa. Overrides individuais de meses passados são mantidos.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
     <div class="m-footer">
       <button class="btn btn-secondary" onclick="closeModal('m-ed')">Cancelar</button>
       <button class="btn btn-primary" onclick="saveEditDesp()">Salvar</button>
@@ -589,6 +633,37 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
     <div id="ed-od-repeat-box" style="display:none" class="fg"><label>Quantos meses se repete?</label>
       <input type="number" id="ed-od-nmeses" placeholder="Ex: 12" min="2" step="1" value="12"/>
     </div>
+
+    <!-- ── NOVO: escopo para outras despesas ── -->
+    <div id="ed-od-scope-box" style="display:none">
+      <div class="scope-box">
+        <div class="scope-box-title">📌 Escopo da alteração de valor</div>
+        <div class="scope-opts">
+          <label class="scope-opt sel-scope" id="od-scope-opt-mes">
+            <input type="radio" name="ed-od-scope" value="mes" checked onchange="updateODScopeUI()"/>
+            <div class="scope-opt-info">
+              <div class="scope-opt-label">Só este mês</div>
+              <div class="scope-opt-desc" id="od-scope-desc-mes">Altera apenas o valor de <strong>—</strong></div>
+            </div>
+          </label>
+          <label class="scope-opt" id="od-scope-opt-forward">
+            <input type="radio" name="ed-od-scope" value="forward" onchange="updateODScopeUI()"/>
+            <div class="scope-opt-info">
+              <div class="scope-opt-label">Este mês em diante</div>
+              <div class="scope-opt-desc" id="od-scope-desc-forward">Altera <strong>—</strong> e todos os meses futuros.</div>
+            </div>
+          </label>
+          <label class="scope-opt" id="od-scope-opt-all">
+            <input type="radio" name="ed-od-scope" value="all" onchange="updateODScopeUI()"/>
+            <div class="scope-opt-info">
+              <div class="scope-opt-label">Todos os meses (base)</div>
+              <div class="scope-opt-desc">Altera o valor base. Overrides de meses passados são mantidos.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
     <div class="m-footer">
       <button class="btn btn-secondary" onclick="closeModal('m-ed-od')">Cancelar</button>
       <button class="btn btn-primary" onclick="saveEditOD()">Salvar</button>
@@ -687,10 +762,7 @@ function absM(y,m){return y*12+m;}
 let S={
   cartoes:[],
   months:{},
-  // outrasDespesas: global, [{id,desc,valor,cat,anoInicio,mesInicio,repeticoes,excluidos:[]}]
-  // excluidos: array of "YYYY-MM" keys where this OD is skipped for that month
   outrasDespesas:[],
-  // contaCorrente items (no month logic)
   ccItems:[],
   editDespId:null,
   editODId:null,
@@ -708,6 +780,14 @@ function load(){
   if(!S.ccItems)S.ccItems=[];
   if(!S.cartoes)S.cartoes=[];
   if(!S.months)S.months={};
+  // migrate: ensure overrides field exists on all despesas and outrasDespesas
+  S.cartoes.forEach(c=>{
+    (c.despesas||[]).forEach(d=>{if(!d.overrides)d.overrides={};});
+  });
+  S.outrasDespesas.forEach(d=>{
+    if(!d.overrides)d.overrides={};
+    if(!d.excluidos)d.excluidos=[];
+  });
 }
 function save(){localStorage.setItem('ff5',JSON.stringify(S));}
 
@@ -723,6 +803,20 @@ function mdata(y,m){
 function cur(){return mdata(S.cy,S.cm);}
 function ck(){return mk(S.cy,S.cm);}
 
+// ── valor efetivo de uma despesa num dado mês ──
+// Para cartões: overrides armazena valor da parcela daquele mês
+function dValMesCC(d, y, m){
+  const key=mk(y,m);
+  if(d.overrides&&d.overrides[key]!==undefined) return d.overrides[key];
+  return d.valor/d.parcelas;
+}
+// Para outras despesas: overrides armazena valor total daquele mês
+function dValMesOD(d, y, m){
+  const key=mk(y,m);
+  if(d.overrides&&d.overrides[key]!==undefined) return d.overrides[key];
+  return d.valor;
+}
+
 // ── OD helpers ──
 function odAtivas(y,m){
   y=y??S.cy;m=m??S.cm;
@@ -735,7 +829,6 @@ function odAtivas(y,m){
       const fim=inicio+(d.repeticoes||1)-1;
       if(alvo>fim)return false;
     }
-    // check per-month exclusion
     return!(d.excluidos||[]).includes(key);
   });
 }
@@ -755,7 +848,7 @@ function despesasAtivas(cartao,y,m){
 }
 function usadoMes(cartao,y,m){
   y=y??S.cy;m=m??S.cm;
-  return despesasAtivas(cartao,y,m).reduce((s,d)=>s+d.valor/d.parcelas,0);
+  return despesasAtivas(cartao,y,m).reduce((s,d)=>s+dValMesCC(d,y,m),0);
 }
 function limiteComprometido(cartao){
   if(!cartao.despesas)return 0;
@@ -764,7 +857,13 @@ function limiteComprometido(cartao){
     const ini=absM(d.anoInicio,d.mesInicio);
     const fim=ini+d.parcelas-1;
     if(ini>hoje||fim<hoje)return s;
-    return s+(d.valor/d.parcelas)*(fim-hoje+1);
+    // sum future months using base value (overrides unknown)
+    let total=0;
+    for(let am=hoje;am<=fim;am++){
+      const fy=Math.floor(am/12),fm=am%12;
+      total+=dValMesCC(d,fy,fm);
+    }
+    return s+total;
   },0);
 }
 
@@ -819,6 +918,30 @@ function selCor(el,ns){
 function toggleRepeat(ns){
   const val=document.getElementById(ns+'-repete').value;
   document.getElementById(ns+'-repeat-box').style.display=val!=='0'?'block':'none';
+  // show scope if repeating
+  const scopeBox=document.getElementById(ns+'-scope-box');
+  if(scopeBox) scopeBox.style.display=val!=='0'?'block':'none';
+}
+
+// ════════════════════════════════════════════
+//  SCOPE UI helpers
+// ════════════════════════════════════════════
+function updateScopeUI(){
+  const radios=document.querySelectorAll('input[name="ed-scope"]');
+  radios.forEach(r=>{
+    r.closest('.scope-opt').classList.toggle('sel-scope',r.checked);
+  });
+}
+function updateODScopeUI(){
+  const radios=document.querySelectorAll('input[name="ed-od-scope"]');
+  radios.forEach(r=>{
+    r.closest('.scope-opt').classList.toggle('sel-scope',r.checked);
+  });
+}
+
+function getScope(radioName){
+  const sel=document.querySelector(`input[name="${radioName}"]:checked`);
+  return sel?sel.value:'all';
 }
 
 // ════════════════════════════════════════════
@@ -930,16 +1053,18 @@ function renderDP(){
   }
   list.innerHTML=ativas.map(d=>{
     const np=absM(S.cy,S.cm)-absM(d.anoInicio,d.mesInicio)+1;
-    const parLabel=d.parcelas>1?`Parcela ${np}/${d.parcelas} · ${fmt(d.valor/d.parcelas)}/mês`:'À vista';
+    const parLabel=d.parcelas>1?`Parcela ${np}/${d.parcelas} · ${fmt(dValMesCC(d,S.cy,S.cm))}/mês`:'À vista';
+    const hasOverride=d.overrides&&d.overrides[ck()]!==undefined;
+    const overrideBadge=hasOverride?`<span class="ovr-badge">⚡ valor personalizado</span>`:'';
     return`<div class="ei">
       <div class="ei-icon">${d.cat}</div>
       <div class="ei-info">
-        <div class="ei-desc">${d.desc}</div>
+        <div class="ei-desc">${d.desc}${overrideBadge}</div>
         <div class="ei-meta">${parLabel} · desde ${MONTHS[d.mesInicio].slice(0,3)} ${d.anoInicio}</div>
       </div>
       <div style="text-align:right">
         <div class="ei-val">${fmt(d.valor)}</div>
-        <div class="ei-par">${d.parcelas>1?fmt(d.valor/d.parcelas)+'/mês':''}</div>
+        <div class="ei-par">${d.parcelas>1?fmt(dValMesCC(d,S.cy,S.cm))+'/mês':''}</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:5px">
         <button class="btn btn-edit btn-sm" onclick="openEditDesp(${c.id},${d.id})">✏️</button>
@@ -965,7 +1090,9 @@ function addDespesa(){
   if(!desc){toast('⚠️ Informe a descrição');return;}
   if(!valor||valor<=0){toast('⚠️ Valor inválido');return;}
   const[anoI,mesI]=mesRef?mesRef.split('-').map(Number):[S.cy,S.cm+1];
-  c.despesas.push({id:Date.now(),desc,valor,parcelas,cat,anoInicio:mesRef?anoI:S.cy,mesInicio:mesRef?mesI-1:S.cm});
+  c.despesas.push({id:Date.now(),desc,valor,parcelas,cat,
+    anoInicio:mesRef?anoI:S.cy,mesInicio:mesRef?mesI-1:S.cm,
+    overrides:{}});
   save();closeModal('m-nd');
   document.getElementById('nd-desc').value='';
   document.getElementById('nd-val').value='';
@@ -973,12 +1100,14 @@ function addDespesa(){
   document.getElementById('nd-repeat-box').style.display='none';
   renderAll();toast('✅ Despesa adicionada!');
 }
+
 function openEditDesp(cid,did){
   const c=S.cartoes.find(c=>c.id===cid);if(!c)return;
   const d=c.despesas.find(d=>d.id===did);if(!d)return;
   S.editDespId=did;S.selCartao=cid;
   document.getElementById('ed-desc').value=d.desc;
-  document.getElementById('ed-val').value=d.valor;
+  // show current month's effective value in the field
+  document.getElementById('ed-val').value=d.parcelas>1?dValMesCC(d,S.cy,S.cm)*d.parcelas:d.valor;
   document.getElementById('ed-cat').value=d.cat;
   document.getElementById('ed-mes').value=mk(d.anoInicio,d.mesInicio);
   const isParc=d.parcelas>1;
@@ -989,23 +1118,83 @@ function openEditDesp(cid,did){
     const opts=[...sel.options].map(o=>+o.value);
     sel.value=opts.includes(d.parcelas)?d.parcelas:opts.reduce((a,b)=>Math.abs(b-d.parcelas)<Math.abs(a-d.parcelas)?b:a);
   }
+
+  // scope box - only show if parcelada
+  const scopeBox=document.getElementById('ed-scope-box');
+  scopeBox.style.display=isParc?'block':'none';
+
+  if(isParc){
+    // reset to "só este mês" by default
+    document.querySelector('input[name="ed-scope"][value="mes"]').checked=true;
+    updateScopeUI();
+    // fill in descriptions
+    document.getElementById('scope-desc-mes').innerHTML=`Altera apenas o valor de <strong>${lbl(ck())}</strong>`;
+    document.getElementById('scope-desc-forward').innerHTML=`Altera <strong>${lbl(ck())}</strong> e todos os meses futuros. Meses passados não são tocados.`;
+
+    // show value as parcela value for this month
+    document.getElementById('ed-val').value=dValMesCC(d,S.cy,S.cm);
+    // add hint below val input
+  }
+
   openModal('m-ed');
 }
+
 function saveEditDesp(){
   const c=S.cartoes.find(c=>c.id===S.selCartao);if(!c)return;
   const d=c.despesas.find(d=>d.id===S.editDespId);if(!d)return;
   const desc=document.getElementById('ed-desc').value.trim();
-  const valor=parseFloat(document.getElementById('ed-val').value);
+  const valInput=parseFloat(document.getElementById('ed-val').value);
   const cat=document.getElementById('ed-cat').value;
   const mesRef=document.getElementById('ed-mes').value;
   const repete=document.getElementById('ed-repete').value;
   const parcelas=repete==='N'?parseInt(document.getElementById('ed-par').value)||1:1;
   if(!desc){toast('⚠️ Informe a descrição');return;}
-  if(!valor||valor<=0){toast('⚠️ Valor inválido');return;}
+  if(!valInput||valInput<=0){toast('⚠️ Valor inválido');return;}
   const[anoI,mesI]=mesRef.split('-').map(Number);
-  d.desc=desc;d.valor=valor;d.parcelas=parcelas;d.cat=cat;d.anoInicio=anoI;d.mesInicio=mesI-1;
-  save();closeModal('m-ed');renderAll();toast('✅ Despesa atualizada!');
+
+  const isParc=d.parcelas>1;
+  const scope=isParc?getScope('ed-scope'):'all';
+
+  if(scope==='mes'){
+    // override only current month's parcela value
+    if(!d.overrides)d.overrides={};
+    d.overrides[ck()]=valInput;
+    // other fields (desc, cat) still updated globally
+    d.desc=desc;d.cat=cat;
+    toast('✅ Valor de '+lbl(ck())+' personalizado!');
+  } else if(scope==='forward'){
+    // set overrides for current month and all future months of this despesa
+    if(!d.overrides)d.overrides={};
+    const ini=absM(d.anoInicio,d.mesInicio);
+    const fim=ini+d.parcelas-1;
+    const now=absM(S.cy,S.cm);
+    for(let am=now;am<=fim;am++){
+      const fy=Math.floor(am/12),fm=am%12;
+      const fk=mk(fy,fm);
+      // only override future months (don't touch past)
+      if(am>=now) d.overrides[fk]=valInput;
+    }
+    d.desc=desc;d.cat=cat;
+    toast('✅ Valor atualizado de '+lbl(ck())+' em diante!');
+  } else {
+    // 'all' — update base value, remove forward overrides but keep past ones
+    const now=absM(S.cy,S.cm);
+    if(d.overrides){
+      // keep only past overrides (before current month)
+      const pastOverrides={};
+      Object.keys(d.overrides).forEach(k=>{
+        const[ky,km]=k.split('-').map(Number);
+        if(absM(ky,km-1)<now) pastOverrides[k]=d.overrides[k];
+      });
+      d.overrides=pastOverrides;
+    }
+    d.desc=desc;d.valor=valInput*parcelas;d.parcelas=parcelas;d.cat=cat;d.anoInicio=anoI;d.mesInicio=mesI-1;
+    toast('✅ Despesa atualizada (base)!');
+  }
+
+  save();closeModal('m-ed');renderAll();
 }
+
 function delDesp(cid,did){
   const c=S.cartoes.find(c=>c.id===cid);if(!c)return;
   if(!confirm('Remover esta despesa de todos os meses?'))return;
@@ -1042,7 +1231,7 @@ function delRenda(id){
 }
 
 // ════════════════════════════════════════════
-//  OUTRAS DESPESAS  ← KEY CHANGE: per-month exclusion
+//  OUTRAS DESPESAS
 // ════════════════════════════════════════════
 function addOutraDespesa(){
   const desc=document.getElementById('od-desc').value.trim();
@@ -1059,7 +1248,8 @@ function addOutraDespesa(){
     anoInicio:mesRef?anoI:S.cy,
     mesInicio:mesRef?mesI-1:S.cm,
     repeticoes:nMeses,
-    excluidos:[]
+    excluidos:[],
+    overrides:{}
   });
   save();closeModal('m-od');
   document.getElementById('od-desc').value='';
@@ -1069,7 +1259,6 @@ function addOutraDespesa(){
   renderPanorama();toast('✅ Despesa adicionada!');
 }
 
-// Delete ONLY from current month (add to excluidos)
 function delOD(id){
   const d=S.outrasDespesas.find(x=>x.id===id);
   if(!d)return;
@@ -1081,11 +1270,9 @@ function delOD(id){
   if(!confirm(msg))return;
   if(!d.excluidos)d.excluidos=[];
   d.excluidos.push(key);
-  // If all months are now excluded, clean up the entry
   save();renderPanorama();toast('🗑️ Removido de '+lbl(key));
 }
 
-// Delete from ALL months
 function delODAll(id){
   if(!confirm('Remover esta despesa de TODOS os meses?'))return;
   S.outrasDespesas=S.outrasDespesas.filter(x=>x.id!==id);
@@ -1096,29 +1283,81 @@ function openEditOD(id){
   const d=S.outrasDespesas.find(x=>x.id===id);if(!d)return;
   S.editODId=id;
   document.getElementById('ed-od-desc').value=d.desc;
-  document.getElementById('ed-od-val').value=d.valor;
   document.getElementById('ed-od-cat').value=d.cat;
   document.getElementById('ed-od-mes').value=mk(d.anoInicio,d.mesInicio);
   const repSel=document.getElementById('ed-od-repete');
+  const isRepeat=d.repeticoes===-1||d.repeticoes>1;
   repSel.value=d.repeticoes===-1?'-1':d.repeticoes<=1?'0':'N';
   const box=document.getElementById('ed-od-repeat-box');
   if(d.repeticoes>1){box.style.display='block';document.getElementById('ed-od-nmeses').value=d.repeticoes;}
   else box.style.display='none';
+
+  // scope box
+  const scopeBox=document.getElementById('ed-od-scope-box');
+  scopeBox.style.display=isRepeat?'block':'none';
+
+  if(isRepeat){
+    // default to "só este mês", show current month's effective value
+    document.querySelector('input[name="ed-od-scope"][value="mes"]').checked=true;
+    updateODScopeUI();
+    document.getElementById('od-scope-desc-mes').innerHTML=`Altera apenas o valor de <strong>${lbl(ck())}</strong>`;
+    document.getElementById('od-scope-desc-forward').innerHTML=`Altera <strong>${lbl(ck())}</strong> e todos os meses futuros. Meses passados não são tocados.`;
+    document.getElementById('ed-od-val').value=dValMesOD(d,S.cy,S.cm);
+  } else {
+    document.getElementById('ed-od-val').value=d.valor;
+  }
+
   openModal('m-ed-od');
 }
+
 function saveEditOD(){
   const d=S.outrasDespesas.find(x=>x.id===S.editODId);if(!d)return;
   const desc=document.getElementById('ed-od-desc').value.trim();
-  const valor=parseFloat(document.getElementById('ed-od-val').value);
+  const valInput=parseFloat(document.getElementById('ed-od-val').value);
   const cat=document.getElementById('ed-od-cat').value;
   const mesRef=document.getElementById('ed-od-mes').value;
   const repVal=document.getElementById('ed-od-repete').value;
   const nMeses=repVal==='0'?1:repVal==='-1'?-1:parseInt(document.getElementById('ed-od-nmeses').value)||1;
   if(!desc){toast('⚠️ Informe a descrição');return;}
-  if(!valor||valor<=0){toast('⚠️ Valor inválido');return;}
+  if(!valInput||valInput<=0){toast('⚠️ Valor inválido');return;}
   const[anoI,mesI]=mesRef.split('-').map(Number);
-  d.desc=desc;d.valor=valor;d.cat=cat;d.anoInicio=anoI;d.mesInicio=mesI-1;d.repeticoes=nMeses;
-  save();closeModal('m-ed-od');renderPanorama();toast('✅ Despesa atualizada!');
+
+  const isRepeat=d.repeticoes===-1||d.repeticoes>1;
+  const scope=isRepeat?getScope('ed-od-scope'):'all';
+
+  if(scope==='mes'){
+    if(!d.overrides)d.overrides={};
+    d.overrides[ck()]=valInput;
+    d.desc=desc;d.cat=cat;
+    toast('✅ Valor de '+lbl(ck())+' personalizado!');
+  } else if(scope==='forward'){
+    if(!d.overrides)d.overrides={};
+    const now=absM(S.cy,S.cm);
+    const totalReps=d.repeticoes===-1?999:d.repeticoes;
+    const ini=absM(d.anoInicio,d.mesInicio);
+    const fim=d.repeticoes===-1?now+240:ini+totalReps-1; // cap at 20 years for indefinite
+    for(let am=now;am<=fim;am++){
+      const fy=Math.floor(am/12),fm=am%12;
+      d.overrides[mk(fy,fm)]=valInput;
+    }
+    d.desc=desc;d.cat=cat;
+    toast('✅ Valor atualizado de '+lbl(ck())+' em diante!');
+  } else {
+    // 'all' — update base, keep past overrides only
+    const now=absM(S.cy,S.cm);
+    if(d.overrides){
+      const pastOverrides={};
+      Object.keys(d.overrides).forEach(k=>{
+        const[ky,km]=k.split('-').map(Number);
+        if(absM(ky,km-1)<now) pastOverrides[k]=d.overrides[k];
+      });
+      d.overrides=pastOverrides;
+    }
+    d.desc=desc;d.valor=valInput;d.cat=cat;d.anoInicio=anoI;d.mesInicio=mesI-1;d.repeticoes=nMeses;
+    toast('✅ Despesa atualizada (base)!');
+  }
+
+  save();closeModal('m-ed-od');renderPanorama();
 }
 
 // ════════════════════════════════════════════
@@ -1139,7 +1378,7 @@ function renderPanorama(){
 
   const totCC=S.cartoes.reduce((s,c)=>s+usadoMes(c),0);
   const ativas=odAtivas();
-  const totOD=ativas.reduce((s,d)=>s+d.valor,0);
+  const totOD=ativas.reduce((s,d)=>s+dValMesOD(d,S.cy,S.cm),0);
   const totG=totCC+totOD;
   const saldo=totalEntradas-totG;
   const pct=totalEntradas>0?Math.round((totG/totalEntradas)*100):0;
@@ -1180,13 +1419,16 @@ function renderPanorama(){
     ?`<div class="empty" style="padding:18px 0"><div class="empty-ico">📋</div><h3>Nenhuma despesa em ${lbl(ck())}</h3><p>Aluguel, contas, assinaturas…</p></div>`
     :ativas.map(d=>{
         const rep=d.repeticoes===-1?'∞ recorrente':d.repeticoes>1?`${numParcelaOD(d)} de ${d.repeticoes} meses`:'único mês';
+        const hasOverride=d.overrides&&d.overrides[ck()]!==undefined;
+        const overrideBadge=hasOverride?`<span class="ovr-badge">⚡ personalizado</span>`:'';
+        const valorMes=dValMesOD(d,S.cy,S.cm);
         return`<div class="oe">
           <div class="ei-icon">${d.cat}</div>
           <div class="ei-info">
-            <div class="ei-desc">${d.desc}</div>
-            <div class="ei-meta">${rep}</div>
+            <div class="ei-desc">${d.desc}${overrideBadge}</div>
+            <div class="ei-meta">${rep}${hasOverride?' · base: '+fmt(d.valor):''}</div>
           </div>
-          <div class="ei-val">${fmt(d.valor)}</div>
+          <div class="ei-val">${fmt(valorMes)}</div>
           <div style="display:flex;flex-direction:column;gap:4px">
             <button class="btn btn-edit btn-sm" onclick="openEditOD(${d.id})">✏️</button>
             <button class="btn btn-danger btn-sm" title="Remove só deste mês" onclick="delOD(${d.id})">✕ mês</button>
@@ -1246,7 +1488,8 @@ function renderHistorico(){
     const totRendasH=(md.outraRendas||[]).reduce((s,r)=>s+r.valor,0);
     const totalEntradasH=sal+totRendasH;
     const totCC=S.cartoes.reduce((s,c)=>s+usadoMes(c,ky,km-1),0);
-    const totOD=odAtivas(ky,km-1).reduce((s,d)=>s+d.valor,0);
+    const odH=odAtivas(ky,km-1);
+    const totOD=odH.reduce((s,d)=>s+dValMesOD(d,ky,km-1),0);
     const tot=totCC+totOD;
     const saldo=totalEntradasH-tot;
     const pct=totalEntradasH>0?Math.round((tot/totalEntradasH)*100):null;
@@ -1321,7 +1564,6 @@ function renderCC(){
       <p>Adicione itens para compor o saldo da conta corrente.<br>Ex: "Saldo livre R$ 500", "Reserva médica R$ 200"</p></div>`;
     return;
   }
-  // percentage of total for each item
   list.innerHTML=`<div class="cc-items-grid">${S.ccItems.map(it=>{
     const pct=total>0?Math.round((it.valor/total)*100):0;
     return`<div class="cc-item">
