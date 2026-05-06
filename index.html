@@ -141,6 +141,35 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .ovr-badge{display:inline-block;padding:2px 7px;border-radius:99px;font-size:.68rem;font-weight:600;
   background:rgba(245,158,11,.15);color:var(--accent4);margin-left:6px;vertical-align:middle;}
 
+/* ── RESUMO CATEGORIAS ── */
+.cat-grid{display:flex;flex-direction:column;gap:10px;}
+.cat-row{display:flex;align-items:center;gap:12px;padding:11px 14px;
+  background:var(--surface2);border:1px solid var(--border);border-radius:12px;transition:all .18s;}
+.cat-row:hover{border-color:rgba(255,255,255,.11);background:var(--surface3);}
+.cat-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;
+  justify-content:center;font-size:1rem;flex-shrink:0;}
+.cat-info{flex:1;min-width:0;}
+.cat-name{font-weight:500;font-size:.88rem;}
+.cat-bar-wrap{margin-top:5px;height:4px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;}
+.cat-bar-fill{height:100%;border-radius:99px;transition:width .5s ease;}
+.cat-meta{font-size:.73rem;color:var(--text2);margin-top:3px;}
+.cat-val{font-family:'Syne',sans-serif;font-weight:700;font-size:.97rem;white-space:nowrap;}
+.cat-pct{font-size:.72rem;color:var(--text2);text-align:right;white-space:nowrap;}
+
+/* ── GERENCIAR CATEGORIAS ── */
+.cat-list-item{display:flex;align-items:center;gap:10px;padding:9px 12px;
+  background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;}
+.cat-list-item-icon{font-size:1.1rem;width:28px;text-align:center;flex-shrink:0;}
+.cat-list-item-name{flex:1;font-size:.88rem;}
+.cat-list-item-src{font-size:.72rem;color:var(--text2);padding:2px 7px;border-radius:99px;
+  background:rgba(255,255,255,.06);}
+/* emoji picker row */
+.emoji-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.emoji-opt{width:32px;height:32px;border-radius:7px;border:1px solid var(--border);
+  background:var(--surface2);cursor:pointer;font-size:1rem;display:flex;align-items:center;
+  justify-content:center;transition:all .13s;}
+.emoji-opt:hover,.emoji-opt.sel-emoji{background:var(--surface3);border-color:var(--accent);}
+
 /* ── CC CARD ── */
 .cc{background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid var(--border);
   border-radius:16px;padding:22px;position:relative;overflow:hidden;cursor:pointer;transition:all .25s;}
@@ -361,6 +390,14 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
       <div class="dp-hdr"><div class="dp-title">Outras Despesas / Fixas</div></div>
       <div id="od-list"></div>
     </div>
+    <!-- RESUMO POR CATEGORIA -->
+    <div class="card" style="margin-bottom:18px">
+      <div class="dp-hdr">
+        <div class="dp-title">Gastos por Categoria <small style="font-family:'DM Sans',sans-serif;font-weight:400;font-size:.78rem;color:var(--text2)">Cartões + outras despesas</small></div>
+        <button class="btn btn-secondary btn-sm" onclick="openModal('m-cats')">⚙️ Gerenciar categorias</button>
+      </div>
+      <div id="cat-resumo"></div>
+    </div>
     <div class="card">
       <div class="dp-hdr"><div class="dp-title">Resumo dos Cartões</div></div>
       <div id="pan-cc-list"></div>
@@ -485,15 +522,7 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
         <option value="18">18×</option><option value="24">24×</option>
       </select>
     </div>
-    <div class="fg"><label>Categoria</label>
-      <select id="nd-cat">
-        <option value="🛒">🛒 Mercado/Alimentação</option><option value="🏠">🏠 Casa/Moradia</option>
-        <option value="🚗">🚗 Transporte</option><option value="💊">💊 Saúde</option>
-        <option value="🎮">🎮 Lazer</option><option value="👗">👗 Vestuário</option>
-        <option value="📱">📱 Tecnologia</option><option value="✈️">✈️ Viagem</option>
-        <option value="📚">📚 Educação</option><option value="💰">💰 Outros</option>
-      </select>
-    </div>
+    <div class="fg"><label>Categoria</label><select id="nd-cat"></select></div>
     <div class="m-footer">
       <button class="btn btn-secondary" onclick="closeModal('m-nd')">Cancelar</button>
       <button class="btn btn-primary" onclick="addDespesa()">Adicionar</button>
@@ -525,15 +554,7 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
         <option value="18">18×</option><option value="24">24×</option>
       </select>
     </div>
-    <div class="fg"><label>Categoria</label>
-      <select id="ed-cat">
-        <option value="🛒">🛒 Mercado/Alimentação</option><option value="🏠">🏠 Casa/Moradia</option>
-        <option value="🚗">🚗 Transporte</option><option value="💊">💊 Saúde</option>
-        <option value="🎮">🎮 Lazer</option><option value="👗">👗 Vestuário</option>
-        <option value="📱">📱 Tecnologia</option><option value="✈️">✈️ Viagem</option>
-        <option value="📚">📚 Educação</option><option value="💰">💰 Outros</option>
-      </select>
-    </div>
+    <div class="fg"><label>Categoria</label><select id="ed-cat"></select></div>
 
     <!-- ── NOVO: escopo de alteração de valor (só aparece em parceladas/recorrentes) ── -->
     <div id="ed-scope-box" style="display:none">
@@ -579,14 +600,7 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
     <div class="fg"><label>Descrição</label><input type="text" id="od-desc" placeholder="Ex: Aluguel, Luz, Academia..."/></div>
     <div class="fr">
       <div class="fg"><label>Valor (R$)</label><input type="number" id="od-val" placeholder="0,00" min="0" step="0.01"/></div>
-      <div class="fg"><label>Categoria</label>
-        <select id="od-cat">
-          <option value="🏠">🏠 Moradia</option><option value="💡">💡 Utilidades</option>
-          <option value="📱">📱 Assinatura</option><option value="🚗">🚗 Transporte</option>
-          <option value="💊">💊 Saúde</option><option value="📚">📚 Educação</option>
-          <option value="🎮">🎮 Lazer</option><option value="💰">💰 Outros</option>
-        </select>
-      </div>
+    <div class="fg"><label>Categoria</label><select id="od-cat"></select></div>
     </div>
     <div class="fg"><label>Mês de início</label><input type="month" id="od-mes"/></div>
     <div class="fg"><label>Esta despesa se repete?</label>
@@ -613,14 +627,7 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
     <div class="fg"><label>Descrição</label><input type="text" id="ed-od-desc"/></div>
     <div class="fr">
       <div class="fg"><label>Valor (R$)</label><input type="number" id="ed-od-val" min="0" step="0.01"/></div>
-      <div class="fg"><label>Categoria</label>
-        <select id="ed-od-cat">
-          <option value="🏠">🏠 Moradia</option><option value="💡">💡 Utilidades</option>
-          <option value="📱">📱 Assinatura</option><option value="🚗">🚗 Transporte</option>
-          <option value="💊">💊 Saúde</option><option value="📚">📚 Educação</option>
-          <option value="🎮">🎮 Lazer</option><option value="💰">💰 Outros</option>
-        </select>
-      </div>
+      <div class="fg"><label>Categoria</label><select id="ed-od-cat"></select></div>
     </div>
     <div class="fg"><label>Mês de início</label><input type="month" id="ed-od-mes"/></div>
     <div class="fg"><label>Esta despesa se repete?</label>
@@ -698,6 +705,40 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   </div>
 </div>
 
+<!-- GERENCIAR CATEGORIAS -->
+<div class="mo" id="m-cats">
+  <div class="modal" style="max-width:520px">
+    <div class="m-title">🏷️ Gerenciar Categorias</div>
+    <div style="font-size:.81rem;color:var(--text2);margin-bottom:16px">
+      As categorias abaixo ficam disponíveis ao adicionar despesas de cartão e outras despesas.
+    </div>
+
+    <!-- Nova categoria -->
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:18px">
+      <div style="font-size:.75rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:11px">+ Nova categoria</div>
+      <div class="fg" style="margin-bottom:10px"><label>Nome</label>
+        <input type="text" id="ncat-nome" placeholder="Ex: Pet, Farmácia, Streaming…" maxlength="30"/>
+      </div>
+      <div class="fg" style="margin-bottom:8px"><label>Ícone</label></div>
+      <div class="emoji-row" id="emoji-picker">
+        <!-- populated by JS -->
+      </div>
+      <input type="hidden" id="ncat-emoji" value="💰"/>
+      <div style="margin-top:12px;display:flex;justify-content:flex-end">
+        <button class="btn btn-primary btn-sm" onclick="addCategoria()">Adicionar categoria</button>
+      </div>
+    </div>
+
+    <!-- Lista -->
+    <div style="font-size:.75rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">Categorias ativas</div>
+    <div id="cats-list" style="max-height:280px;overflow-y:auto;"></div>
+
+    <div class="m-footer">
+      <button class="btn btn-primary" onclick="closeModal('m-cats')">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════ MODALS: CONTA CORRENTE ═══════════════ -->
 
 <!-- NOVO ITEM CC -->
@@ -764,6 +805,7 @@ let S={
   months:{},
   outrasDespesas:[],
   ccItems:[],
+  categorias:[], // custom categories [{id,emoji,nome,builtin?}]
   editDespId:null,
   editODId:null,
   editCCIId:null,
@@ -780,6 +822,7 @@ function load(){
   if(!S.ccItems)S.ccItems=[];
   if(!S.cartoes)S.cartoes=[];
   if(!S.months)S.months={};
+  if(!S.categorias)S.categorias=[];
   // migrate: ensure overrides field exists on all despesas and outrasDespesas
   S.cartoes.forEach(c=>{
     (c.despesas||[]).forEach(d=>{if(!d.overrides)d.overrides={};});
@@ -1105,6 +1148,7 @@ function openEditDesp(cid,did){
   const c=S.cartoes.find(c=>c.id===cid);if(!c)return;
   const d=c.despesas.find(d=>d.id===did);if(!d)return;
   S.editDespId=did;S.selCartao=cid;
+  populateCatSelects(d.cat, null);
   document.getElementById('ed-desc').value=d.desc;
   // show current month's effective value in the field
   document.getElementById('ed-val').value=d.parcelas>1?dValMesCC(d,S.cy,S.cm)*d.parcelas:d.valor;
@@ -1282,6 +1326,7 @@ function delODAll(id){
 function openEditOD(id){
   const d=S.outrasDespesas.find(x=>x.id===id);if(!d)return;
   S.editODId=id;
+  populateCatSelects(null, d.cat);
   document.getElementById('ed-od-desc').value=d.desc;
   document.getElementById('ed-od-cat').value=d.cat;
   document.getElementById('ed-od-mes').value=mk(d.anoInicio,d.mesInicio);
@@ -1587,9 +1632,191 @@ function renderCC(){
 }
 
 // ════════════════════════════════════════════
+//  CATEGORIAS
+// ════════════════════════════════════════════
+const BUILTIN_CATS=[
+  {id:'b-mercado',emoji:'🛒',nome:'Mercado/Alimentação',builtin:true},
+  {id:'b-casa',emoji:'🏠',nome:'Casa/Moradia',builtin:true},
+  {id:'b-transporte',emoji:'🚗',nome:'Transporte',builtin:true},
+  {id:'b-saude',emoji:'💊',nome:'Saúde',builtin:true},
+  {id:'b-lazer',emoji:'🎮',nome:'Lazer',builtin:true},
+  {id:'b-vestuario',emoji:'👗',nome:'Vestuário',builtin:true},
+  {id:'b-tech',emoji:'📱',nome:'Tecnologia',builtin:true},
+  {id:'b-viagem',emoji:'✈️',nome:'Viagem',builtin:true},
+  {id:'b-educacao',emoji:'📚',nome:'Educação',builtin:true},
+  {id:'b-util',emoji:'💡',nome:'Utilidades',builtin:true},
+  {id:'b-assin',emoji:'🔔',nome:'Assinatura',builtin:true},
+  {id:'b-outros',emoji:'💰',nome:'Outros',builtin:true},
+];
+const EMOJI_OPTS=['🐾','🎵','🎨','🏋️','👶','🌿','🍕','☕','🎁','💈','🏖️','🔧','🏥','📦','🎯','💼','🌱','🏦','🛍️','🎪','🧴','🧹','🪴','🐶','🐱','🚀','⚽','🎸','🎬','🍷'];
+
+function allCats(){
+  return[...BUILTIN_CATS,...S.categorias];
+}
+
+// find display label for a stored cat value (emoji key or id)
+function catLabel(val){
+  // stored as emoji string like "🛒"
+  const all=allCats();
+  const found=all.find(c=>c.emoji===val||c.id===val);
+  return found?`${found.emoji} ${found.nome}`:val;
+}
+function catEmoji(val){
+  const all=allCats();
+  const found=all.find(c=>c.emoji===val||c.id===val);
+  return found?found.emoji:val;
+}
+function catNome(val){
+  const all=allCats();
+  const found=all.find(c=>c.emoji===val||c.id===val);
+  return found?found.nome:val;
+}
+
+function populateCatSelects(selCCVal, selODVal){
+  const cats=allCats();
+  const opts=cats.map(c=>`<option value="${c.emoji}">${c.emoji} ${c.nome}</option>`).join('');
+  ['nd-cat','ed-cat','od-cat','ed-od-cat'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.innerHTML=opts;
+  });
+  if(selCCVal){
+    const el=document.getElementById('ed-cat');
+    if(el)el.value=selCCVal;
+  }
+  if(selODVal){
+    const el=document.getElementById('ed-od-cat');
+    if(el)el.value=selODVal;
+  }
+}
+
+// ── Emoji picker ──
+let selEmoji=EMOJI_OPTS[0];
+function renderEmojiPicker(){
+  const picker=document.getElementById('emoji-picker');
+  if(!picker)return;
+  picker.innerHTML=EMOJI_OPTS.map(e=>
+    `<div class="emoji-opt${e===selEmoji?' sel-emoji':''}" onclick="pickEmoji('${e}')" title="${e}">${e}</div>`
+  ).join('');
+  document.getElementById('ncat-emoji').value=selEmoji;
+}
+function pickEmoji(e){
+  selEmoji=e;
+  document.getElementById('ncat-emoji').value=e;
+  renderEmojiPicker();
+}
+
+function addCategoria(){
+  const nome=document.getElementById('ncat-nome').value.trim();
+  const emoji=document.getElementById('ncat-emoji').value||'💰';
+  if(!nome){toast('⚠️ Informe o nome da categoria');return;}
+  // check duplicate
+  if(allCats().some(c=>c.nome.toLowerCase()===nome.toLowerCase())){
+    toast('⚠️ Já existe uma categoria com esse nome');return;
+  }
+  S.categorias.push({id:'c-'+Date.now(),emoji,nome,builtin:false});
+  save();
+  document.getElementById('ncat-nome').value='';
+  selEmoji=EMOJI_OPTS[0];
+  renderEmojiPicker();
+  renderCatsList();
+  populateCatSelects();
+  toast('✅ Categoria "'+nome+'" adicionada!');
+}
+
+function delCategoria(id){
+  if(!confirm('Remover esta categoria? Despesas já cadastradas com ela não serão afetadas.'))return;
+  S.categorias=S.categorias.filter(c=>c.id!==id);
+  save();renderCatsList();populateCatSelects();toast('🗑️ Categoria removida');
+}
+
+function renderCatsList(){
+  const el=document.getElementById('cats-list');
+  if(!el)return;
+  const cats=allCats();
+  el.innerHTML=cats.map(c=>`
+    <div class="cat-list-item">
+      <div class="cat-list-item-icon">${c.emoji}</div>
+      <div class="cat-list-item-name">${c.nome}</div>
+      <span class="cat-list-item-src">${c.builtin?'padrão':'custom'}</span>
+      ${!c.builtin?`<button class="btn btn-danger btn-sm" onclick="delCategoria('${c.id}')">✕</button>`:'<div style="width:52px"></div>'}
+    </div>`).join('');
+}
+
+// ── Abrir modal categorias ──
+const _origOpenModal=openModal;
+// override to render emoji picker when opening cats modal
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  if(id==='m-cats'){renderEmojiPicker();renderCatsList();}
+}
+
+// ════════════════════════════════════════════
+//  RESUMO POR CATEGORIA
+// ════════════════════════════════════════════
+// palette for category bars (cycles)
+const CAT_COLORS=['#00e5a0','#0099ff','#8b5cf6','#f59e0b','#ec4899','#ef4444','#10b981','#06b6d4','#f97316','#a78bfa'];
+
+function renderCatResumo(){
+  const el=document.getElementById('cat-resumo');
+  if(!el)return;
+
+  // aggregate by emoji key
+  const map={};
+
+  // cartão despesas
+  S.cartoes.forEach(c=>{
+    despesasAtivas(c,S.cy,S.cm).forEach(d=>{
+      const key=d.cat||'💰';
+      map[key]=(map[key]||0)+dValMesCC(d,S.cy,S.cm);
+    });
+  });
+
+  // outras despesas
+  odAtivas().forEach(d=>{
+    const key=d.cat||'💰';
+    map[key]=(map[key]||0)+dValMesOD(d,S.cy,S.cm);
+  });
+
+  const entries=Object.entries(map).sort((a,b)=>b[1]-a[1]);
+  const total=entries.reduce((s,[,v])=>s+v,0);
+
+  if(!entries.length){
+    el.innerHTML=`<div class="empty" style="padding:20px 0">
+      <div class="empty-ico">🏷️</div><h3>Nenhuma despesa em ${lbl(ck())}</h3>
+      <p>As categorias aparecerão aqui quando houver despesas no mês</p></div>`;
+    return;
+  }
+
+  el.innerHTML=`<div class="cat-grid">${entries.map(([key,val],i)=>{
+    const pct=total>0?Math.round((val/total)*100):0;
+    const cor=CAT_COLORS[i%CAT_COLORS.length];
+    const nome=catNome(key);
+    const emoji=catEmoji(key);
+    return`<div class="cat-row">
+      <div class="cat-icon" style="background:${cor}22">${emoji}</div>
+      <div class="cat-info">
+        <div class="cat-name">${nome}</div>
+        <div class="cat-bar-wrap"><div class="cat-bar-fill" style="width:${pct}%;background:${cor}"></div></div>
+        <div class="cat-meta">${pct}% do total de despesas</div>
+      </div>
+      <div style="text-align:right">
+        <div class="cat-val" style="color:${cor}">${fmt(val)}</div>
+        <div class="cat-pct">${pct}%</div>
+      </div>
+    </div>`;
+  }).join('')}</div>
+  <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);
+    display:flex;justify-content:space-between;font-size:.82rem;color:var(--text2)">
+    <span>${entries.length} categoria(s)</span>
+    <span>Total: <strong style="color:var(--text)">${fmt(total)}</strong></span>
+  </div>`;
+}
+
+// ════════════════════════════════════════════
 //  RENDER ALL (GF)
 // ════════════════════════════════════════════
-function renderAll(){updateMB();renderCartoes();renderDP();renderPanorama();renderHistorico();}
+function renderAll(){updateMB();renderCartoes();renderDP();renderPanorama();renderCatResumo();renderHistorico();}
 
 // ── INIT ──
 (function(){
@@ -1597,6 +1824,7 @@ function renderAll(){updateMB();renderCartoes();renderDP();renderPanorama();rend
   ['nd-mes','ed-mes','od-mes','ed-od-mes'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.value=mesAtual;
   });
+  populateCatSelects();
 })();
 
 renderAll();
