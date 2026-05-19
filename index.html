@@ -87,6 +87,8 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .btn-danger:hover{background:rgba(255,107,107,.2);}
 .btn-edit{background:rgba(0,153,255,.1);color:var(--accent2);border:1px solid rgba(0,153,255,.2);}
 .btn-edit:hover{background:rgba(0,153,255,.2);}
+.btn-warn{background:rgba(245,158,11,.1);color:var(--accent4);border:1px solid rgba(245,158,11,.2);}
+.btn-warn:hover{background:rgba(245,158,11,.2);}
 .btn-sm{padding:5px 13px;font-size:.8rem;}
 
 /* ── CARD ── */
@@ -122,7 +124,7 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .co{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;}
 .co.sel{border-color:white;transform:scale(1.15);}
 
-/* ── SCOPE SELECTOR (novo) ── */
+/* ── SCOPE SELECTOR ── */
 .scope-box{
   background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);
   padding:14px;margin-bottom:15px;
@@ -137,9 +139,10 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .scope-opt-info{flex:1;}
 .scope-opt-label{font-size:.88rem;font-weight:500;color:var(--text);}
 .scope-opt-desc{font-size:.75rem;color:var(--text2);margin-top:2px;}
-/* override badge */
 .ovr-badge{display:inline-block;padding:2px 7px;border-radius:99px;font-size:.68rem;font-weight:600;
   background:rgba(245,158,11,.15);color:var(--accent4);margin-left:6px;vertical-align:middle;}
+.ant-badge{display:inline-block;padding:2px 7px;border-radius:99px;font-size:.68rem;font-weight:600;
+  background:rgba(139,92,246,.15);color:#a78bfa;margin-left:6px;vertical-align:middle;}
 
 /* ── RESUMO CATEGORIAS ── */
 .cat-grid{display:flex;flex-direction:column;gap:10px;}
@@ -163,14 +166,13 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .cat-list-item-name{flex:1;font-size:.88rem;}
 .cat-list-item-src{font-size:.72rem;color:var(--text2);padding:2px 7px;border-radius:99px;
   background:rgba(255,255,255,.06);}
-/* emoji picker row */
 .emoji-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
 .emoji-opt{width:32px;height:32px;border-radius:7px;border:1px solid var(--border);
   background:var(--surface2);cursor:pointer;font-size:1rem;display:flex;align-items:center;
   justify-content:center;transition:all .13s;}
 .emoji-opt:hover,.emoji-opt.sel-emoji{background:var(--surface3);border-color:var(--accent);}
 
-/* ── CC CARD ── */
+/* ── CC CARD (cartão de crédito) ── */
 .cc{background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid var(--border);
   border-radius:16px;padding:22px;position:relative;overflow:hidden;cursor:pointer;transition:all .25s;}
 .cc::before{content:'';position:absolute;width:190px;height:190px;border-radius:50%;top:-55px;right:-55px;opacity:.15;}
@@ -244,28 +246,213 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .hc-saldo{font-weight:600;font-size:.97rem;}
 .hc-det{font-size:.74rem;color:var(--text2);margin-top:3px;}
 
-/* ── CONTA CORRENTE ── */
-.cc-hero{
-  background:linear-gradient(135deg,rgba(0,153,255,.08),rgba(139,92,246,.08));
-  border:1px solid rgba(0,153,255,.15);border-radius:var(--r);
-  padding:32px;margin-bottom:24px;
+/* ══════════════════════════════
+   CONTA CORRENTE — REDESIGN
+══════════════════════════════ */
+
+/* módulo principal */
+#mod-cc{
+  background:var(--bg);
+  min-height:100vh;
 }
-.cc-hero-label{font-size:.81rem;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;}
-.cc-hero-amount{font-family:'Syne',sans-serif;font-weight:800;font-size:2.8rem;letter-spacing:-1.5px;}
-.cc-item{
-  display:flex;align-items:center;gap:14px;
-  padding:14px;border-radius:12px;
+#mod-cc main{
+  max-width:840px;
+  margin:0 auto;
+  padding:32px 22px 100px;
+}
+
+/* hero de saldo repaginado */
+.cch-hero{
+  position:relative;
+  overflow:hidden;
+  border-radius:24px;
+  padding:36px 36px 32px;
+  margin-bottom:32px;
+  background:linear-gradient(135deg,#0d1e3a 0%,#0b1a2e 60%,#0a1628 100%);
+  border:1px solid rgba(0,153,255,.18);
+}
+.cch-hero::before{
+  content:'';position:absolute;
+  width:400px;height:400px;border-radius:50%;
+  top:-120px;right:-80px;
+  background:radial-gradient(circle,rgba(0,153,255,.18) 0%,transparent 70%);
+  pointer-events:none;
+}
+.cch-hero::after{
+  content:'';position:absolute;
+  width:280px;height:280px;border-radius:50%;
+  bottom:-80px;left:-40px;
+  background:radial-gradient(circle,rgba(139,92,246,.14) 0%,transparent 70%);
+  pointer-events:none;
+}
+.cch-hero-inner{position:relative;z-index:1;}
+.cch-label{
+  font-size:.72rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(0,153,255,.8);margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;
+}
+.cch-label::before{
+  content:'';display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:#0099ff;box-shadow:0 0 8px #0099ff;
+}
+.cch-amount{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:3.2rem;
+  letter-spacing:-2px;line-height:1;
+  background:linear-gradient(135deg,#fff 30%,rgba(0,153,255,.7));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:8px;
+}
+.cch-meta{font-size:.82rem;color:rgba(255,255,255,.4);margin-bottom:24px;}
+
+/* barra visual de composição */
+.cch-bar-section{margin-bottom:22px;}
+.cch-bar-label{
+  display:flex;justify-content:space-between;
+  font-size:.72rem;color:rgba(255,255,255,.4);
+  margin-bottom:7px;
+}
+.cch-bar-track{
+  height:8px;border-radius:99px;
+  background:rgba(255,255,255,.07);
+  overflow:hidden;
+  display:flex;
+}
+.cch-bar-seg{height:100%;transition:width .6s ease;}
+
+/* mini sumários abaixo da barra */
+.cch-legend{
+  display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;
+}
+.cch-leg-item{
+  display:flex;align-items:center;gap:6px;
+  font-size:.74rem;color:rgba(255,255,255,.55);
+}
+.cch-leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* grid de itens */
+.cch-items-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.cch-items-title{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;
+}
+.cch-items-count{
+  font-size:.78rem;color:var(--text2);
   background:var(--surface2);border:1px solid var(--border);
-  transition:all .2s;
+  padding:3px 10px;border-radius:99px;
 }
-.cc-item:hover{border-color:rgba(255,255,255,.12);}
-.cc-item-icon{width:40px;height:40px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
-.cc-item-info{flex:1;min-width:0;}
-.cc-item-desc{font-weight:500;font-size:.92rem;}
-.cc-item-sub{font-size:.76rem;color:var(--text2);margin-top:2px;}
-.cc-item-val{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;white-space:nowrap;}
-.cc-items-grid{display:flex;flex-direction:column;gap:10px;}
+
+.cch-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  gap:12px;
+}
+
+.cch-item{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px;
+  transition:all .22s;
+  position:relative;
+  overflow:hidden;
+  cursor:default;
+}
+.cch-item::after{
+  content:'';position:absolute;
+  inset:0;border-radius:16px;
+  opacity:0;transition:opacity .22s;
+  background:linear-gradient(135deg,transparent,rgba(255,255,255,.025));
+}
+.cch-item:hover{border-color:rgba(255,255,255,.12);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3);}
+.cch-item:hover::after{opacity:1;}
+
+.cch-item-top{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  margin-bottom:14px;
+}
+.cch-item-icon-wrap{
+  width:42px;height:42px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;
+  background:rgba(0,153,255,.1);
+  border:1px solid rgba(0,153,255,.15);
+  flex-shrink:0;
+}
+.cch-item-actions{display:flex;gap:5px;}
+
+.cch-item-name{font-weight:500;font-size:.92rem;margin-bottom:4px;}
+.cch-item-amount{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;letter-spacing:-.5px;
+  color:var(--accent2);margin-bottom:10px;
+}
+
+/* mini barra de proporção dentro do card */
+.cch-item-pct-bar{
+  height:3px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;
+  margin-bottom:6px;
+}
+.cch-item-pct-fill{height:100%;border-radius:99px;transition:width .6s ease;}
+.cch-item-pct-label{font-size:.72rem;color:var(--text2);}
+
+/* palette de cores para itens */
+.cchi-blue .cch-item-icon-wrap{background:rgba(0,153,255,.1);border-color:rgba(0,153,255,.2);}
+.cchi-blue .cch-item-amount{color:#0099ff;}
+.cchi-blue .cch-item-pct-fill{background:#0099ff;}
+
+.cchi-green .cch-item-icon-wrap{background:rgba(0,229,160,.1);border-color:rgba(0,229,160,.2);}
+.cchi-green .cch-item-amount{color:#00e5a0;}
+.cchi-green .cch-item-pct-fill{background:#00e5a0;}
+
+.cchi-purple .cch-item-icon-wrap{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.2);}
+.cchi-purple .cch-item-amount{color:#a78bfa;}
+.cchi-purple .cch-item-pct-fill{background:#a78bfa;}
+
+.cchi-orange .cch-item-icon-wrap{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.2);}
+.cchi-orange .cch-item-amount{color:#f59e0b;}
+.cchi-orange .cch-item-pct-fill{background:#f59e0b;}
+
+.cchi-pink .cch-item-icon-wrap{background:rgba(236,72,153,.1);border-color:rgba(236,72,153,.2);}
+.cchi-pink .cch-item-amount{color:#ec4899;}
+.cchi-pink .cch-item-pct-fill{background:#ec4899;}
+
+.cchi-teal .cch-item-icon-wrap{background:rgba(20,184,166,.1);border-color:rgba(20,184,166,.2);}
+.cchi-teal .cch-item-amount{color:#2dd4bf;}
+.cchi-teal .cch-item-pct-fill{background:#2dd4bf;}
+
+.cchi-red .cch-item-icon-wrap{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.2);}
+.cchi-red .cch-item-amount{color:#f87171;}
+.cchi-red .cch-item-pct-fill{background:#f87171;}
+
+.cchi-gray .cch-item-icon-wrap{background:rgba(138,154,181,.1);border-color:rgba(138,154,181,.2);}
+.cchi-gray .cch-item-amount{color:var(--text2);}
+.cchi-gray .cch-item-pct-fill{background:var(--text2);}
+
+/* vazio */
+.cch-empty{
+  text-align:center;padding:60px 18px;
+  border:1px dashed rgba(0,153,255,.2);border-radius:16px;
+}
+.cch-empty-ico{font-size:2.5rem;margin-bottom:12px;opacity:.4;}
+.cch-empty h3{font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:5px;}
+.cch-empty p{font-size:.84rem;color:var(--text2);}
+
+/* ── ANTECIPAR PARCELA ── */
+.ant-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:10px 0;}
+.ant-par{
+  padding:10px 8px;border-radius:10px;border:1px solid var(--border);
+  background:var(--surface2);cursor:pointer;transition:all .15s;
+  text-align:center;
+}
+.ant-par:hover{border-color:rgba(139,92,246,.4);background:rgba(139,92,246,.06);}
+.ant-par.sel-ant{border-color:#8b5cf6;background:rgba(139,92,246,.12);}
+.ant-par.ja-pago{opacity:.4;cursor:not-allowed;background:rgba(0,229,160,.04);border-color:rgba(0,229,160,.2);}
+.ant-par.esta-mes{border-color:rgba(0,229,160,.3);background:rgba(0,229,160,.05);}
+.ant-par-num{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;}
+.ant-par-mes{font-size:.7rem;color:var(--text2);margin-top:2px;}
+.ant-par-val{font-size:.72rem;font-weight:600;color:var(--accent4);margin-top:2px;}
+.ant-par-status{font-size:.65rem;margin-top:3px;font-weight:600;}
 
 /* ── EMPTY ── */
 .empty{text-align:center;padding:40px 18px;color:var(--text2);}
@@ -288,6 +475,7 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   .fr{grid-template-columns:1fr;}
   .mod-switcher{bottom:16px;padding:4px;}
   .mod-btn{padding:7px 14px;font-size:.78rem;}
+  .cch-amount{font-size:2.2rem;}
 }
 </style>
 </head>
@@ -390,7 +578,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
       <div class="dp-hdr"><div class="dp-title">Outras Despesas / Fixas</div></div>
       <div id="od-list"></div>
     </div>
-    <!-- RESUMO POR CATEGORIA -->
     <div class="card" style="margin-bottom:18px">
       <div class="dp-hdr">
         <div class="dp-title">Gastos por Categoria <small style="font-family:'DM Sans',sans-serif;font-weight:400;font-size:.78rem;color:var(--text2)">Cartões + outras despesas</small></div>
@@ -417,27 +604,40 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 
 
 <!-- ══════════════════════════════════════════
-     MODULE: CONTA CORRENTE
+     MODULE: CONTA CORRENTE — REDESIGN
 ════════════════════════════════════════════ -->
 <div class="module" id="mod-cc">
 
-<header style="position:sticky;top:0;z-index:100;background:rgba(11,15,26,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;height:60px;">
-  <div class="logo">Finance<span>Flow</span> <span style="-webkit-text-fill-color:var(--accent2);font-size:.8rem;margin-left:6px;opacity:.7">Conta Corrente</span></div>
+<header style="position:sticky;top:0;z-index:100;background:rgba(11,15,26,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:60px;">
+  <div class="logo">Finance<span>Flow</span> <span style="-webkit-text-fill-color:rgba(0,153,255,.7);font-size:.8rem;margin-left:6px">Conta Corrente</span></div>
+  <button class="btn btn-primary" onclick="openModal('m-cc-item')" style="font-size:.82rem;padding:7px 16px">+ Adicionar item</button>
 </header>
 
 <main>
-  <div style="max-width:680px;margin:0 auto">
-    <div class="cc-hero">
-      <div class="cc-hero-label">Saldo da conta corrente</div>
-      <div class="cc-hero-amount" id="cc-saldo-total">R$ 0,00</div>
-      <div style="font-size:.82rem;color:var(--text2);margin-top:6px" id="cc-saldo-meta">Nenhum item cadastrado</div>
+  <!-- HERO SALDO -->
+  <div class="cch-hero">
+    <div class="cch-hero-inner">
+      <div class="cch-label">Saldo total da conta</div>
+      <div class="cch-amount" id="cc-saldo-total">R$ 0,00</div>
+      <div class="cch-meta" id="cc-saldo-meta">Nenhum item cadastrado</div>
+
+      <div class="cch-bar-section">
+        <div class="cch-bar-label">
+          <span>Composição</span>
+          <span id="cc-bar-total-label">—</span>
+        </div>
+        <div class="cch-bar-track" id="cc-bar-track"></div>
+        <div class="cch-legend" id="cc-legend"></div>
+      </div>
     </div>
-    <div class="sec-hdr">
-      <div class="sec-title">Composição do Saldo <small>Itens que formam o saldo total</small></div>
-      <button class="btn btn-primary" onclick="openModal('m-cc-item')">+ Adicionar item</button>
-    </div>
-    <div id="cc-items-list"></div>
   </div>
+
+  <!-- LISTA DE ITENS -->
+  <div class="cch-items-header">
+    <div class="cch-items-title">Composição do saldo</div>
+    <div class="cch-items-count" id="cc-items-count">0 itens</div>
+  </div>
+  <div id="cc-items-list"></div>
 </main>
 
 </div><!-- /mod-cc -->
@@ -556,7 +756,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
     </div>
     <div class="fg"><label>Categoria</label><select id="ed-cat"></select></div>
 
-    <!-- ── NOVO: escopo de alteração de valor (só aparece em parceladas/recorrentes) ── -->
     <div id="ed-scope-box" style="display:none">
       <div class="scope-box">
         <div class="scope-box-title">📌 Escopo da alteração de valor</div>
@@ -572,14 +771,14 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
             <input type="radio" name="ed-scope" value="forward" onchange="updateScopeUI()"/>
             <div class="scope-opt-info">
               <div class="scope-opt-label">Este mês em diante</div>
-              <div class="scope-opt-desc" id="scope-desc-forward">Altera <strong>—</strong> e todos os meses futuros. Meses passados não são tocados.</div>
+              <div class="scope-opt-desc" id="scope-desc-forward">Altera <strong>—</strong> e todos os meses futuros.</div>
             </div>
           </label>
           <label class="scope-opt" id="scope-opt-all">
             <input type="radio" name="ed-scope" value="all" onchange="updateScopeUI()"/>
             <div class="scope-opt-info">
               <div class="scope-opt-label">Todos os meses (base)</div>
-              <div class="scope-opt-desc">Altera o valor base da despesa. Overrides individuais de meses passados são mantidos.</div>
+              <div class="scope-opt-desc">Altera o valor base da despesa.</div>
             </div>
           </label>
         </div>
@@ -593,6 +792,23 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   </div>
 </div>
 
+<!-- ANTECIPAR PARCELA -->
+<div class="mo" id="m-ant">
+  <div class="modal" style="max-width:540px">
+    <div class="m-title">⚡ Antecipar Parcela</div>
+    <div id="ant-info" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px;font-size:.85rem;">—</div>
+    <div style="font-size:.75rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;">
+      Selecione qual parcela antecipar para <strong id="ant-mes-dest" style="color:var(--accent4);text-transform:none;font-size:.82rem;font-weight:700"></strong>:
+    </div>
+    <div id="ant-parcelas-grid" class="ant-grid"></div>
+    <div id="ant-resumo" style="display:none;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:10px;padding:13px;margin-top:12px;font-size:.84rem;"></div>
+    <div class="m-footer">
+      <button class="btn btn-secondary" onclick="closeModal('m-ant')">Cancelar</button>
+      <button class="btn btn-primary" id="ant-confirm-btn" onclick="confirmarAntecipacao()" style="background:#8b5cf6;color:#fff">⚡ Confirmar antecipação</button>
+    </div>
+  </div>
+</div>
+
 <!-- OUTRA DESPESA -->
 <div class="mo" id="m-od">
   <div class="modal">
@@ -600,7 +816,7 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
     <div class="fg"><label>Descrição</label><input type="text" id="od-desc" placeholder="Ex: Aluguel, Luz, Academia..."/></div>
     <div class="fr">
       <div class="fg"><label>Valor (R$)</label><input type="number" id="od-val" placeholder="0,00" min="0" step="0.01"/></div>
-    <div class="fg"><label>Categoria</label><select id="od-cat"></select></div>
+      <div class="fg"><label>Categoria</label><select id="od-cat"></select></div>
     </div>
     <div class="fg"><label>Mês de início</label><input type="month" id="od-mes"/></div>
     <div class="fg"><label>Esta despesa se repete?</label>
@@ -640,8 +856,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
     <div id="ed-od-repeat-box" style="display:none" class="fg"><label>Quantos meses se repete?</label>
       <input type="number" id="ed-od-nmeses" placeholder="Ex: 12" min="2" step="1" value="12"/>
     </div>
-
-    <!-- ── NOVO: escopo para outras despesas ── -->
     <div id="ed-od-scope-box" style="display:none">
       <div class="scope-box">
         <div class="scope-box-title">📌 Escopo da alteração de valor</div>
@@ -670,7 +884,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
         </div>
       </div>
     </div>
-
     <div class="m-footer">
       <button class="btn btn-secondary" onclick="closeModal('m-ed-od')">Cancelar</button>
       <button class="btn btn-primary" onclick="saveEditOD()">Salvar</button>
@@ -712,27 +925,20 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
     <div style="font-size:.81rem;color:var(--text2);margin-bottom:16px">
       As categorias abaixo ficam disponíveis ao adicionar despesas de cartão e outras despesas.
     </div>
-
-    <!-- Nova categoria -->
     <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:18px">
       <div style="font-size:.75rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:11px">+ Nova categoria</div>
       <div class="fg" style="margin-bottom:10px"><label>Nome</label>
         <input type="text" id="ncat-nome" placeholder="Ex: Pet, Farmácia, Streaming…" maxlength="30"/>
       </div>
       <div class="fg" style="margin-bottom:8px"><label>Ícone</label></div>
-      <div class="emoji-row" id="emoji-picker">
-        <!-- populated by JS -->
-      </div>
+      <div class="emoji-row" id="emoji-picker"></div>
       <input type="hidden" id="ncat-emoji" value="💰"/>
       <div style="margin-top:12px;display:flex;justify-content:flex-end">
         <button class="btn btn-primary btn-sm" onclick="addCategoria()">Adicionar categoria</button>
       </div>
     </div>
-
-    <!-- Lista -->
     <div style="font-size:.75rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">Categorias ativas</div>
     <div id="cats-list" style="max-height:280px;overflow-y:auto;"></div>
-
     <div class="m-footer">
       <button class="btn btn-primary" onclick="closeModal('m-cats')">Fechar</button>
     </div>
@@ -805,7 +1011,7 @@ let S={
   months:{},
   outrasDespesas:[],
   ccItems:[],
-  categorias:[], // custom categories [{id,emoji,nome,builtin?}]
+  categorias:[],
   editDespId:null,
   editODId:null,
   editCCIId:null,
@@ -813,7 +1019,11 @@ let S={
   ncColor:'green',
   ecColor:'green',
   cy:NOW.getFullYear(),
-  cm:NOW.getMonth()
+  cm:NOW.getMonth(),
+  // antecipacao state
+  antCid:null,
+  antDid:null,
+  antParSel:null
 };
 
 function load(){
@@ -823,9 +1033,11 @@ function load(){
   if(!S.cartoes)S.cartoes=[];
   if(!S.months)S.months={};
   if(!S.categorias)S.categorias=[];
-  // migrate: ensure overrides field exists on all despesas and outrasDespesas
   S.cartoes.forEach(c=>{
-    (c.despesas||[]).forEach(d=>{if(!d.overrides)d.overrides={};});
+    (c.despesas||[]).forEach(d=>{
+      if(!d.overrides)d.overrides={};
+      if(!d.antecipadas)d.antecipadas={}; // {mesOriginalKey: mesAntKey}
+    });
   });
   S.outrasDespesas.forEach(d=>{
     if(!d.overrides)d.overrides={};
@@ -846,18 +1058,25 @@ function mdata(y,m){
 function cur(){return mdata(S.cy,S.cm);}
 function ck(){return mk(S.cy,S.cm);}
 
-// ── valor efetivo de uma despesa num dado mês ──
-// Para cartões: overrides armazena valor da parcela daquele mês
-function dValMesCC(d, y, m){
+// ── valor efetivo de uma despesa num dado mês (cartão) ──
+function dValMesCC(d,y,m){
   const key=mk(y,m);
-  if(d.overrides&&d.overrides[key]!==undefined) return d.overrides[key];
+  if(d.overrides&&d.overrides[key]!==undefined)return d.overrides[key];
   return d.valor/d.parcelas;
 }
-// Para outras despesas: overrides armazena valor total daquele mês
-function dValMesOD(d, y, m){
+function dValMesOD(d,y,m){
   const key=mk(y,m);
-  if(d.overrides&&d.overrides[key]!==undefined) return d.overrides[key];
+  if(d.overrides&&d.overrides[key]!==undefined)return d.overrides[key];
   return d.valor;
+}
+
+// ── Verificar se uma parcela está antecipada ──
+// d.antecipadas = { "YYYY-MM_originalParcIdx": "YYYY-MM_antecipatedToMonth" }
+// Mais simples: armazenar quais números de parcela foram antecipados para qual mês
+// d.antecipadas = { parcelaNum(1-based): mesKeyAntecipado }
+function parcelaAntecipada(d, parNum){
+  if(!d.antecipadas)return null;
+  return d.antecipadas[parNum]||null; // retorna o mês-chave para onde foi antecipada, ou null
 }
 
 // ── OD helpers ──
@@ -875,23 +1094,91 @@ function odAtivas(y,m){
     return!(d.excluidos||[]).includes(key);
   });
 }
-
 function numParcelaOD(d){
   return absM(S.cy,S.cm)-absM(d.anoInicio,d.mesInicio)+1;
 }
 
-// ── CC card helpers ──
+// ── CC card helpers (despesas de cartão) ──
+// Uma despesa aparece num mês se:
+//  - É a parcela original e NÃO foi antecipada desse mês
+//  - OU foi antecipada PARA esse mês (de outro mês)
 function despesasAtivas(cartao,y,m){
   if(!cartao.despesas)return[];
   const alvo=absM(y,m);
+  const mesKey=mk(y,m);
   return cartao.despesas.filter(d=>{
     const ini=absM(d.anoInicio,d.mesInicio);
-    return alvo>=ini&&alvo<=ini+d.parcelas-1;
-  });
+    const fim=ini+d.parcelas-1;
+    if(alvo<ini||alvo>fim)return false; // fora do range base... mas pode ter antecipação
+
+    // Verificar se esse alvo é uma parcela original que foi antecipada (sumir do mês original)
+    const parNum=alvo-ini+1; // 1-based
+    const antDest=parcelaAntecipada(d,parNum);
+    if(antDest){
+      // essa parcela foi antecipada para outro mês — não aparece aqui
+      return false;
+    }
+    return true;
+  }).concat(
+    // Adicionar despesas cujas parcelas FORAM antecipadas para este mês
+    cartao.despesas.filter(d=>{
+      if(!d.antecipadas)return false;
+      const ini=absM(d.anoInicio,d.mesInicio);
+      return Object.entries(d.antecipadas).some(([parNum,destKey])=>{
+        if(destKey!==mesKey)return false;
+        const parIdx=parseInt(parNum)-1;
+        const parOriginalAbs=ini+parIdx;
+        const parOriginalMesKey=mk(Math.floor(parOriginalAbs/12),parOriginalAbs%12);
+        // só inclui se a parcela original não seria neste mês (evitar duplicata)
+        return parOriginalMesKey!==mesKey;
+      });
+    })
+  );
 }
+
+// helper: pega informações de exibição de uma despesa considerando antecipações
+function getDespExibicao(d, y, m){
+  const mesKey=mk(y,m);
+  const alvo=absM(y,m);
+  const ini=absM(d.anoInicio,d.mesInicio);
+
+  // verificar se é uma parcela antecipada para este mês
+  if(d.antecipadas){
+    for(const[parNumStr,destKey] of Object.entries(d.antecipadas)){
+      if(destKey===mesKey){
+        const parNum=parseInt(parNumStr);
+        const parIdx=parNum-1;
+        const parOriginalAbs=ini+parIdx;
+        const parOriginalMesKey=mk(Math.floor(parOriginalAbs/12),parOriginalAbs%12);
+        if(parOriginalMesKey!==mesKey){
+          // é parcela antecipada de outro mês
+          return{
+            parNum,
+            antecipada:true,
+            antOrigem:parOriginalMesKey,
+            valor:d.overrides&&d.overrides[parOriginalMesKey]!==undefined?d.overrides[parOriginalMesKey]:d.valor/d.parcelas
+          };
+        }
+      }
+    }
+  }
+
+  // parcela normal
+  const parNum=alvo-ini+1;
+  return{
+    parNum,
+    antecipada:false,
+    antOrigem:null,
+    valor:dValMesCC(d,y,m)
+  };
+}
+
 function usadoMes(cartao,y,m){
   y=y??S.cy;m=m??S.cm;
-  return despesasAtivas(cartao,y,m).reduce((s,d)=>s+dValMesCC(d,y,m),0);
+  return despesasAtivas(cartao,y,m).reduce((s,d)=>{
+    const exib=getDespExibicao(d,y,m);
+    return s+exib.valor;
+  },0);
 }
 function limiteComprometido(cartao){
   if(!cartao.despesas)return 0;
@@ -900,7 +1187,6 @@ function limiteComprometido(cartao){
     const ini=absM(d.anoInicio,d.mesInicio);
     const fim=ini+d.parcelas-1;
     if(ini>hoje||fim<hoje)return s;
-    // sum future months using base value (overrides unknown)
     let total=0;
     for(let am=hoje;am<=fim;am++){
       const fy=Math.floor(am/12),fm=am%12;
@@ -961,27 +1247,20 @@ function selCor(el,ns){
 function toggleRepeat(ns){
   const val=document.getElementById(ns+'-repete').value;
   document.getElementById(ns+'-repeat-box').style.display=val!=='0'?'block':'none';
-  // show scope if repeating
   const scopeBox=document.getElementById(ns+'-scope-box');
-  if(scopeBox) scopeBox.style.display=val!=='0'?'block':'none';
+  if(scopeBox)scopeBox.style.display=val!=='0'?'block':'none';
 }
 
-// ════════════════════════════════════════════
-//  SCOPE UI helpers
-// ════════════════════════════════════════════
 function updateScopeUI(){
-  const radios=document.querySelectorAll('input[name="ed-scope"]');
-  radios.forEach(r=>{
+  document.querySelectorAll('input[name="ed-scope"]').forEach(r=>{
     r.closest('.scope-opt').classList.toggle('sel-scope',r.checked);
   });
 }
 function updateODScopeUI(){
-  const radios=document.querySelectorAll('input[name="ed-od-scope"]');
-  radios.forEach(r=>{
+  document.querySelectorAll('input[name="ed-od-scope"]').forEach(r=>{
     r.closest('.scope-opt').classList.toggle('sel-scope',r.checked);
   });
 }
-
 function getScope(radioName){
   const sel=document.querySelector(`input[name="${radioName}"]:checked`);
   return sel?sel.value:'all';
@@ -1095,22 +1374,41 @@ function renderDP(){
     return;
   }
   list.innerHTML=ativas.map(d=>{
-    const np=absM(S.cy,S.cm)-absM(d.anoInicio,d.mesInicio)+1;
-    const parLabel=d.parcelas>1?`Parcela ${np}/${d.parcelas} · ${fmt(dValMesCC(d,S.cy,S.cm))}/mês`:'À vista';
-    const hasOverride=d.overrides&&d.overrides[ck()]!==undefined;
-    const overrideBadge=hasOverride?`<span class="ovr-badge">⚡ valor personalizado</span>`:'';
+    const exib=getDespExibicao(d,S.cy,S.cm);
+    const np=exib.parNum;
+    let parLabel,badges='';
+    if(d.parcelas>1){
+      parLabel=`Parcela ${np}/${d.parcelas} · ${fmt(exib.valor)}/mês`;
+      if(exib.antecipada){
+        badges+=`<span class="ant-badge">⚡ antecipada de ${lbl(exib.antOrigem)}</span>`;
+      }
+    } else {
+      parLabel='À vista';
+    }
+    if(d.overrides&&d.overrides[ck()]!==undefined&&!exib.antecipada){
+      badges+=`<span class="ovr-badge">⚡ valor personalizado</span>`;
+    }
+    // verificar se tem alguma antecipação aplicada à despesa
+    const temAntecipacao=d.antecipadas&&Object.keys(d.antecipadas).length>0;
+
+    // botão antecipar só para parceladas com mais de 1 parcela restante
+    const parAtual=np;
+    const parRestantes=d.parcelas-parAtual; // quantas após a atual
+    const podeAntecipar=d.parcelas>1&&parRestantes>0;
+
     return`<div class="ei">
       <div class="ei-icon">${d.cat}</div>
       <div class="ei-info">
-        <div class="ei-desc">${d.desc}${overrideBadge}</div>
+        <div class="ei-desc">${d.desc}${badges}</div>
         <div class="ei-meta">${parLabel} · desde ${MONTHS[d.mesInicio].slice(0,3)} ${d.anoInicio}</div>
       </div>
       <div style="text-align:right">
         <div class="ei-val">${fmt(d.valor)}</div>
-        <div class="ei-par">${d.parcelas>1?fmt(dValMesCC(d,S.cy,S.cm))+'/mês':''}</div>
+        <div class="ei-par">${d.parcelas>1?fmt(exib.valor)+'/mês':''}</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:5px">
         <button class="btn btn-edit btn-sm" onclick="openEditDesp(${c.id},${d.id})">✏️</button>
+        ${podeAntecipar?`<button class="btn btn-warn btn-sm" onclick="openAntecipar(${c.id},${d.id})" title="Antecipar parcela">⚡</button>`:''}
         <button class="btn btn-danger btn-sm" onclick="delDesp(${c.id},${d.id})">✕</button>
       </div>
     </div>`;
@@ -1118,7 +1416,99 @@ function renderDP(){
 }
 
 // ════════════════════════════════════════════
-//  DESPESAS CARTÃO
+//  ANTECIPAR PARCELA
+// ════════════════════════════════════════════
+function openAntecipar(cid, did){
+  const c=S.cartoes.find(c=>c.id===cid);if(!c)return;
+  const d=c.despesas.find(d=>d.id===did);if(!d)return;
+  if(!d.antecipadas)d.antecipadas={};
+  S.antCid=cid;S.antDid=did;S.antParSel=null;
+
+  // info da despesa
+  const ini=absM(d.anoInicio,d.mesInicio);
+  const exibAtual=getDespExibicao(d,S.cy,S.cm);
+  const parAtual=exibAtual.parNum;
+
+  document.getElementById('ant-info').innerHTML=
+    `<strong>${d.cat} ${d.desc}</strong><br>
+     <span style="color:var(--text2);font-size:.8rem">${d.parcelas}× de ${fmt(d.valor/d.parcelas)} · Parcela atual: ${parAtual}/${d.parcelas}</span>`;
+
+  document.getElementById('ant-mes-dest').textContent=lbl(ck());
+
+  // montar grade de parcelas
+  const grid=document.getElementById('ant-parcelas-grid');
+  let html='';
+  for(let i=1;i<=d.parcelas;i++){
+    const amPar=ini+i-1;
+    const py=Math.floor(amPar/12),pm=amPar%12;
+    const parKey=mk(py,pm);
+    const jaPago=absM(py,pm)<absM(S.cy,S.cm);
+    const esteMes=absM(py,pm)===absM(S.cy,S.cm);
+    const antDest=parcelaAntecipada(d,i);
+    const jaAntecipada=!!antDest;
+    const valorPar=d.overrides&&d.overrides[parKey]!==undefined?d.overrides[parKey]:d.valor/d.parcelas;
+
+    // pode selecionar? só parcelas futuras não antecipadas e não é a do mês atual (já está aqui)
+    const podeAntecipar=!jaPago&&!esteMes&&!jaAntecipada;
+
+    let cls='ant-par';
+    let statusHtml='';
+    if(jaPago){cls+=' ja-pago';statusHtml='<div class="ant-par-status" style="color:var(--accent)">✓ pago</div>';}
+    else if(esteMes){cls+=' esta-mes';statusHtml='<div class="ant-par-status" style="color:var(--accent2)">→ este mês</div>';}
+    else if(jaAntecipada){cls+=' ja-pago';statusHtml=`<div class="ant-par-status" style="color:#a78bfa">⚡ em ${lbl(antDest)}</div>`;}
+    else{statusHtml=`<div class="ant-par-status" style="color:var(--text2)">${MONTHS[pm].slice(0,3)} ${py}</div>`;}
+
+    html+=`<div class="${cls}" data-par="${i}" data-key="${parKey}" data-val="${valorPar}"
+      ${podeAntecipar?`onclick="selAntPar(this,${i},'${parKey}',${valorPar})"`:''}>
+      <div class="ant-par-num">${i}ª</div>
+      <div class="ant-par-mes">${MONTHS[pm].slice(0,3)} ${py}</div>
+      <div class="ant-par-val">${fmt(valorPar)}</div>
+      ${statusHtml}
+    </div>`;
+  }
+  grid.innerHTML=html;
+  document.getElementById('ant-resumo').style.display='none';
+  document.getElementById('ant-confirm-btn').disabled=true;
+  openModal('m-ant');
+}
+
+function selAntPar(el,parNum,parKey,valor){
+  document.querySelectorAll('.ant-par').forEach(p=>p.classList.remove('sel-ant'));
+  el.classList.add('sel-ant');
+  S.antParSel={parNum,parKey,valor};
+
+  const resumo=document.getElementById('ant-resumo');
+  resumo.style.display='block';
+  resumo.innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+      <span style="font-size:1.1rem">⚡</span>
+      <strong>Resumo da antecipação</strong>
+    </div>
+    <div style="font-size:.81rem;color:var(--text2);line-height:1.6">
+      A <strong style="color:var(--text)">${parNum}ª parcela</strong> (${lbl(parKey)}) de <strong style="color:var(--accent4)">${fmt(valor)}</strong>
+      será cobrada em <strong style="color:var(--accent)">${lbl(ck())}</strong> junto com a fatura deste mês.<br>
+      <span style="color:rgba(255,255,255,.4);font-size:.75rem">O mês original (${lbl(parKey)}) não terá essa cobrança.</span>
+    </div>`;
+  document.getElementById('ant-confirm-btn').disabled=false;
+}
+
+function confirmarAntecipacao(){
+  if(!S.antParSel){toast('⚠️ Selecione uma parcela');return;}
+  const c=S.cartoes.find(c=>c.id===S.antCid);if(!c)return;
+  const d=c.despesas.find(d=>d.id===S.antDid);if(!d)return;
+  if(!d.antecipadas)d.antecipadas={};
+
+  // registrar: parcela parNum vai para ck() (mês atual)
+  d.antecipadas[S.antParSel.parNum]=ck();
+
+  save();closeModal('m-ant');
+  renderAll();
+  toast(`⚡ Parcela ${S.antParSel.parNum} antecipada para ${lbl(ck())}!`);
+  S.antParSel=null;
+}
+
+// ════════════════════════════════════════════
+//  DESPESAS CARTÃO CRUD
 // ════════════════════════════════════════════
 function addDespesa(){
   const c=S.cartoes.find(c=>c.id===S.selCartao);
@@ -1135,7 +1525,7 @@ function addDespesa(){
   const[anoI,mesI]=mesRef?mesRef.split('-').map(Number):[S.cy,S.cm+1];
   c.despesas.push({id:Date.now(),desc,valor,parcelas,cat,
     anoInicio:mesRef?anoI:S.cy,mesInicio:mesRef?mesI-1:S.cm,
-    overrides:{}});
+    overrides:{},antecipadas:{}});
   save();closeModal('m-nd');
   document.getElementById('nd-desc').value='';
   document.getElementById('nd-val').value='';
@@ -1148,10 +1538,8 @@ function openEditDesp(cid,did){
   const c=S.cartoes.find(c=>c.id===cid);if(!c)return;
   const d=c.despesas.find(d=>d.id===did);if(!d)return;
   S.editDespId=did;S.selCartao=cid;
-  populateCatSelects(d.cat, null);
+  populateCatSelects(d.cat,null);
   document.getElementById('ed-desc').value=d.desc;
-  // show current month's effective value in the field
-  document.getElementById('ed-val').value=d.parcelas>1?dValMesCC(d,S.cy,S.cm)*d.parcelas:d.valor;
   document.getElementById('ed-cat').value=d.cat;
   document.getElementById('ed-mes').value=mk(d.anoInicio,d.mesInicio);
   const isParc=d.parcelas>1;
@@ -1162,24 +1550,17 @@ function openEditDesp(cid,did){
     const opts=[...sel.options].map(o=>+o.value);
     sel.value=opts.includes(d.parcelas)?d.parcelas:opts.reduce((a,b)=>Math.abs(b-d.parcelas)<Math.abs(a-d.parcelas)?b:a);
   }
-
-  // scope box - only show if parcelada
   const scopeBox=document.getElementById('ed-scope-box');
   scopeBox.style.display=isParc?'block':'none';
-
   if(isParc){
-    // reset to "só este mês" by default
     document.querySelector('input[name="ed-scope"][value="mes"]').checked=true;
     updateScopeUI();
-    // fill in descriptions
     document.getElementById('scope-desc-mes').innerHTML=`Altera apenas o valor de <strong>${lbl(ck())}</strong>`;
-    document.getElementById('scope-desc-forward').innerHTML=`Altera <strong>${lbl(ck())}</strong> e todos os meses futuros. Meses passados não são tocados.`;
-
-    // show value as parcela value for this month
+    document.getElementById('scope-desc-forward').innerHTML=`Altera <strong>${lbl(ck())}</strong> e todos os meses futuros.`;
     document.getElementById('ed-val').value=dValMesCC(d,S.cy,S.cm);
-    // add hint below val input
+  } else {
+    document.getElementById('ed-val').value=d.valor;
   }
-
   openModal('m-ed');
 }
 
@@ -1195,47 +1576,37 @@ function saveEditDesp(){
   if(!desc){toast('⚠️ Informe a descrição');return;}
   if(!valInput||valInput<=0){toast('⚠️ Valor inválido');return;}
   const[anoI,mesI]=mesRef.split('-').map(Number);
-
   const isParc=d.parcelas>1;
   const scope=isParc?getScope('ed-scope'):'all';
-
   if(scope==='mes'){
-    // override only current month's parcela value
     if(!d.overrides)d.overrides={};
     d.overrides[ck()]=valInput;
-    // other fields (desc, cat) still updated globally
     d.desc=desc;d.cat=cat;
     toast('✅ Valor de '+lbl(ck())+' personalizado!');
   } else if(scope==='forward'){
-    // set overrides for current month and all future months of this despesa
     if(!d.overrides)d.overrides={};
     const ini=absM(d.anoInicio,d.mesInicio);
     const fim=ini+d.parcelas-1;
     const now=absM(S.cy,S.cm);
     for(let am=now;am<=fim;am++){
       const fy=Math.floor(am/12),fm=am%12;
-      const fk=mk(fy,fm);
-      // only override future months (don't touch past)
-      if(am>=now) d.overrides[fk]=valInput;
+      d.overrides[mk(fy,fm)]=valInput;
     }
     d.desc=desc;d.cat=cat;
     toast('✅ Valor atualizado de '+lbl(ck())+' em diante!');
   } else {
-    // 'all' — update base value, remove forward overrides but keep past ones
     const now=absM(S.cy,S.cm);
     if(d.overrides){
-      // keep only past overrides (before current month)
       const pastOverrides={};
       Object.keys(d.overrides).forEach(k=>{
         const[ky,km]=k.split('-').map(Number);
-        if(absM(ky,km-1)<now) pastOverrides[k]=d.overrides[k];
+        if(absM(ky,km-1)<now)pastOverrides[k]=d.overrides[k];
       });
       d.overrides=pastOverrides;
     }
     d.desc=desc;d.valor=valInput*parcelas;d.parcelas=parcelas;d.cat=cat;d.anoInicio=anoI;d.mesInicio=mesI-1;
     toast('✅ Despesa atualizada (base)!');
   }
-
   save();closeModal('m-ed');renderAll();
 }
 
@@ -1304,8 +1675,7 @@ function addOutraDespesa(){
 }
 
 function delOD(id){
-  const d=S.outrasDespesas.find(x=>x.id===id);
-  if(!d)return;
+  const d=S.outrasDespesas.find(x=>x.id===id);if(!d)return;
   const key=ck();
   const totalMeses=d.repeticoes===-1?'∞':d.repeticoes;
   const msg=d.repeticoes===1
@@ -1316,17 +1686,15 @@ function delOD(id){
   d.excluidos.push(key);
   save();renderPanorama();toast('🗑️ Removido de '+lbl(key));
 }
-
 function delODAll(id){
   if(!confirm('Remover esta despesa de TODOS os meses?'))return;
   S.outrasDespesas=S.outrasDespesas.filter(x=>x.id!==id);
   save();renderPanorama();toast('🗑️ Despesa removida de todos os meses');
 }
-
 function openEditOD(id){
   const d=S.outrasDespesas.find(x=>x.id===id);if(!d)return;
   S.editODId=id;
-  populateCatSelects(null, d.cat);
+  populateCatSelects(null,d.cat);
   document.getElementById('ed-od-desc').value=d.desc;
   document.getElementById('ed-od-cat').value=d.cat;
   document.getElementById('ed-od-mes').value=mk(d.anoInicio,d.mesInicio);
@@ -1336,25 +1704,19 @@ function openEditOD(id){
   const box=document.getElementById('ed-od-repeat-box');
   if(d.repeticoes>1){box.style.display='block';document.getElementById('ed-od-nmeses').value=d.repeticoes;}
   else box.style.display='none';
-
-  // scope box
   const scopeBox=document.getElementById('ed-od-scope-box');
   scopeBox.style.display=isRepeat?'block':'none';
-
   if(isRepeat){
-    // default to "só este mês", show current month's effective value
     document.querySelector('input[name="ed-od-scope"][value="mes"]').checked=true;
     updateODScopeUI();
     document.getElementById('od-scope-desc-mes').innerHTML=`Altera apenas o valor de <strong>${lbl(ck())}</strong>`;
-    document.getElementById('od-scope-desc-forward').innerHTML=`Altera <strong>${lbl(ck())}</strong> e todos os meses futuros. Meses passados não são tocados.`;
+    document.getElementById('od-scope-desc-forward').innerHTML=`Altera <strong>${lbl(ck())}</strong> e todos os meses futuros.`;
     document.getElementById('ed-od-val').value=dValMesOD(d,S.cy,S.cm);
   } else {
     document.getElementById('ed-od-val').value=d.valor;
   }
-
   openModal('m-ed-od');
 }
-
 function saveEditOD(){
   const d=S.outrasDespesas.find(x=>x.id===S.editODId);if(!d)return;
   const desc=document.getElementById('ed-od-desc').value.trim();
@@ -1366,10 +1728,8 @@ function saveEditOD(){
   if(!desc){toast('⚠️ Informe a descrição');return;}
   if(!valInput||valInput<=0){toast('⚠️ Valor inválido');return;}
   const[anoI,mesI]=mesRef.split('-').map(Number);
-
   const isRepeat=d.repeticoes===-1||d.repeticoes>1;
   const scope=isRepeat?getScope('ed-od-scope'):'all';
-
   if(scope==='mes'){
     if(!d.overrides)d.overrides={};
     d.overrides[ck()]=valInput;
@@ -1378,9 +1738,8 @@ function saveEditOD(){
   } else if(scope==='forward'){
     if(!d.overrides)d.overrides={};
     const now=absM(S.cy,S.cm);
-    const totalReps=d.repeticoes===-1?999:d.repeticoes;
     const ini=absM(d.anoInicio,d.mesInicio);
-    const fim=d.repeticoes===-1?now+240:ini+totalReps-1; // cap at 20 years for indefinite
+    const fim=d.repeticoes===-1?now+240:ini+(d.repeticoes||1)-1;
     for(let am=now;am<=fim;am++){
       const fy=Math.floor(am/12),fm=am%12;
       d.overrides[mk(fy,fm)]=valInput;
@@ -1388,20 +1747,18 @@ function saveEditOD(){
     d.desc=desc;d.cat=cat;
     toast('✅ Valor atualizado de '+lbl(ck())+' em diante!');
   } else {
-    // 'all' — update base, keep past overrides only
     const now=absM(S.cy,S.cm);
     if(d.overrides){
       const pastOverrides={};
       Object.keys(d.overrides).forEach(k=>{
         const[ky,km]=k.split('-').map(Number);
-        if(absM(ky,km-1)<now) pastOverrides[k]=d.overrides[k];
+        if(absM(ky,km-1)<now)pastOverrides[k]=d.overrides[k];
       });
       d.overrides=pastOverrides;
     }
     d.desc=desc;d.valor=valInput;d.cat=cat;d.anoInicio=anoI;d.mesInicio=mesI-1;d.repeticoes=nMeses;
     toast('✅ Despesa atualizada (base)!');
   }
-
   save();closeModal('m-ed-od');renderPanorama();
 }
 
@@ -1414,30 +1771,25 @@ function renderPanorama(){
   const sal=md.salario||0;
   const totRendas=md.outraRendas.reduce((s,r)=>s+r.valor,0);
   const totalEntradas=sal+totRendas;
-
   document.getElementById('sal-display').textContent=sal>0?fmt(sal):'Não definido';
   document.getElementById('sal-badge').style.display=sal>0?'inline-block':'none';
   document.getElementById('m-sal-sub').textContent='Mês: '+lbl(ck());
   document.getElementById('m-renda-sub').textContent='Mês: '+lbl(ck());
   const salEl=document.getElementById('sal-val');if(salEl&&sal>0)salEl.value=sal;
-
   const totCC=S.cartoes.reduce((s,c)=>s+usadoMes(c),0);
   const ativas=odAtivas();
   const totOD=ativas.reduce((s,d)=>s+dValMesOD(d,S.cy,S.cm),0);
   const totG=totCC+totOD;
   const saldo=totalEntradas-totG;
   const pct=totalEntradas>0?Math.round((totG/totalEntradas)*100):0;
-
   document.getElementById('bd-sal').textContent=fmt(sal);
   document.getElementById('bd-renda').textContent=fmt(totRendas);
   document.getElementById('bd-cc').textContent=fmt(totCC);
   document.getElementById('bd-ot').textContent=fmt(totOD);
-
   const sEl=document.getElementById('saldo');
   sEl.textContent=fmt(saldo);
   sEl.style.background=saldo>=0?'linear-gradient(135deg,var(--accent),var(--accent2))':'linear-gradient(135deg,#ef4444,#ff9999)';
   sEl.style['-webkit-background-clip']='text';sEl.style['-webkit-text-fill-color']='transparent';
-
   const nD=S.cartoes.reduce((s,c)=>s+despesasAtivas(c,S.cy,S.cm).length,0);
   document.getElementById('s-renda-tot').textContent=fmt(totalEntradas);
   document.getElementById('s-renda-sub').textContent=(sal>0?'salário':'sem salário')+(totRendas>0?' + '+md.outraRendas.length+' ganho(s)':'');
@@ -1447,7 +1799,6 @@ function renderPanorama(){
   document.getElementById('s-ot-sub').textContent=ativas.length+' ativo(s)';
   document.getElementById('s-pct').textContent=pct+'%';
 
-  // rendas list
   const rl=document.getElementById('renda-list');
   rl.innerHTML=!md.outraRendas.length
     ?`<div style="font-size:.82rem;color:var(--text2);padding:4px 0">Nenhum ganho extra em ${lbl(ck())}</div>`
@@ -1458,7 +1809,6 @@ function renderPanorama(){
         <button class="btn btn-danger btn-sm" onclick="delRenda(${r.id})">✕</button>
       </div>`).join('');
 
-  // outras despesas list
   const odList=document.getElementById('od-list');
   odList.innerHTML=!ativas.length
     ?`<div class="empty" style="padding:18px 0"><div class="empty-ico">📋</div><h3>Nenhuma despesa em ${lbl(ck())}</h3><p>Aluguel, contas, assinaturas…</p></div>`
@@ -1482,7 +1832,6 @@ function renderPanorama(){
         </div>`;
       }).join('');
 
-  // resumo cartões
   const pcList=document.getElementById('pan-cc-list');
   pcList.innerHTML=!S.cartoes.length
     ?`<div class="empty" style="padding:18px 0"><div class="empty-ico">💳</div><h3>Nenhum cartão</h3></div>`
@@ -1554,8 +1903,13 @@ function renderHistorico(){
 }
 
 // ════════════════════════════════════════════
-//  CONTA CORRENTE
+//  CONTA CORRENTE — REDESIGN
 // ════════════════════════════════════════════
+
+// Paleta para os cards de itens — cicla pelos estilos
+const CC_ITEM_THEMES=['blue','green','purple','orange','pink','teal','red','gray'];
+const CC_BAR_COLORS=['#0099ff','#00e5a0','#a78bfa','#f59e0b','#ec4899','#2dd4bf','#f87171','#8a9ab5'];
+
 function addCCItem(){
   const desc=document.getElementById('cci-desc').value.trim();
   const valor=parseFloat(document.getElementById('cci-val').value);
@@ -1593,40 +1947,68 @@ function delCCItem(id){
 
 function renderCC(){
   const total=S.ccItems.reduce((s,i)=>s+i.valor,0);
+
+  // Saldo total
   const totalEl=document.getElementById('cc-saldo-total');
   totalEl.textContent=fmt(total);
-  totalEl.style.background='linear-gradient(135deg,var(--accent2),#8b5cf6)';
-  totalEl.style['-webkit-background-clip']='text';
-  totalEl.style['-webkit-text-fill-color']='transparent';
 
   document.getElementById('cc-saldo-meta').textContent=
-    S.ccItems.length?S.ccItems.length+' item(s) compondo o saldo':'Nenhum item cadastrado';
+    S.ccItems.length?`${S.ccItems.length} item(s) · atualizado agora`:'Nenhum item cadastrado';
 
+  // Barra de composição
+  const barTrack=document.getElementById('cc-bar-track');
+  const legend=document.getElementById('cc-legend');
+  document.getElementById('cc-bar-total-label').textContent=total>0?fmt(total):'—';
+  document.getElementById('cc-items-count').textContent=S.ccItems.length+' item(s)';
+
+  if(!S.ccItems.length||total===0){
+    barTrack.innerHTML='<div style="flex:1;background:rgba(255,255,255,.05)"></div>';
+    legend.innerHTML='';
+  } else {
+    barTrack.innerHTML=S.ccItems.map((it,i)=>{
+      const pct=(it.valor/total)*100;
+      const cor=CC_BAR_COLORS[i%CC_BAR_COLORS.length];
+      return`<div class="cch-bar-seg" style="width:${pct}%;background:${cor};"></div>`;
+    }).join('');
+    legend.innerHTML=S.ccItems.map((it,i)=>{
+      const cor=CC_BAR_COLORS[i%CC_BAR_COLORS.length];
+      const pct=Math.round((it.valor/total)*100);
+      return`<div class="cch-leg-item">
+        <div class="cch-leg-dot" style="background:${cor}"></div>
+        <span>${it.icon} ${it.desc} <span style="color:rgba(255,255,255,.3)">${pct}%</span></span>
+      </div>`;
+    }).join('');
+  }
+
+  // Grid de itens
   const list=document.getElementById('cc-items-list');
   if(!S.ccItems.length){
-    list.innerHTML=`<div class="empty"><div class="empty-ico">🏦</div>
-      <h3>Nenhum item ainda</h3>
-      <p>Adicione itens para compor o saldo da conta corrente.<br>Ex: "Saldo livre R$ 500", "Reserva médica R$ 200"</p></div>`;
+    list.innerHTML=`<div class="cch-empty">
+      <div class="cch-empty-ico">🏦</div>
+      <h3>Nenhum item cadastrado</h3>
+      <p>Adicione itens para compor o saldo da conta corrente.<br>Ex: "Saldo livre R$ 500", "Reserva médica R$ 200"</p>
+    </div>`;
     return;
   }
-  list.innerHTML=`<div class="cc-items-grid">${S.ccItems.map(it=>{
+
+  list.innerHTML=`<div class="cch-grid">${S.ccItems.map((it,i)=>{
     const pct=total>0?Math.round((it.valor/total)*100):0;
-    return`<div class="cc-item">
-      <div class="cc-item-icon" style="background:rgba(0,153,255,.12)">${it.icon}</div>
-      <div class="cc-item-info">
-        <div class="cc-item-desc">${it.desc}</div>
-        <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
-          <div style="flex:1;height:4px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden">
-            <div style="width:${pct}%;height:100%;background:var(--accent2);border-radius:99px"></div>
-          </div>
-          <span class="cc-item-sub">${pct}%</span>
+    const theme=CC_ITEM_THEMES[i%CC_ITEM_THEMES.length];
+    const cor=CC_BAR_COLORS[i%CC_BAR_COLORS.length];
+    return`<div class="cch-item cchi-${theme}">
+      <div class="cch-item-top">
+        <div class="cch-item-icon-wrap">${it.icon}</div>
+        <div class="cch-item-actions">
+          <button class="btn btn-edit btn-sm" onclick="openEditCCItem(${it.id})" style="padding:4px 9px">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="delCCItem(${it.id})" style="padding:4px 9px">✕</button>
         </div>
       </div>
-      <div class="cc-item-val" style="color:var(--accent2)">${fmt(it.valor)}</div>
-      <div style="display:flex;flex-direction:column;gap:5px">
-        <button class="btn btn-edit btn-sm" onclick="openEditCCItem(${it.id})">✏️</button>
-        <button class="btn btn-danger btn-sm" onclick="delCCItem(${it.id})">✕</button>
+      <div class="cch-item-name">${it.desc}</div>
+      <div class="cch-item-amount">${fmt(it.valor)}</div>
+      <div class="cch-item-pct-bar">
+        <div class="cch-item-pct-fill" style="width:${pct}%;background:${cor}"></div>
       </div>
+      <div class="cch-item-pct-label">${pct}% do saldo total</div>
     </div>`;
   }).join('')}</div>`;
 }
@@ -1650,91 +2032,48 @@ const BUILTIN_CATS=[
 ];
 const EMOJI_OPTS=['🐾','🎵','🎨','🏋️','👶','🌿','🍕','☕','🎁','💈','🏖️','🔧','🏥','📦','🎯','💼','🌱','🏦','🛍️','🎪','🧴','🧹','🪴','🐶','🐱','🚀','⚽','🎸','🎬','🍷'];
 
-function allCats(){
-  return[...BUILTIN_CATS,...S.categorias];
-}
+function allCats(){return[...BUILTIN_CATS,...S.categorias];}
+function catNome(val){const all=allCats();const found=all.find(c=>c.emoji===val||c.id===val);return found?found.nome:val;}
+function catEmoji(val){const all=allCats();const found=all.find(c=>c.emoji===val||c.id===val);return found?found.emoji:val;}
 
-// find display label for a stored cat value (emoji key or id)
-function catLabel(val){
-  // stored as emoji string like "🛒"
-  const all=allCats();
-  const found=all.find(c=>c.emoji===val||c.id===val);
-  return found?`${found.emoji} ${found.nome}`:val;
-}
-function catEmoji(val){
-  const all=allCats();
-  const found=all.find(c=>c.emoji===val||c.id===val);
-  return found?found.emoji:val;
-}
-function catNome(val){
-  const all=allCats();
-  const found=all.find(c=>c.emoji===val||c.id===val);
-  return found?found.nome:val;
-}
-
-function populateCatSelects(selCCVal, selODVal){
+function populateCatSelects(selCCVal,selODVal){
   const cats=allCats();
   const opts=cats.map(c=>`<option value="${c.emoji}">${c.emoji} ${c.nome}</option>`).join('');
   ['nd-cat','ed-cat','od-cat','ed-od-cat'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(!el)return;
+    const el=document.getElementById(id);if(!el)return;
     el.innerHTML=opts;
   });
-  if(selCCVal){
-    const el=document.getElementById('ed-cat');
-    if(el)el.value=selCCVal;
-  }
-  if(selODVal){
-    const el=document.getElementById('ed-od-cat');
-    if(el)el.value=selODVal;
-  }
+  if(selCCVal){const el=document.getElementById('ed-cat');if(el)el.value=selCCVal;}
+  if(selODVal){const el=document.getElementById('ed-od-cat');if(el)el.value=selODVal;}
 }
 
-// ── Emoji picker ──
 let selEmoji=EMOJI_OPTS[0];
 function renderEmojiPicker(){
-  const picker=document.getElementById('emoji-picker');
-  if(!picker)return;
+  const picker=document.getElementById('emoji-picker');if(!picker)return;
   picker.innerHTML=EMOJI_OPTS.map(e=>
-    `<div class="emoji-opt${e===selEmoji?' sel-emoji':''}" onclick="pickEmoji('${e}')" title="${e}">${e}</div>`
+    `<div class="emoji-opt${e===selEmoji?' sel-emoji':''}" onclick="pickEmoji('${e}')">${e}</div>`
   ).join('');
   document.getElementById('ncat-emoji').value=selEmoji;
 }
-function pickEmoji(e){
-  selEmoji=e;
-  document.getElementById('ncat-emoji').value=e;
-  renderEmojiPicker();
-}
+function pickEmoji(e){selEmoji=e;document.getElementById('ncat-emoji').value=e;renderEmojiPicker();}
 
 function addCategoria(){
   const nome=document.getElementById('ncat-nome').value.trim();
   const emoji=document.getElementById('ncat-emoji').value||'💰';
   if(!nome){toast('⚠️ Informe o nome da categoria');return;}
-  // check duplicate
-  if(allCats().some(c=>c.nome.toLowerCase()===nome.toLowerCase())){
-    toast('⚠️ Já existe uma categoria com esse nome');return;
-  }
+  if(allCats().some(c=>c.nome.toLowerCase()===nome.toLowerCase())){toast('⚠️ Já existe uma categoria com esse nome');return;}
   S.categorias.push({id:'c-'+Date.now(),emoji,nome,builtin:false});
-  save();
-  document.getElementById('ncat-nome').value='';
-  selEmoji=EMOJI_OPTS[0];
-  renderEmojiPicker();
-  renderCatsList();
-  populateCatSelects();
-  toast('✅ Categoria "'+nome+'" adicionada!');
+  save();document.getElementById('ncat-nome').value='';selEmoji=EMOJI_OPTS[0];
+  renderEmojiPicker();renderCatsList();populateCatSelects();toast('✅ Categoria "'+nome+'" adicionada!');
 }
-
 function delCategoria(id){
-  if(!confirm('Remover esta categoria? Despesas já cadastradas com ela não serão afetadas.'))return;
+  if(!confirm('Remover esta categoria?'))return;
   S.categorias=S.categorias.filter(c=>c.id!==id);
   save();renderCatsList();populateCatSelects();toast('🗑️ Categoria removida');
 }
-
 function renderCatsList(){
-  const el=document.getElementById('cats-list');
-  if(!el)return;
-  const cats=allCats();
-  el.innerHTML=cats.map(c=>`
+  const el=document.getElementById('cats-list');if(!el)return;
+  el.innerHTML=allCats().map(c=>`
     <div class="cat-list-item">
       <div class="cat-list-item-icon">${c.emoji}</div>
       <div class="cat-list-item-name">${c.nome}</div>
@@ -1743,9 +2082,6 @@ function renderCatsList(){
     </div>`).join('');
 }
 
-// ── Abrir modal categorias ──
-const _origOpenModal=openModal;
-// override to render emoji picker when opening cats modal
 function openModal(id){
   document.getElementById(id).classList.add('open');
   if(id==='m-cats'){renderEmojiPicker();renderCatsList();}
@@ -1754,49 +2090,37 @@ function openModal(id){
 // ════════════════════════════════════════════
 //  RESUMO POR CATEGORIA
 // ════════════════════════════════════════════
-// palette for category bars (cycles)
 const CAT_COLORS=['#00e5a0','#0099ff','#8b5cf6','#f59e0b','#ec4899','#ef4444','#10b981','#06b6d4','#f97316','#a78bfa'];
 
 function renderCatResumo(){
-  const el=document.getElementById('cat-resumo');
-  if(!el)return;
-
-  // aggregate by emoji key
+  const el=document.getElementById('cat-resumo');if(!el)return;
   const map={};
-
-  // cartão despesas
   S.cartoes.forEach(c=>{
     despesasAtivas(c,S.cy,S.cm).forEach(d=>{
+      const exib=getDespExibicao(d,S.cy,S.cm);
       const key=d.cat||'💰';
-      map[key]=(map[key]||0)+dValMesCC(d,S.cy,S.cm);
+      map[key]=(map[key]||0)+exib.valor;
     });
   });
-
-  // outras despesas
   odAtivas().forEach(d=>{
     const key=d.cat||'💰';
     map[key]=(map[key]||0)+dValMesOD(d,S.cy,S.cm);
   });
-
   const entries=Object.entries(map).sort((a,b)=>b[1]-a[1]);
   const total=entries.reduce((s,[,v])=>s+v,0);
-
   if(!entries.length){
     el.innerHTML=`<div class="empty" style="padding:20px 0">
       <div class="empty-ico">🏷️</div><h3>Nenhuma despesa em ${lbl(ck())}</h3>
       <p>As categorias aparecerão aqui quando houver despesas no mês</p></div>`;
     return;
   }
-
   el.innerHTML=`<div class="cat-grid">${entries.map(([key,val],i)=>{
     const pct=total>0?Math.round((val/total)*100):0;
     const cor=CAT_COLORS[i%CAT_COLORS.length];
-    const nome=catNome(key);
-    const emoji=catEmoji(key);
     return`<div class="cat-row">
-      <div class="cat-icon" style="background:${cor}22">${emoji}</div>
+      <div class="cat-icon" style="background:${cor}22">${catEmoji(key)}</div>
       <div class="cat-info">
-        <div class="cat-name">${nome}</div>
+        <div class="cat-name">${catNome(key)}</div>
         <div class="cat-bar-wrap"><div class="cat-bar-fill" style="width:${pct}%;background:${cor}"></div></div>
         <div class="cat-meta">${pct}% do total de despesas</div>
       </div>
@@ -1814,7 +2138,7 @@ function renderCatResumo(){
 }
 
 // ════════════════════════════════════════════
-//  RENDER ALL (GF)
+//  RENDER ALL
 // ════════════════════════════════════════════
 function renderAll(){updateMB();renderCartoes();renderDP();renderPanorama();renderCatResumo();renderHistorico();}
 
