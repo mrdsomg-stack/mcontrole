@@ -250,201 +250,85 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
    CONTA CORRENTE — REDESIGN
 ══════════════════════════════ */
 
-/* módulo principal */
-#mod-cc{
-  background:var(--bg);
-  min-height:100vh;
-}
-#mod-cc main{
-  max-width:840px;
-  margin:0 auto;
-  padding:32px 22px 100px;
-}
+#mod-cc{background:var(--bg);min-height:100vh;}
+#mod-cc main{max-width:840px;margin:0 auto;padding:32px 22px 100px;}
 
-/* hero de saldo repaginado */
 .cch-hero{
-  position:relative;
-  overflow:hidden;
-  border-radius:24px;
-  padding:36px 36px 32px;
-  margin-bottom:32px;
+  position:relative;overflow:hidden;border-radius:24px;padding:36px 36px 32px;margin-bottom:32px;
   background:linear-gradient(135deg,#0d1e3a 0%,#0b1a2e 60%,#0a1628 100%);
   border:1px solid rgba(0,153,255,.18);
 }
-.cch-hero::before{
-  content:'';position:absolute;
-  width:400px;height:400px;border-radius:50%;
-  top:-120px;right:-80px;
-  background:radial-gradient(circle,rgba(0,153,255,.18) 0%,transparent 70%);
-  pointer-events:none;
-}
-.cch-hero::after{
-  content:'';position:absolute;
-  width:280px;height:280px;border-radius:50%;
-  bottom:-80px;left:-40px;
-  background:radial-gradient(circle,rgba(139,92,246,.14) 0%,transparent 70%);
-  pointer-events:none;
-}
+.cch-hero::before{content:'';position:absolute;width:400px;height:400px;border-radius:50%;top:-120px;right:-80px;
+  background:radial-gradient(circle,rgba(0,153,255,.18) 0%,transparent 70%);pointer-events:none;}
+.cch-hero::after{content:'';position:absolute;width:280px;height:280px;border-radius:50%;bottom:-80px;left:-40px;
+  background:radial-gradient(circle,rgba(139,92,246,.14) 0%,transparent 70%);pointer-events:none;}
 .cch-hero-inner{position:relative;z-index:1;}
-.cch-label{
-  font-size:.72rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
-  color:rgba(0,153,255,.8);margin-bottom:10px;
-  display:flex;align-items:center;gap:6px;
-}
-.cch-label::before{
-  content:'';display:inline-block;width:6px;height:6px;border-radius:50%;
-  background:#0099ff;box-shadow:0 0 8px #0099ff;
-}
-.cch-amount{
-  font-family:'Syne',sans-serif;font-weight:800;font-size:3.2rem;
-  letter-spacing:-2px;line-height:1;
+.cch-label{font-size:.72rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:rgba(0,153,255,.8);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.cch-label::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:#0099ff;box-shadow:0 0 8px #0099ff;}
+.cch-amount{font-family:'Syne',sans-serif;font-weight:800;font-size:3.2rem;letter-spacing:-2px;line-height:1;
   background:linear-gradient(135deg,#fff 30%,rgba(0,153,255,.7));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  margin-bottom:8px;
-}
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
 .cch-meta{font-size:.82rem;color:rgba(255,255,255,.4);margin-bottom:24px;}
 
-/* barra visual de composição */
 .cch-bar-section{margin-bottom:22px;}
-.cch-bar-label{
-  display:flex;justify-content:space-between;
-  font-size:.72rem;color:rgba(255,255,255,.4);
-  margin-bottom:7px;
-}
-.cch-bar-track{
-  height:8px;border-radius:99px;
-  background:rgba(255,255,255,.07);
-  overflow:hidden;
-  display:flex;
-}
+.cch-bar-label{display:flex;justify-content:space-between;font-size:.72rem;color:rgba(255,255,255,.4);margin-bottom:7px;}
+.cch-bar-track{height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden;display:flex;}
 .cch-bar-seg{height:100%;transition:width .6s ease;}
-
-/* mini sumários abaixo da barra */
-.cch-legend{
-  display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;
-}
-.cch-leg-item{
-  display:flex;align-items:center;gap:6px;
-  font-size:.74rem;color:rgba(255,255,255,.55);
-}
+.cch-legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;}
+.cch-leg-item{display:flex;align-items:center;gap:6px;font-size:.74rem;color:rgba(255,255,255,.55);}
 .cch-leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 
-/* grid de itens */
-.cch-items-header{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:16px;
-}
-.cch-items-title{
-  font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;
-}
-.cch-items-count{
-  font-size:.78rem;color:var(--text2);
-  background:var(--surface2);border:1px solid var(--border);
-  padding:3px 10px;border-radius:99px;
-}
+.cch-items-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.cch-items-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;}
+.cch-items-count{font-size:.78rem;color:var(--text2);background:var(--surface2);border:1px solid var(--border);
+  padding:3px 10px;border-radius:99px;}
 
-.cch-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
-  gap:12px;
-}
+.cch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;}
 
-.cch-item{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:18px;
-  transition:all .22s;
-  position:relative;
-  overflow:hidden;
-  cursor:default;
-}
-.cch-item::after{
-  content:'';position:absolute;
-  inset:0;border-radius:16px;
-  opacity:0;transition:opacity .22s;
-  background:linear-gradient(135deg,transparent,rgba(255,255,255,.025));
-}
+.cch-item{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;
+  transition:all .22s;position:relative;overflow:hidden;cursor:default;}
+.cch-item::after{content:'';position:absolute;inset:0;border-radius:16px;opacity:0;transition:opacity .22s;
+  background:linear-gradient(135deg,transparent,rgba(255,255,255,.025));}
 .cch-item:hover{border-color:rgba(255,255,255,.12);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3);}
 .cch-item:hover::after{opacity:1;}
 
-.cch-item-top{
-  display:flex;align-items:flex-start;justify-content:space-between;
-  margin-bottom:14px;
-}
-.cch-item-icon-wrap{
-  width:42px;height:42px;border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.2rem;
-  background:rgba(0,153,255,.1);
-  border:1px solid rgba(0,153,255,.15);
-  flex-shrink:0;
-}
+.cch-item-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+.cch-item-icon-wrap{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;
+  justify-content:center;font-size:1.2rem;background:rgba(0,153,255,.1);border:1px solid rgba(0,153,255,.15);flex-shrink:0;}
 .cch-item-actions{display:flex;gap:5px;}
-
 .cch-item-name{font-weight:500;font-size:.92rem;margin-bottom:4px;}
-.cch-item-amount{
-  font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;letter-spacing:-.5px;
-  color:var(--accent2);margin-bottom:10px;
-}
+.cch-item-amount{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;letter-spacing:-.5px;
+  color:var(--accent2);}
 
-/* mini barra de proporção dentro do card */
-.cch-item-pct-bar{
-  height:3px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;
-  margin-bottom:6px;
-}
-.cch-item-pct-fill{height:100%;border-radius:99px;transition:width .6s ease;}
-.cch-item-pct-label{font-size:.72rem;color:var(--text2);}
-
-/* palette de cores para itens */
+/* palettes */
 .cchi-blue .cch-item-icon-wrap{background:rgba(0,153,255,.1);border-color:rgba(0,153,255,.2);}
 .cchi-blue .cch-item-amount{color:#0099ff;}
-.cchi-blue .cch-item-pct-fill{background:#0099ff;}
-
 .cchi-green .cch-item-icon-wrap{background:rgba(0,229,160,.1);border-color:rgba(0,229,160,.2);}
 .cchi-green .cch-item-amount{color:#00e5a0;}
-.cchi-green .cch-item-pct-fill{background:#00e5a0;}
-
 .cchi-purple .cch-item-icon-wrap{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.2);}
 .cchi-purple .cch-item-amount{color:#a78bfa;}
-.cchi-purple .cch-item-pct-fill{background:#a78bfa;}
-
 .cchi-orange .cch-item-icon-wrap{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.2);}
 .cchi-orange .cch-item-amount{color:#f59e0b;}
-.cchi-orange .cch-item-pct-fill{background:#f59e0b;}
-
 .cchi-pink .cch-item-icon-wrap{background:rgba(236,72,153,.1);border-color:rgba(236,72,153,.2);}
 .cchi-pink .cch-item-amount{color:#ec4899;}
-.cchi-pink .cch-item-pct-fill{background:#ec4899;}
-
 .cchi-teal .cch-item-icon-wrap{background:rgba(20,184,166,.1);border-color:rgba(20,184,166,.2);}
 .cchi-teal .cch-item-amount{color:#2dd4bf;}
-.cchi-teal .cch-item-pct-fill{background:#2dd4bf;}
-
 .cchi-red .cch-item-icon-wrap{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.2);}
 .cchi-red .cch-item-amount{color:#f87171;}
-.cchi-red .cch-item-pct-fill{background:#f87171;}
-
 .cchi-gray .cch-item-icon-wrap{background:rgba(138,154,181,.1);border-color:rgba(138,154,181,.2);}
 .cchi-gray .cch-item-amount{color:var(--text2);}
-.cchi-gray .cch-item-pct-fill{background:var(--text2);}
 
-/* vazio */
-.cch-empty{
-  text-align:center;padding:60px 18px;
-  border:1px dashed rgba(0,153,255,.2);border-radius:16px;
-}
+.cch-empty{text-align:center;padding:60px 18px;border:1px dashed rgba(0,153,255,.2);border-radius:16px;}
 .cch-empty-ico{font-size:2.5rem;margin-bottom:12px;opacity:.4;}
 .cch-empty h3{font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:5px;}
 .cch-empty p{font-size:.84rem;color:var(--text2);}
 
 /* ── ANTECIPAR PARCELA ── */
 .ant-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:10px 0;}
-.ant-par{
-  padding:10px 8px;border-radius:10px;border:1px solid var(--border);
-  background:var(--surface2);cursor:pointer;transition:all .15s;
-  text-align:center;
-}
+.ant-par{padding:10px 8px;border-radius:10px;border:1px solid var(--border);
+  background:var(--surface2);cursor:pointer;transition:all .15s;text-align:center;}
 .ant-par:hover{border-color:rgba(139,92,246,.4);background:rgba(139,92,246,.06);}
 .ant-par.sel-ant{border-color:#8b5cf6;background:rgba(139,92,246,.12);}
 .ant-par.ja-pago{opacity:.4;cursor:not-allowed;background:rgba(0,229,160,.04);border-color:rgba(0,229,160,.2);}
@@ -614,13 +498,11 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 </header>
 
 <main>
-  <!-- HERO SALDO -->
   <div class="cch-hero">
     <div class="cch-hero-inner">
       <div class="cch-label">Saldo total da conta</div>
       <div class="cch-amount" id="cc-saldo-total">R$ 0,00</div>
       <div class="cch-meta" id="cc-saldo-meta">Nenhum item cadastrado</div>
-
       <div class="cch-bar-section">
         <div class="cch-bar-label">
           <span>Composição</span>
@@ -632,7 +514,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
     </div>
   </div>
 
-  <!-- LISTA DE ITENS -->
   <div class="cch-items-header">
     <div class="cch-items-title">Composição do saldo</div>
     <div class="cch-items-count" id="cc-items-count">0 itens</div>
@@ -795,16 +676,17 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 <!-- ANTECIPAR PARCELA -->
 <div class="mo" id="m-ant">
   <div class="modal" style="max-width:540px">
-    <div class="m-title">⚡ Antecipar Parcela</div>
+    <div class="m-title">⚡ Antecipar Parcela(s)</div>
     <div id="ant-info" style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:16px;font-size:.85rem;">—</div>
-    <div style="font-size:.75rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;">
-      Selecione qual parcela antecipar para <strong id="ant-mes-dest" style="color:var(--accent4);text-transform:none;font-size:.82rem;font-weight:700"></strong>:
+    <div style="font-size:.75rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;">
+      Selecione as parcelas para antecipar para <strong id="ant-mes-dest" style="color:var(--accent4);text-transform:none;font-size:.82rem;font-weight:700"></strong>:
     </div>
+    <div style="font-size:.74rem;color:var(--text2);margin-bottom:10px;">Clique em uma parcela para selecionar/desselecionar. Pode selecionar várias.</div>
     <div id="ant-parcelas-grid" class="ant-grid"></div>
     <div id="ant-resumo" style="display:none;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:10px;padding:13px;margin-top:12px;font-size:.84rem;"></div>
     <div class="m-footer">
       <button class="btn btn-secondary" onclick="closeModal('m-ant')">Cancelar</button>
-      <button class="btn btn-primary" id="ant-confirm-btn" onclick="confirmarAntecipacao()" style="background:#8b5cf6;color:#fff">⚡ Confirmar antecipação</button>
+      <button class="btn btn-primary" id="ant-confirm-btn" onclick="confirmarAntecipacao()" style="background:#8b5cf6;color:#fff" disabled>⚡ Confirmar antecipação</button>
     </div>
   </div>
 </div>
@@ -1020,10 +902,10 @@ let S={
   ecColor:'green',
   cy:NOW.getFullYear(),
   cm:NOW.getMonth(),
-  // antecipacao state
+  // antecipacao state — array para multi-seleção
   antCid:null,
   antDid:null,
-  antParSel:null
+  antParSels:[]
 };
 
 function load(){
@@ -1033,10 +915,11 @@ function load(){
   if(!S.cartoes)S.cartoes=[];
   if(!S.months)S.months={};
   if(!S.categorias)S.categorias=[];
+  if(!S.antParSels)S.antParSels=[];
   S.cartoes.forEach(c=>{
     (c.despesas||[]).forEach(d=>{
       if(!d.overrides)d.overrides={};
-      if(!d.antecipadas)d.antecipadas={}; // {mesOriginalKey: mesAntKey}
+      if(!d.antecipadas)d.antecipadas={};
     });
   });
   S.outrasDespesas.forEach(d=>{
@@ -1071,12 +954,9 @@ function dValMesOD(d,y,m){
 }
 
 // ── Verificar se uma parcela está antecipada ──
-// d.antecipadas = { "YYYY-MM_originalParcIdx": "YYYY-MM_antecipatedToMonth" }
-// Mais simples: armazenar quais números de parcela foram antecipados para qual mês
-// d.antecipadas = { parcelaNum(1-based): mesKeyAntecipado }
 function parcelaAntecipada(d, parNum){
   if(!d.antecipadas)return null;
-  return d.antecipadas[parNum]||null; // retorna o mês-chave para onde foi antecipada, ou null
+  return d.antecipadas[parNum]||null;
 }
 
 // ── OD helpers ──
@@ -1099,9 +979,6 @@ function numParcelaOD(d){
 }
 
 // ── CC card helpers (despesas de cartão) ──
-// Uma despesa aparece num mês se:
-//  - É a parcela original e NÃO foi antecipada desse mês
-//  - OU foi antecipada PARA esse mês (de outro mês)
 function despesasAtivas(cartao,y,m){
   if(!cartao.despesas)return[];
   const alvo=absM(y,m);
@@ -1109,18 +986,16 @@ function despesasAtivas(cartao,y,m){
   return cartao.despesas.filter(d=>{
     const ini=absM(d.anoInicio,d.mesInicio);
     const fim=ini+d.parcelas-1;
-    if(alvo<ini||alvo>fim)return false; // fora do range base... mas pode ter antecipação
-
-    // Verificar se esse alvo é uma parcela original que foi antecipada (sumir do mês original)
-    const parNum=alvo-ini+1; // 1-based
+    if(alvo<ini||alvo>fim)return false;
+    // Parcela original que foi antecipada para outro mês — não aparece aqui
+    const parNum=alvo-ini+1;
     const antDest=parcelaAntecipada(d,parNum);
-    if(antDest){
-      // essa parcela foi antecipada para outro mês — não aparece aqui
+    if(antDest&&antDest!==mesKey){
       return false;
     }
     return true;
   }).concat(
-    // Adicionar despesas cujas parcelas FORAM antecipadas para este mês
+    // Parcelas de outras despesas antecipadas para este mês
     cartao.despesas.filter(d=>{
       if(!d.antecipadas)return false;
       const ini=absM(d.anoInicio,d.mesInicio);
@@ -1129,14 +1004,12 @@ function despesasAtivas(cartao,y,m){
         const parIdx=parseInt(parNum)-1;
         const parOriginalAbs=ini+parIdx;
         const parOriginalMesKey=mk(Math.floor(parOriginalAbs/12),parOriginalAbs%12);
-        // só inclui se a parcela original não seria neste mês (evitar duplicata)
         return parOriginalMesKey!==mesKey;
       });
     })
   );
 }
 
-// helper: pega informações de exibição de uma despesa considerando antecipações
 function getDespExibicao(d, y, m){
   const mesKey=mk(y,m);
   const alvo=absM(y,m);
@@ -1151,7 +1024,6 @@ function getDespExibicao(d, y, m){
         const parOriginalAbs=ini+parIdx;
         const parOriginalMesKey=mk(Math.floor(parOriginalAbs/12),parOriginalAbs%12);
         if(parOriginalMesKey!==mesKey){
-          // é parcela antecipada de outro mês
           return{
             parNum,
             antecipada:true,
@@ -1163,7 +1035,6 @@ function getDespExibicao(d, y, m){
     }
   }
 
-  // parcela normal
   const parNum=alvo-ini+1;
   return{
     parNum,
@@ -1233,7 +1104,10 @@ function jumpToMonth(k){
 //  UTILS
 // ════════════════════════════════════════════
 function fmt(v){return'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function openModal(id){document.getElementById(id).classList.add('open');}
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  if(id==='m-cats'){renderEmojiPicker();renderCatsList();}
+}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
@@ -1388,12 +1262,9 @@ function renderDP(){
     if(d.overrides&&d.overrides[ck()]!==undefined&&!exib.antecipada){
       badges+=`<span class="ovr-badge">⚡ valor personalizado</span>`;
     }
-    // verificar se tem alguma antecipação aplicada à despesa
-    const temAntecipacao=d.antecipadas&&Object.keys(d.antecipadas).length>0;
 
-    // botão antecipar só para parceladas com mais de 1 parcela restante
     const parAtual=np;
-    const parRestantes=d.parcelas-parAtual; // quantas após a atual
+    const parRestantes=d.parcelas-parAtual;
     const podeAntecipar=d.parcelas>1&&parRestantes>0;
 
     return`<div class="ei">
@@ -1408,7 +1279,7 @@ function renderDP(){
       </div>
       <div style="display:flex;flex-direction:column;gap:5px">
         <button class="btn btn-edit btn-sm" onclick="openEditDesp(${c.id},${d.id})">✏️</button>
-        ${podeAntecipar?`<button class="btn btn-warn btn-sm" onclick="openAntecipar(${c.id},${d.id})" title="Antecipar parcela">⚡</button>`:''}
+        ${podeAntecipar?`<button class="btn btn-warn btn-sm" onclick="openAntecipar(${c.id},${d.id})" title="Antecipar parcela(s)">⚡</button>`:''}
         <button class="btn btn-danger btn-sm" onclick="delDesp(${c.id},${d.id})">✕</button>
       </div>
     </div>`;
@@ -1416,15 +1287,14 @@ function renderDP(){
 }
 
 // ════════════════════════════════════════════
-//  ANTECIPAR PARCELA
+//  ANTECIPAR PARCELA(S) — MULTI-SELEÇÃO
 // ════════════════════════════════════════════
 function openAntecipar(cid, did){
   const c=S.cartoes.find(c=>c.id===cid);if(!c)return;
   const d=c.despesas.find(d=>d.id===did);if(!d)return;
   if(!d.antecipadas)d.antecipadas={};
-  S.antCid=cid;S.antDid=did;S.antParSel=null;
+  S.antCid=cid;S.antDid=did;S.antParSels=[];
 
-  // info da despesa
   const ini=absM(d.anoInicio,d.mesInicio);
   const exibAtual=getDespExibicao(d,S.cy,S.cm);
   const parAtual=exibAtual.parNum;
@@ -1435,7 +1305,6 @@ function openAntecipar(cid, did){
 
   document.getElementById('ant-mes-dest').textContent=lbl(ck());
 
-  // montar grade de parcelas
   const grid=document.getElementById('ant-parcelas-grid');
   let html='';
   for(let i=1;i<=d.parcelas;i++){
@@ -1448,7 +1317,7 @@ function openAntecipar(cid, did){
     const jaAntecipada=!!antDest;
     const valorPar=d.overrides&&d.overrides[parKey]!==undefined?d.overrides[parKey]:d.valor/d.parcelas;
 
-    // pode selecionar? só parcelas futuras não antecipadas e não é a do mês atual (já está aqui)
+    // Pode selecionar: parcelas futuras que ainda não foram antecipadas
     const podeAntecipar=!jaPago&&!esteMes&&!jaAntecipada;
 
     let cls='ant-par';
@@ -1472,39 +1341,65 @@ function openAntecipar(cid, did){
   openModal('m-ant');
 }
 
-function selAntPar(el,parNum,parKey,valor){
-  document.querySelectorAll('.ant-par').forEach(p=>p.classList.remove('sel-ant'));
-  el.classList.add('sel-ant');
-  S.antParSel={parNum,parKey,valor};
+function selAntPar(el, parNum, parKey, valor){
+  // Toggle: clica de novo para desselecionar
+  const idx=S.antParSels.findIndex(p=>p.parNum===parNum);
+  if(idx>=0){
+    S.antParSels.splice(idx,1);
+    el.classList.remove('sel-ant');
+  } else {
+    S.antParSels.push({parNum,parKey,valor});
+    el.classList.add('sel-ant');
+  }
 
   const resumo=document.getElementById('ant-resumo');
+  const btn=document.getElementById('ant-confirm-btn');
+
+  if(!S.antParSels.length){
+    resumo.style.display='none';
+    btn.disabled=true;
+    return;
+  }
+
+  const sorted=[...S.antParSels].sort((a,b)=>a.parNum-b.parNum);
+  const totalAnt=sorted.reduce((s,p)=>s+p.valor,0);
+
   resumo.style.display='block';
   resumo.innerHTML=`
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
       <span style="font-size:1.1rem">⚡</span>
-      <strong>Resumo da antecipação</strong>
+      <strong>${sorted.length} parcela(s) selecionada(s)</strong>
     </div>
-    <div style="font-size:.81rem;color:var(--text2);line-height:1.6">
-      A <strong style="color:var(--text)">${parNum}ª parcela</strong> (${lbl(parKey)}) de <strong style="color:var(--accent4)">${fmt(valor)}</strong>
-      será cobrada em <strong style="color:var(--accent)">${lbl(ck())}</strong> junto com a fatura deste mês.<br>
-      <span style="color:rgba(255,255,255,.4);font-size:.75rem">O mês original (${lbl(parKey)}) não terá essa cobrança.</span>
+    ${sorted.map(p=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;
+      font-size:.81rem;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+      <span><strong style="color:var(--text)">${p.parNum}ª parcela</strong>
+        <span style="color:var(--text2);font-size:.74rem"> · ${lbl(p.parKey)}</span></span>
+      <span style="color:var(--accent4);font-weight:600">${fmt(p.valor)}</span>
+    </div>`).join('')}
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:6px">
+      <span style="font-size:.78rem;color:rgba(255,255,255,.4)">Todas cobradas em <strong style="color:var(--accent)">${lbl(ck())}</strong></span>
+      <strong style="color:var(--accent4)">${fmt(totalAnt)}</strong>
     </div>`;
-  document.getElementById('ant-confirm-btn').disabled=false;
+  btn.disabled=false;
 }
 
 function confirmarAntecipacao(){
-  if(!S.antParSel){toast('⚠️ Selecione uma parcela');return;}
+  if(!S.antParSels.length){toast('⚠️ Selecione ao menos uma parcela');return;}
   const c=S.cartoes.find(c=>c.id===S.antCid);if(!c)return;
   const d=c.despesas.find(d=>d.id===S.antDid);if(!d)return;
   if(!d.antecipadas)d.antecipadas={};
 
-  // registrar: parcela parNum vai para ck() (mês atual)
-  d.antecipadas[S.antParSel.parNum]=ck();
+  // Registrar todas as parcelas selecionadas
+  S.antParSels.forEach(p=>{
+    d.antecipadas[p.parNum]=ck();
+  });
 
   save();closeModal('m-ant');
   renderAll();
-  toast(`⚡ Parcela ${S.antParSel.parNum} antecipada para ${lbl(ck())}!`);
-  S.antParSel=null;
+  const nums=[...S.antParSels].sort((a,b)=>a.parNum-b.parNum).map(p=>p.parNum+'ª').join(', ');
+  toast(`⚡ Parcela(s) ${nums} antecipada(s) para ${lbl(ck())}!`);
+  S.antParSels=[];
 }
 
 // ════════════════════════════════════════════
@@ -1906,7 +1801,6 @@ function renderHistorico(){
 //  CONTA CORRENTE — REDESIGN
 // ════════════════════════════════════════════
 
-// Paleta para os cards de itens — cicla pelos estilos
 const CC_ITEM_THEMES=['blue','green','purple','orange','pink','teal','red','gray'];
 const CC_BAR_COLORS=['#0099ff','#00e5a0','#a78bfa','#f59e0b','#ec4899','#2dd4bf','#f87171','#8a9ab5'];
 
@@ -1948,14 +1842,10 @@ function delCCItem(id){
 function renderCC(){
   const total=S.ccItems.reduce((s,i)=>s+i.valor,0);
 
-  // Saldo total
-  const totalEl=document.getElementById('cc-saldo-total');
-  totalEl.textContent=fmt(total);
-
+  document.getElementById('cc-saldo-total').textContent=fmt(total);
   document.getElementById('cc-saldo-meta').textContent=
     S.ccItems.length?`${S.ccItems.length} item(s) · atualizado agora`:'Nenhum item cadastrado';
 
-  // Barra de composição
   const barTrack=document.getElementById('cc-bar-track');
   const legend=document.getElementById('cc-legend');
   document.getElementById('cc-bar-total-label').textContent=total>0?fmt(total):'—';
@@ -1980,7 +1870,7 @@ function renderCC(){
     }).join('');
   }
 
-  // Grid de itens
+  // Grid de itens — SEM barra de porcentagem nos cards
   const list=document.getElementById('cc-items-list');
   if(!S.ccItems.length){
     list.innerHTML=`<div class="cch-empty">
@@ -1992,9 +1882,7 @@ function renderCC(){
   }
 
   list.innerHTML=`<div class="cch-grid">${S.ccItems.map((it,i)=>{
-    const pct=total>0?Math.round((it.valor/total)*100):0;
     const theme=CC_ITEM_THEMES[i%CC_ITEM_THEMES.length];
-    const cor=CC_BAR_COLORS[i%CC_BAR_COLORS.length];
     return`<div class="cch-item cchi-${theme}">
       <div class="cch-item-top">
         <div class="cch-item-icon-wrap">${it.icon}</div>
@@ -2005,10 +1893,6 @@ function renderCC(){
       </div>
       <div class="cch-item-name">${it.desc}</div>
       <div class="cch-item-amount">${fmt(it.valor)}</div>
-      <div class="cch-item-pct-bar">
-        <div class="cch-item-pct-fill" style="width:${pct}%;background:${cor}"></div>
-      </div>
-      <div class="cch-item-pct-label">${pct}% do saldo total</div>
     </div>`;
   }).join('')}</div>`;
 }
@@ -2080,11 +1964,6 @@ function renderCatsList(){
       <span class="cat-list-item-src">${c.builtin?'padrão':'custom'}</span>
       ${!c.builtin?`<button class="btn btn-danger btn-sm" onclick="delCategoria('${c.id}')">✕</button>`:'<div style="width:52px"></div>'}
     </div>`).join('');
-}
-
-function openModal(id){
-  document.getElementById(id).classList.add('open');
-  if(id==='m-cats'){renderEmojiPicker();renderCatsList();}
 }
 
 // ════════════════════════════════════════════
