@@ -121,7 +121,7 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 
 /* ── COLOR PICKER ── */
 .cp{display:flex;gap:9px;flex-wrap:wrap;}
-.co{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;}
+.co{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15px;}
 .co.sel{border-color:white;transform:scale(1.15);}
 
 /* ── SCOPE SELECTOR ── */
@@ -270,15 +270,7 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .cch-amount{font-family:'Syne',sans-serif;font-weight:800;font-size:3.2rem;letter-spacing:-2px;line-height:1;
   background:linear-gradient(135deg,#fff 30%,rgba(0,153,255,.7));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
-.cch-meta{font-size:.82rem;color:rgba(255,255,255,.4);margin-bottom:24px;}
-
-.cch-bar-section{margin-bottom:22px;}
-.cch-bar-label{display:flex;justify-content:space-between;font-size:.72rem;color:rgba(255,255,255,.4);margin-bottom:7px;}
-.cch-bar-track{height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden;display:flex;}
-.cch-bar-seg{height:100%;transition:width .6s ease;}
-.cch-legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;}
-.cch-leg-item{display:flex;align-items:center;gap:6px;font-size:.74rem;color:rgba(255,255,255,.55);}
-.cch-leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.cch-meta{font-size:.82rem;color:rgba(255,255,255,.4);}
 
 .cch-items-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .cch-items-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;}
@@ -498,19 +490,12 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 </header>
 
 <main>
+  <!-- HERO SIMPLIFICADO: apenas saldo total, sem seção de composição -->
   <div class="cch-hero">
     <div class="cch-hero-inner">
       <div class="cch-label">Saldo total da conta</div>
       <div class="cch-amount" id="cc-saldo-total">R$ 0,00</div>
       <div class="cch-meta" id="cc-saldo-meta">Nenhum item cadastrado</div>
-      <div class="cch-bar-section">
-        <div class="cch-bar-label">
-          <span>Composição</span>
-          <span id="cc-bar-total-label">—</span>
-        </div>
-        <div class="cch-bar-track" id="cc-bar-track"></div>
-        <div class="cch-legend" id="cc-legend"></div>
-      </div>
     </div>
   </div>
 
@@ -902,7 +887,6 @@ let S={
   ecColor:'green',
   cy:NOW.getFullYear(),
   cm:NOW.getMonth(),
-  // antecipacao state — array para multi-seleção
   antCid:null,
   antDid:null,
   antParSels:[]
@@ -941,7 +925,6 @@ function mdata(y,m){
 function cur(){return mdata(S.cy,S.cm);}
 function ck(){return mk(S.cy,S.cm);}
 
-// ── valor efetivo de uma despesa num dado mês (cartão) ──
 function dValMesCC(d,y,m){
   const key=mk(y,m);
   if(d.overrides&&d.overrides[key]!==undefined)return d.overrides[key];
@@ -953,13 +936,11 @@ function dValMesOD(d,y,m){
   return d.valor;
 }
 
-// ── Verificar se uma parcela está antecipada ──
-function parcelaAntecipada(d, parNum){
+function parcelaAntecipada(d,parNum){
   if(!d.antecipadas)return null;
   return d.antecipadas[parNum]||null;
 }
 
-// ── OD helpers ──
 function odAtivas(y,m){
   y=y??S.cy;m=m??S.cm;
   const alvo=absM(y,m);
@@ -978,7 +959,6 @@ function numParcelaOD(d){
   return absM(S.cy,S.cm)-absM(d.anoInicio,d.mesInicio)+1;
 }
 
-// ── CC card helpers (despesas de cartão) ──
 function despesasAtivas(cartao,y,m){
   if(!cartao.despesas)return[];
   const alvo=absM(y,m);
@@ -987,15 +967,11 @@ function despesasAtivas(cartao,y,m){
     const ini=absM(d.anoInicio,d.mesInicio);
     const fim=ini+d.parcelas-1;
     if(alvo<ini||alvo>fim)return false;
-    // Parcela original que foi antecipada para outro mês — não aparece aqui
     const parNum=alvo-ini+1;
     const antDest=parcelaAntecipada(d,parNum);
-    if(antDest&&antDest!==mesKey){
-      return false;
-    }
+    if(antDest&&antDest!==mesKey){return false;}
     return true;
   }).concat(
-    // Parcelas de outras despesas antecipadas para este mês
     cartao.despesas.filter(d=>{
       if(!d.antecipadas)return false;
       const ini=absM(d.anoInicio,d.mesInicio);
@@ -1010,12 +986,10 @@ function despesasAtivas(cartao,y,m){
   );
 }
 
-function getDespExibicao(d, y, m){
+function getDespExibicao(d,y,m){
   const mesKey=mk(y,m);
   const alvo=absM(y,m);
   const ini=absM(d.anoInicio,d.mesInicio);
-
-  // verificar se é uma parcela antecipada para este mês
   if(d.antecipadas){
     for(const[parNumStr,destKey] of Object.entries(d.antecipadas)){
       if(destKey===mesKey){
@@ -1024,24 +998,14 @@ function getDespExibicao(d, y, m){
         const parOriginalAbs=ini+parIdx;
         const parOriginalMesKey=mk(Math.floor(parOriginalAbs/12),parOriginalAbs%12);
         if(parOriginalMesKey!==mesKey){
-          return{
-            parNum,
-            antecipada:true,
-            antOrigem:parOriginalMesKey,
-            valor:d.overrides&&d.overrides[parOriginalMesKey]!==undefined?d.overrides[parOriginalMesKey]:d.valor/d.parcelas
-          };
+          return{parNum,antecipada:true,antOrigem:parOriginalMesKey,
+            valor:d.overrides&&d.overrides[parOriginalMesKey]!==undefined?d.overrides[parOriginalMesKey]:d.valor/d.parcelas};
         }
       }
     }
   }
-
   const parNum=alvo-ini+1;
-  return{
-    parNum,
-    antecipada:false,
-    antOrigem:null,
-    valor:dValMesCC(d,y,m)
-  };
+  return{parNum,antecipada:false,antOrigem:null,valor:dValMesCC(d,y,m)};
 }
 
 function usadoMes(cartao,y,m){
@@ -1262,11 +1226,9 @@ function renderDP(){
     if(d.overrides&&d.overrides[ck()]!==undefined&&!exib.antecipada){
       badges+=`<span class="ovr-badge">⚡ valor personalizado</span>`;
     }
-
     const parAtual=np;
     const parRestantes=d.parcelas-parAtual;
     const podeAntecipar=d.parcelas>1&&parRestantes>0;
-
     return`<div class="ei">
       <div class="ei-icon">${d.cat}</div>
       <div class="ei-info">
@@ -1287,24 +1249,20 @@ function renderDP(){
 }
 
 // ════════════════════════════════════════════
-//  ANTECIPAR PARCELA(S) — MULTI-SELEÇÃO
+//  ANTECIPAR PARCELA(S)
 // ════════════════════════════════════════════
-function openAntecipar(cid, did){
+function openAntecipar(cid,did){
   const c=S.cartoes.find(c=>c.id===cid);if(!c)return;
   const d=c.despesas.find(d=>d.id===did);if(!d)return;
   if(!d.antecipadas)d.antecipadas={};
   S.antCid=cid;S.antDid=did;S.antParSels=[];
-
   const ini=absM(d.anoInicio,d.mesInicio);
   const exibAtual=getDespExibicao(d,S.cy,S.cm);
   const parAtual=exibAtual.parNum;
-
   document.getElementById('ant-info').innerHTML=
     `<strong>${d.cat} ${d.desc}</strong><br>
      <span style="color:var(--text2);font-size:.8rem">${d.parcelas}× de ${fmt(d.valor/d.parcelas)} · Parcela atual: ${parAtual}/${d.parcelas}</span>`;
-
   document.getElementById('ant-mes-dest').textContent=lbl(ck());
-
   const grid=document.getElementById('ant-parcelas-grid');
   let html='';
   for(let i=1;i<=d.parcelas;i++){
@@ -1316,17 +1274,13 @@ function openAntecipar(cid, did){
     const antDest=parcelaAntecipada(d,i);
     const jaAntecipada=!!antDest;
     const valorPar=d.overrides&&d.overrides[parKey]!==undefined?d.overrides[parKey]:d.valor/d.parcelas;
-
-    // Pode selecionar: parcelas futuras que ainda não foram antecipadas
     const podeAntecipar=!jaPago&&!esteMes&&!jaAntecipada;
-
     let cls='ant-par';
     let statusHtml='';
     if(jaPago){cls+=' ja-pago';statusHtml='<div class="ant-par-status" style="color:var(--accent)">✓ pago</div>';}
     else if(esteMes){cls+=' esta-mes';statusHtml='<div class="ant-par-status" style="color:var(--accent2)">→ este mês</div>';}
     else if(jaAntecipada){cls+=' ja-pago';statusHtml=`<div class="ant-par-status" style="color:#a78bfa">⚡ em ${lbl(antDest)}</div>`;}
     else{statusHtml=`<div class="ant-par-status" style="color:var(--text2)">${MONTHS[pm].slice(0,3)} ${py}</div>`;}
-
     html+=`<div class="${cls}" data-par="${i}" data-key="${parKey}" data-val="${valorPar}"
       ${podeAntecipar?`onclick="selAntPar(this,${i},'${parKey}',${valorPar})"`:''}>
       <div class="ant-par-num">${i}ª</div>
@@ -1341,8 +1295,7 @@ function openAntecipar(cid, did){
   openModal('m-ant');
 }
 
-function selAntPar(el, parNum, parKey, valor){
-  // Toggle: clica de novo para desselecionar
+function selAntPar(el,parNum,parKey,valor){
   const idx=S.antParSels.findIndex(p=>p.parNum===parNum);
   if(idx>=0){
     S.antParSels.splice(idx,1);
@@ -1351,19 +1304,11 @@ function selAntPar(el, parNum, parKey, valor){
     S.antParSels.push({parNum,parKey,valor});
     el.classList.add('sel-ant');
   }
-
   const resumo=document.getElementById('ant-resumo');
   const btn=document.getElementById('ant-confirm-btn');
-
-  if(!S.antParSels.length){
-    resumo.style.display='none';
-    btn.disabled=true;
-    return;
-  }
-
+  if(!S.antParSels.length){resumo.style.display='none';btn.disabled=true;return;}
   const sorted=[...S.antParSels].sort((a,b)=>a.parNum-b.parNum);
   const totalAnt=sorted.reduce((s,p)=>s+p.valor,0);
-
   resumo.style.display='block';
   resumo.innerHTML=`
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
@@ -1389,14 +1334,8 @@ function confirmarAntecipacao(){
   const c=S.cartoes.find(c=>c.id===S.antCid);if(!c)return;
   const d=c.despesas.find(d=>d.id===S.antDid);if(!d)return;
   if(!d.antecipadas)d.antecipadas={};
-
-  // Registrar todas as parcelas selecionadas
-  S.antParSels.forEach(p=>{
-    d.antecipadas[p.parNum]=ck();
-  });
-
-  save();closeModal('m-ant');
-  renderAll();
+  S.antParSels.forEach(p=>{d.antecipadas[p.parNum]=ck();});
+  save();closeModal('m-ant');renderAll();
   const nums=[...S.antParSels].sort((a,b)=>a.parNum-b.parNum).map(p=>p.parNum+'ª').join(', ');
   toast(`⚡ Parcela(s) ${nums} antecipada(s) para ${lbl(ck())}!`);
   S.antParSels=[];
@@ -1798,11 +1737,10 @@ function renderHistorico(){
 }
 
 // ════════════════════════════════════════════
-//  CONTA CORRENTE — REDESIGN
+//  CONTA CORRENTE
 // ════════════════════════════════════════════
 
 const CC_ITEM_THEMES=['blue','green','purple','orange','pink','teal','red','gray'];
-const CC_BAR_COLORS=['#0099ff','#00e5a0','#a78bfa','#f59e0b','#ec4899','#2dd4bf','#f87171','#8a9ab5'];
 
 function addCCItem(){
   const desc=document.getElementById('cci-desc').value.trim();
@@ -1816,16 +1754,23 @@ function addCCItem(){
   document.getElementById('cci-val').value='';
   renderCC();toast('✅ Item adicionado!');
 }
+
+// FIX: converter id para número antes de buscar, pois onclick passa string do HTML
 function openEditCCItem(id){
-  const it=S.ccItems.find(x=>x.id===id);if(!it)return;
+  id=Number(id);
+  const it=S.ccItems.find(x=>x.id===id);
+  if(!it){toast('⚠️ Item não encontrado');return;}
   S.editCCIId=id;
   document.getElementById('ed-cci-desc').value=it.desc;
   document.getElementById('ed-cci-val').value=it.valor;
   document.getElementById('ed-cci-icon').value=it.icon;
   openModal('m-ed-cci');
 }
+
 function saveEditCCItem(){
-  const it=S.ccItems.find(x=>x.id===S.editCCIId);if(!it)return;
+  S.editCCIId=Number(S.editCCIId);
+  const it=S.ccItems.find(x=>x.id===S.editCCIId);
+  if(!it){toast('⚠️ Item não encontrado');return;}
   const desc=document.getElementById('ed-cci-desc').value.trim();
   const valor=parseFloat(document.getElementById('ed-cci-val').value);
   const icon=document.getElementById('ed-cci-icon').value;
@@ -1834,7 +1779,11 @@ function saveEditCCItem(){
   it.desc=desc;it.valor=valor;it.icon=icon;
   save();closeModal('m-ed-cci');renderCC();toast('✅ Item atualizado!');
 }
+
+// FIX: converter id para número antes de filtrar
 function delCCItem(id){
+  id=Number(id);
+  if(!confirm('Remover este item?'))return;
   S.ccItems=S.ccItems.filter(x=>x.id!==id);
   save();renderCC();toast('🗑️ Item removido');
 }
@@ -1845,32 +1794,8 @@ function renderCC(){
   document.getElementById('cc-saldo-total').textContent=fmt(total);
   document.getElementById('cc-saldo-meta').textContent=
     S.ccItems.length?`${S.ccItems.length} item(s) · atualizado agora`:'Nenhum item cadastrado';
-
-  const barTrack=document.getElementById('cc-bar-track');
-  const legend=document.getElementById('cc-legend');
-  document.getElementById('cc-bar-total-label').textContent=total>0?fmt(total):'—';
   document.getElementById('cc-items-count').textContent=S.ccItems.length+' item(s)';
 
-  if(!S.ccItems.length||total===0){
-    barTrack.innerHTML='<div style="flex:1;background:rgba(255,255,255,.05)"></div>';
-    legend.innerHTML='';
-  } else {
-    barTrack.innerHTML=S.ccItems.map((it,i)=>{
-      const pct=(it.valor/total)*100;
-      const cor=CC_BAR_COLORS[i%CC_BAR_COLORS.length];
-      return`<div class="cch-bar-seg" style="width:${pct}%;background:${cor};"></div>`;
-    }).join('');
-    legend.innerHTML=S.ccItems.map((it,i)=>{
-      const cor=CC_BAR_COLORS[i%CC_BAR_COLORS.length];
-      const pct=Math.round((it.valor/total)*100);
-      return`<div class="cch-leg-item">
-        <div class="cch-leg-dot" style="background:${cor}"></div>
-        <span>${it.icon} ${it.desc} <span style="color:rgba(255,255,255,.3)">${pct}%</span></span>
-      </div>`;
-    }).join('');
-  }
-
-  // Grid de itens — SEM barra de porcentagem nos cards
   const list=document.getElementById('cc-items-list');
   if(!S.ccItems.length){
     list.innerHTML=`<div class="cch-empty">
