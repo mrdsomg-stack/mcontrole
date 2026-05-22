@@ -490,7 +490,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 </header>
 
 <main>
-  <!-- HERO SIMPLIFICADO: apenas saldo total, sem seção de composição -->
   <div class="cch-hero">
     <div class="cch-hero-inner">
       <div class="cch-label">Saldo total da conta</div>
@@ -900,6 +899,8 @@ function load(){
   if(!S.months)S.months={};
   if(!S.categorias)S.categorias=[];
   if(!S.antParSels)S.antParSels=[];
+  // Migrate legacy numeric IDs to strings for ccItems
+  S.ccItems=S.ccItems.map(it=>({...it,id:String(it.id)}));
   S.cartoes.forEach(c=>{
     (c.despesas||[]).forEach(d=>{
       if(!d.overrides)d.overrides={};
@@ -1737,7 +1738,7 @@ function renderHistorico(){
 }
 
 // ════════════════════════════════════════════
-//  CONTA CORRENTE
+//  CONTA CORRENTE  ← BUG CORRIGIDO AQUI
 // ════════════════════════════════════════════
 
 const CC_ITEM_THEMES=['blue','green','purple','orange','pink','teal','red','gray'];
@@ -1748,17 +1749,18 @@ function addCCItem(){
   const icon=document.getElementById('cci-icon').value;
   if(!desc){toast('⚠️ Informe a descrição');return;}
   if(!valor||valor<=0){toast('⚠️ Valor inválido');return;}
-  S.ccItems.push({id:Date.now(),desc,valor,icon});
+  // IDs sempre como String para evitar problemas de comparação
+  S.ccItems.push({id:String(Date.now()),desc,valor,icon});
   save();closeModal('m-cc-item');
   document.getElementById('cci-desc').value='';
   document.getElementById('cci-val').value='';
   renderCC();toast('✅ Item adicionado!');
 }
 
-// FIX: converter id para número antes de buscar, pois onclick passa string do HTML
 function openEditCCItem(id){
-  id=Number(id);
-  const it=S.ccItems.find(x=>x.id===id);
+  // Normaliza para String antes de buscar
+  id=String(id);
+  const it=S.ccItems.find(x=>String(x.id)===id);
   if(!it){toast('⚠️ Item não encontrado');return;}
   S.editCCIId=id;
   document.getElementById('ed-cci-desc').value=it.desc;
@@ -1768,8 +1770,9 @@ function openEditCCItem(id){
 }
 
 function saveEditCCItem(){
-  S.editCCIId=Number(S.editCCIId);
-  const it=S.ccItems.find(x=>x.id===S.editCCIId);
+  // Usa o ID já normalizado em openEditCCItem
+  const editId=String(S.editCCIId);
+  const it=S.ccItems.find(x=>String(x.id)===editId);
   if(!it){toast('⚠️ Item não encontrado');return;}
   const desc=document.getElementById('ed-cci-desc').value.trim();
   const valor=parseFloat(document.getElementById('ed-cci-val').value);
@@ -1780,11 +1783,11 @@ function saveEditCCItem(){
   save();closeModal('m-ed-cci');renderCC();toast('✅ Item atualizado!');
 }
 
-// FIX: converter id para número antes de filtrar
 function delCCItem(id){
-  id=Number(id);
+  // Normaliza para String antes de filtrar
+  id=String(id);
   if(!confirm('Remover este item?'))return;
-  S.ccItems=S.ccItems.filter(x=>x.id!==id);
+  S.ccItems=S.ccItems.filter(x=>String(x.id)!==id);
   save();renderCC();toast('🗑️ Item removido');
 }
 
@@ -1808,12 +1811,13 @@ function renderCC(){
 
   list.innerHTML=`<div class="cch-grid">${S.ccItems.map((it,i)=>{
     const theme=CC_ITEM_THEMES[i%CC_ITEM_THEMES.length];
+    // Usa data-id para passar o ID de forma segura, sem depender de template literal numérico
     return`<div class="cch-item cchi-${theme}">
       <div class="cch-item-top">
         <div class="cch-item-icon-wrap">${it.icon}</div>
         <div class="cch-item-actions">
-          <button class="btn btn-edit btn-sm" onclick="openEditCCItem(${it.id})" style="padding:4px 9px">✏️</button>
-          <button class="btn btn-danger btn-sm" onclick="delCCItem(${it.id})" style="padding:4px 9px">✕</button>
+          <button class="btn btn-edit btn-sm" data-id="${it.id}" onclick="openEditCCItem(this.dataset.id)" style="padding:4px 9px">✏️</button>
+          <button class="btn btn-danger btn-sm" data-id="${it.id}" onclick="delCCItem(this.dataset.id)" style="padding:4px 9px">✕</button>
         </div>
       </div>
       <div class="cch-item-name">${it.desc}</div>
