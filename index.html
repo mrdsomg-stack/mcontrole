@@ -20,7 +20,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:radial-gradient(ellipse 80% 60% at 20% -10%,rgba(0,229,160,.06) 0%,transparent 60%),
              radial-gradient(ellipse 60% 40% at 80% 100%,rgba(0,153,255,.06) 0%,transparent 60%);}
 
-/* ── MODULE SWITCHER ── */
 .mod-switcher{
   position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:300;
   background:var(--surface2);border:1px solid rgba(255,255,255,.12);
@@ -35,11 +34,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .mod-btn.active{background:var(--accent);color:#0b0f1a;}
 .mod-btn:not(.active):hover{color:var(--text);background:var(--surface3);}
 
-/* ── MODULE PANELS ── */
 .module{display:none;}
 .module.active{display:block;}
 
-/* ── HEADER ── */
 header{position:sticky;top:0;z-index:100;background:rgba(11,15,26,.92);backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);padding:0 28px;
   display:flex;align-items:center;justify-content:space-between;height:60px;}
@@ -53,7 +50,6 @@ nav button{background:none;border:none;color:var(--text2);font-family:'DM Sans',
 nav button:hover{color:var(--text);background:var(--surface2);}
 nav button.active{color:var(--accent);background:rgba(0,229,160,.1);}
 
-/* ── MONTH BAR ── */
 .month-bar{position:sticky;top:60px;z-index:99;background:rgba(11,15,26,.93);backdrop-filter:blur(16px);
   border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;gap:12px;height:50px;}
 .mb-label{font-size:.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
@@ -66,7 +62,6 @@ nav button.active{color:var(--accent);background:rgba(0,229,160,.1);}
 .mb-badge{font-size:.72rem;padding:3px 9px;border-radius:99px;font-weight:600;
   background:rgba(0,229,160,.12);color:var(--accent);white-space:nowrap;}
 
-/* ── LAYOUT ── */
 main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22px 90px;}
 .page{display:none;animation:fu .35s ease;}
 .page.active{display:block;}
@@ -76,7 +71,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .sec-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.45rem;letter-spacing:-.5px;}
 .sec-title small{display:block;font-family:'DM Sans',sans-serif;font-weight:400;font-size:.81rem;color:var(--text2);margin-top:2px;}
 
-/* ── BUTTONS ── */
 .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:var(--rs);
   font-family:'DM Sans',sans-serif;font-size:.875rem;font-weight:500;cursor:pointer;border:none;transition:all .2s;}
 .btn-primary{background:var(--accent);color:#0b0f1a;}
@@ -91,14 +85,11 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .btn-warn:hover{background:rgba(245,158,11,.2);}
 .btn-sm{padding:5px 13px;font-size:.8rem;}
 
-/* ── CARD ── */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;box-shadow:var(--shadow);}
 
-/* ── GRID ── */
 .g2{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:18px;}
 .g4{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;}
 
-/* ── MODAL ── */
 .mo{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);
   display:flex;align-items:center;justify-content:center;padding:18px;
   opacity:0;pointer-events:none;transition:opacity .2s;}
@@ -111,7 +102,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .m-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.15rem;margin-bottom:20px;}
 .m-footer{display:flex;gap:9px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
 
-/* ── FORM ── */
 .fg{margin-bottom:15px;}
 .fg label{display:block;font-size:.76rem;font-weight:500;color:var(--text2);margin-bottom:5px;letter-spacing:.3px;text-transform:uppercase;}
 .fg input,.fg select{width:100%;padding:10px 13px;background:var(--surface2);border:1px solid var(--border);
@@ -119,16 +109,11 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .fg input:focus,.fg select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,229,160,.1);}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 
-/* ── COLOR PICKER ── */
 .cp{display:flex;gap:9px;flex-wrap:wrap;}
 .co{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15px;}
 .co.sel{border-color:white;transform:scale(1.15);}
 
-/* ── SCOPE SELECTOR ── */
-.scope-box{
-  background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);
-  padding:14px;margin-bottom:15px;
-}
+.scope-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:14px;margin-bottom:15px;}
 .scope-box-title{font-size:.72rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;}
 .scope-opts{display:flex;flex-direction:column;gap:7px;}
 .scope-opt{display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:9px 11px;border-radius:8px;
@@ -144,7 +129,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .ant-badge{display:inline-block;padding:2px 7px;border-radius:99px;font-size:.68rem;font-weight:600;
   background:rgba(139,92,246,.15);color:#a78bfa;margin-left:6px;vertical-align:middle;}
 
-/* ── RESUMO CATEGORIAS ── */
 .cat-grid{display:flex;flex-direction:column;gap:10px;}
 .cat-row{display:flex;align-items:center;gap:12px;padding:11px 14px;
   background:var(--surface2);border:1px solid var(--border);border-radius:12px;transition:all .18s;}
@@ -159,7 +143,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .cat-val{font-family:'Syne',sans-serif;font-weight:700;font-size:.97rem;white-space:nowrap;}
 .cat-pct{font-size:.72rem;color:var(--text2);text-align:right;white-space:nowrap;}
 
-/* ── GERENCIAR CATEGORIAS ── */
 .cat-list-item{display:flex;align-items:center;gap:10px;padding:9px 12px;
   background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;}
 .cat-list-item-icon{font-size:1.1rem;width:28px;text-align:center;flex-shrink:0;}
@@ -172,7 +155,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   justify-content:center;transition:all .13s;}
 .emoji-opt:hover,.emoji-opt.sel-emoji{background:var(--surface3);border-color:var(--accent);}
 
-/* ── CC CARD (cartão de crédito) ── */
 .cc{background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid var(--border);
   border-radius:16px;padding:22px;position:relative;overflow:hidden;cursor:pointer;transition:all .25s;}
 .cc::before{content:'';position:absolute;width:190px;height:190px;border-radius:50%;top:-55px;right:-55px;opacity:.15;}
@@ -194,7 +176,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .cc-avail{color:var(--text2);}
 .cc-acts{display:flex;gap:7px;margin-top:14px;position:relative;z-index:1;flex-wrap:wrap;}
 
-/* ── EXPENSE ITEMS ── */
 .ei{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);gap:11px;}
 .ei:last-child{border-bottom:none;}
 .ei-icon{width:34px;height:34px;background:var(--surface2);border-radius:8px;
@@ -205,13 +186,11 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .ei-val{font-weight:600;color:var(--accent3);white-space:nowrap;}
 .ei-par{font-size:.74rem;color:var(--text2);text-align:right;}
 
-/* ── STAT CARDS ── */
 .sc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;}
 .sc-lbl{font-size:.75rem;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
 .sc-val{font-family:'Syne',sans-serif;font-weight:700;font-size:1.5rem;}
 .sc-sub{font-size:.78rem;color:var(--text2);margin-top:3px;}
 
-/* ── BALANCE HERO ── */
 .bh{background:linear-gradient(135deg,rgba(0,229,160,.07),rgba(0,153,255,.07));
   border:1px solid rgba(0,229,160,.14);border-radius:var(--r);padding:28px;margin-bottom:20px;
   display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;}
@@ -223,12 +202,10 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .bd-v{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;}
 .bd-l{font-size:.72rem;color:var(--text2);margin-top:2px;}
 
-/* ── DETAIL PANEL ── */
 .dp{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-top:22px;}
 .dp-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:9px;}
 .dp-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;}
 
-/* ── OTHER ── */
 .oe{display:flex;align-items:center;padding:12px 0;gap:11px;border-bottom:1px solid var(--border);}
 .oe:last-child{border-bottom:none;}
 .sal-val{font-family:'Syne',sans-serif;font-weight:700;font-size:1.35rem;}
@@ -236,7 +213,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .bg-green{background:rgba(0,229,160,.12);color:var(--accent);}
 .bg-blue{background:rgba(0,153,255,.12);color:var(--accent2);}
 
-/* ── HISTORICO ── */
 .hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;}
 .hcard{background:var(--surface2);border:1px solid var(--border);border-radius:12px;
   padding:15px;cursor:pointer;transition:all .2s;}
@@ -246,78 +222,29 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .hc-saldo{font-weight:600;font-size:.97rem;}
 .hc-det{font-size:.74rem;color:var(--text2);margin-top:3px;}
 
-/* ══════════════════════════════
-   CONTA CORRENTE — REDESIGN
-══════════════════════════════ */
-
-#mod-cc{background:var(--bg);min-height:100vh;}
-#mod-cc main{max-width:840px;margin:0 auto;padding:32px 22px 100px;}
-
-.cch-hero{
-  position:relative;overflow:hidden;border-radius:24px;padding:36px 36px 32px;margin-bottom:32px;
-  background:linear-gradient(135deg,#0d1e3a 0%,#0b1a2e 60%,#0a1628 100%);
-  border:1px solid rgba(0,153,255,.18);
+/* ── CONTA CORRENTE ── */
+.cc-hero{
+  background:linear-gradient(135deg,rgba(0,153,255,.08),rgba(139,92,246,.08));
+  border:1px solid rgba(0,153,255,.15);border-radius:var(--r);
+  padding:32px;margin-bottom:24px;
 }
-.cch-hero::before{content:'';position:absolute;width:400px;height:400px;border-radius:50%;top:-120px;right:-80px;
-  background:radial-gradient(circle,rgba(0,153,255,.18) 0%,transparent 70%);pointer-events:none;}
-.cch-hero::after{content:'';position:absolute;width:280px;height:280px;border-radius:50%;bottom:-80px;left:-40px;
-  background:radial-gradient(circle,rgba(139,92,246,.14) 0%,transparent 70%);pointer-events:none;}
-.cch-hero-inner{position:relative;z-index:1;}
-.cch-label{font-size:.72rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
-  color:rgba(0,153,255,.8);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
-.cch-label::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;
-  background:#0099ff;box-shadow:0 0 8px #0099ff;}
-.cch-amount{font-family:'Syne',sans-serif;font-weight:800;font-size:3.2rem;letter-spacing:-2px;line-height:1;
-  background:linear-gradient(135deg,#fff 30%,rgba(0,153,255,.7));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
-.cch-meta{font-size:.82rem;color:rgba(255,255,255,.4);}
+.cc-hero-label{font-size:.81rem;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;}
+.cc-hero-amount{font-family:'Syne',sans-serif;font-weight:800;font-size:2.8rem;letter-spacing:-1.5px;}
+.cc-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px;border-radius:12px;
+  background:var(--surface2);border:1px solid var(--border);
+  transition:all .2s;
+}
+.cc-item:hover{border-color:rgba(255,255,255,.12);}
+.cc-item-icon{width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.cc-item-info{flex:1;min-width:0;}
+.cc-item-desc{font-weight:500;font-size:.92rem;}
+.cc-item-sub{font-size:.76rem;color:var(--text2);margin-top:2px;}
+.cc-item-val{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;white-space:nowrap;}
+.cc-items-grid{display:flex;flex-direction:column;gap:10px;}
 
-.cch-items-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.cch-items-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;}
-.cch-items-count{font-size:.78rem;color:var(--text2);background:var(--surface2);border:1px solid var(--border);
-  padding:3px 10px;border-radius:99px;}
-
-.cch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;}
-
-.cch-item{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;
-  transition:all .22s;position:relative;overflow:hidden;cursor:default;}
-.cch-item::after{content:'';position:absolute;inset:0;border-radius:16px;opacity:0;transition:opacity .22s;
-  background:linear-gradient(135deg,transparent,rgba(255,255,255,.025));}
-.cch-item:hover{border-color:rgba(255,255,255,.12);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3);}
-.cch-item:hover::after{opacity:1;}
-
-.cch-item-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
-.cch-item-icon-wrap{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;
-  justify-content:center;font-size:1.2rem;background:rgba(0,153,255,.1);border:1px solid rgba(0,153,255,.15);flex-shrink:0;}
-.cch-item-actions{display:flex;gap:5px;}
-.cch-item-name{font-weight:500;font-size:.92rem;margin-bottom:4px;}
-.cch-item-amount{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;letter-spacing:-.5px;
-  color:var(--accent2);}
-
-/* palettes */
-.cchi-blue .cch-item-icon-wrap{background:rgba(0,153,255,.1);border-color:rgba(0,153,255,.2);}
-.cchi-blue .cch-item-amount{color:#0099ff;}
-.cchi-green .cch-item-icon-wrap{background:rgba(0,229,160,.1);border-color:rgba(0,229,160,.2);}
-.cchi-green .cch-item-amount{color:#00e5a0;}
-.cchi-purple .cch-item-icon-wrap{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.2);}
-.cchi-purple .cch-item-amount{color:#a78bfa;}
-.cchi-orange .cch-item-icon-wrap{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.2);}
-.cchi-orange .cch-item-amount{color:#f59e0b;}
-.cchi-pink .cch-item-icon-wrap{background:rgba(236,72,153,.1);border-color:rgba(236,72,153,.2);}
-.cchi-pink .cch-item-amount{color:#ec4899;}
-.cchi-teal .cch-item-icon-wrap{background:rgba(20,184,166,.1);border-color:rgba(20,184,166,.2);}
-.cchi-teal .cch-item-amount{color:#2dd4bf;}
-.cchi-red .cch-item-icon-wrap{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.2);}
-.cchi-red .cch-item-amount{color:#f87171;}
-.cchi-gray .cch-item-icon-wrap{background:rgba(138,154,181,.1);border-color:rgba(138,154,181,.2);}
-.cchi-gray .cch-item-amount{color:var(--text2);}
-
-.cch-empty{text-align:center;padding:60px 18px;border:1px dashed rgba(0,153,255,.2);border-radius:16px;}
-.cch-empty-ico{font-size:2.5rem;margin-bottom:12px;opacity:.4;}
-.cch-empty h3{font-family:'Syne',sans-serif;font-size:1rem;margin-bottom:5px;}
-.cch-empty p{font-size:.84rem;color:var(--text2);}
-
-/* ── ANTECIPAR PARCELA ── */
 .ant-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:10px 0;}
 .ant-par{padding:10px 8px;border-radius:10px;border:1px solid var(--border);
   background:var(--surface2);cursor:pointer;transition:all .15s;text-align:center;}
@@ -330,13 +257,11 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .ant-par-val{font-size:.72rem;font-weight:600;color:var(--accent4);margin-top:2px;}
 .ant-par-status{font-size:.65rem;margin-top:3px;font-weight:600;}
 
-/* ── EMPTY ── */
 .empty{text-align:center;padding:40px 18px;color:var(--text2);}
 .empty-ico{font-size:2rem;margin-bottom:9px;opacity:.5;}
 .empty h3{font-family:'Syne',sans-serif;font-size:.97rem;margin-bottom:4px;color:var(--text);}
 .empty p{font-size:.83rem;}
 
-/* ── TOAST ── */
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(16px);
   background:var(--surface2);border:1px solid var(--border);color:var(--text);
   padding:10px 20px;border-radius:99px;font-size:.84rem;font-weight:500;
@@ -357,9 +282,7 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     MODULE: GESTÃO FINANCEIRA
-════════════════════════════════════════════ -->
+<!-- MODULE: GESTÃO FINANCEIRA -->
 <div class="module active" id="mod-gf">
 
 <header>
@@ -480,44 +403,47 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 
 
 <!-- ══════════════════════════════════════════
-     MODULE: CONTA CORRENTE — REDESIGN
+     MODULE: CONTA CORRENTE
 ════════════════════════════════════════════ -->
 <div class="module" id="mod-cc">
 
-<header style="position:sticky;top:0;z-index:100;background:rgba(11,15,26,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:60px;">
-  <div class="logo">Finance<span>Flow</span> <span style="-webkit-text-fill-color:rgba(0,153,255,.7);font-size:.8rem;margin-left:6px">Conta Corrente</span></div>
-  <button class="btn btn-primary" onclick="openModal('m-cc-item')" style="font-size:.82rem;padding:7px 16px">+ Adicionar item</button>
+<header style="position:sticky;top:0;z-index:100;background:rgba(11,15,26,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;height:60px;">
+  <div class="logo">Finance<span>Flow</span> <span style="-webkit-text-fill-color:var(--accent2);font-size:.8rem;margin-left:6px;opacity:.7">Conta Corrente</span></div>
 </header>
 
 <main>
-  <div class="cch-hero">
-    <div class="cch-hero-inner">
-      <div class="cch-label">Saldo total da conta</div>
-      <div class="cch-amount" id="cc-saldo-total">R$ 0,00</div>
-      <div class="cch-meta" id="cc-saldo-meta">Nenhum item cadastrado</div>
-    </div>
-  </div>
+  <div style="max-width:680px;margin:0 auto">
 
-  <div class="cch-items-header">
-    <div class="cch-items-title">Composição do saldo</div>
-    <div class="cch-items-count" id="cc-items-count">0 itens</div>
+    <!-- Saldo hero -->
+    <div class="cc-hero">
+      <div class="cc-hero-label">Saldo da conta corrente</div>
+      <div class="cc-hero-amount" id="cc-saldo-total">R$ 0,00</div>
+      <div style="font-size:.82rem;color:var(--text2);margin-top:6px" id="cc-saldo-meta">Nenhum item cadastrado</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="sec-hdr">
+      <div class="sec-title">Composição do Saldo <small>Itens que formam o saldo total</small></div>
+      <button class="btn btn-primary" onclick="openModal('m-cc-item')">+ Adicionar item</button>
+    </div>
+
+    <div id="cc-items-list"></div>
+
   </div>
-  <div id="cc-items-list"></div>
 </main>
 
 </div><!-- /mod-cc -->
 
 
-<!-- ══════ MODULE SWITCHER ══════ -->
+<!-- MODULE SWITCHER -->
 <div class="mod-switcher">
   <button class="mod-btn active" onclick="switchModule('gf',this)">📊 Gestão Financeira</button>
   <button class="mod-btn" onclick="switchModule('cc',this)">🏦 Conta Corrente</button>
 </div>
 
 
-<!-- ═══════════════ MODALS: GESTÃO FINANCEIRA ═══════════════ -->
+<!-- MODALS: GESTÃO FINANCEIRA -->
 
-<!-- NOVO CARTÃO -->
 <div class="mo" id="m-nc">
   <div class="modal">
     <div class="m-title">➕ Novo Cartão de Crédito</div>
@@ -540,7 +466,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   </div>
 </div>
 
-<!-- EDITAR CARTÃO -->
 <div class="mo" id="m-ec">
   <div class="modal">
     <div class="m-title">✏️ Editar Cartão</div>
@@ -563,7 +488,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   </div>
 </div>
 
-<!-- NOVA DESPESA CARTÃO -->
 <div class="mo" id="m-nd">
   <div class="modal">
     <div class="m-title">🧾 Nova Despesa no Cartão</div>
@@ -595,7 +519,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   </div>
 </div>
 
-<!-- EDITAR DESPESA CARTÃO -->
 <div class="mo" id="m-ed">
   <div class="modal">
     <div class="m-title">✏️ Editar Despesa no Cartão</div>
@@ -620,7 +543,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
       </select>
     </div>
     <div class="fg"><label>Categoria</label><select id="ed-cat"></select></div>
-
     <div id="ed-scope-box" style="display:none">
       <div class="scope-box">
         <div class="scope-box-title">📌 Escopo da alteração de valor</div>
@@ -649,7 +571,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
         </div>
       </div>
     </div>
-
     <div class="m-footer">
       <button class="btn btn-secondary" onclick="closeModal('m-ed')">Cancelar</button>
       <button class="btn btn-primary" onclick="saveEditDesp()">Salvar</button>
@@ -657,7 +578,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   </div>
 </div>
 
-<!-- ANTECIPAR PARCELA -->
 <div class="mo" id="m-ant">
   <div class="modal" style="max-width:540px">
     <div class="m-title">⚡ Antecipar Parcela(s)</div>
@@ -675,7 +595,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   </div>
 </div>
 
-<!-- OUTRA DESPESA -->
 <div class="mo" id="m-od">
   <div class="modal">
     <div class="m-title">📋 Nova Despesa Avulsa</div>
@@ -702,7 +621,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   </div>
 </div>
 
-<!-- EDITAR OUTRA DESPESA -->
 <div class="mo" id="m-ed-od">
   <div class="modal">
     <div class="m-title">✏️ Editar Despesa Avulsa</div>
@@ -757,7 +675,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   </div>
 </div>
 
-<!-- SALÁRIO -->
 <div class="mo" id="m-sal">
   <div class="modal">
     <div class="m-title">💵 Salário do Mês</div>
@@ -770,7 +687,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   </div>
 </div>
 
-<!-- OUTRO GANHO -->
 <div class="mo" id="m-renda">
   <div class="modal">
     <div class="m-title">💰 Adicionar Ganho Extra</div>
@@ -784,7 +700,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   </div>
 </div>
 
-<!-- GERENCIAR CATEGORIAS -->
 <div class="mo" id="m-cats">
   <div class="modal" style="max-width:520px">
     <div class="m-title">🏷️ Gerenciar Categorias</div>
@@ -811,9 +726,8 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   </div>
 </div>
 
-<!-- ═══════════════ MODALS: CONTA CORRENTE ═══════════════ -->
+<!-- MODALS: CONTA CORRENTE -->
 
-<!-- NOVO ITEM CC -->
 <div class="mo" id="m-cc-item">
   <div class="modal">
     <div class="m-title">💳 Novo Item da Conta</div>
@@ -835,7 +749,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   </div>
 </div>
 
-<!-- EDITAR ITEM CC -->
 <div class="mo" id="m-ed-cci">
   <div class="modal">
     <div class="m-title">✏️ Editar Item da Conta</div>
@@ -899,8 +812,6 @@ function load(){
   if(!S.months)S.months={};
   if(!S.categorias)S.categorias=[];
   if(!S.antParSels)S.antParSels=[];
-  // Migrate legacy numeric IDs to strings for ccItems
-  S.ccItems=S.ccItems.map(it=>({...it,id:String(it.id)}));
   S.cartoes.forEach(c=>{
     (c.despesas||[]).forEach(d=>{
       if(!d.overrides)d.overrides={};
@@ -1738,42 +1649,30 @@ function renderHistorico(){
 }
 
 // ════════════════════════════════════════════
-//  CONTA CORRENTE  ← BUG CORRIGIDO AQUI
+//  CONTA CORRENTE
 // ════════════════════════════════════════════
-
-const CC_ITEM_THEMES=['blue','green','purple','orange','pink','teal','red','gray'];
-
 function addCCItem(){
   const desc=document.getElementById('cci-desc').value.trim();
   const valor=parseFloat(document.getElementById('cci-val').value);
   const icon=document.getElementById('cci-icon').value;
   if(!desc){toast('⚠️ Informe a descrição');return;}
   if(!valor||valor<=0){toast('⚠️ Valor inválido');return;}
-  // IDs sempre como String para evitar problemas de comparação
-  S.ccItems.push({id:String(Date.now()),desc,valor,icon});
+  S.ccItems.push({id:Date.now(),desc,valor,icon});
   save();closeModal('m-cc-item');
   document.getElementById('cci-desc').value='';
   document.getElementById('cci-val').value='';
   renderCC();toast('✅ Item adicionado!');
 }
-
 function openEditCCItem(id){
-  // Normaliza para String antes de buscar
-  id=String(id);
-  const it=S.ccItems.find(x=>String(x.id)===id);
-  if(!it){toast('⚠️ Item não encontrado');return;}
+  const it=S.ccItems.find(x=>x.id===id);if(!it)return;
   S.editCCIId=id;
   document.getElementById('ed-cci-desc').value=it.desc;
   document.getElementById('ed-cci-val').value=it.valor;
   document.getElementById('ed-cci-icon').value=it.icon;
   openModal('m-ed-cci');
 }
-
 function saveEditCCItem(){
-  // Usa o ID já normalizado em openEditCCItem
-  const editId=String(S.editCCIId);
-  const it=S.ccItems.find(x=>String(x.id)===editId);
-  if(!it){toast('⚠️ Item não encontrado');return;}
+  const it=S.ccItems.find(x=>x.id===S.editCCIId);if(!it)return;
   const desc=document.getElementById('ed-cci-desc').value.trim();
   const valor=parseFloat(document.getElementById('ed-cci-val').value);
   const icon=document.getElementById('ed-cci-icon').value;
@@ -1782,46 +1681,48 @@ function saveEditCCItem(){
   it.desc=desc;it.valor=valor;it.icon=icon;
   save();closeModal('m-ed-cci');renderCC();toast('✅ Item atualizado!');
 }
-
 function delCCItem(id){
-  // Normaliza para String antes de filtrar
-  id=String(id);
-  if(!confirm('Remover este item?'))return;
-  S.ccItems=S.ccItems.filter(x=>String(x.id)!==id);
+  S.ccItems=S.ccItems.filter(x=>x.id!==id);
   save();renderCC();toast('🗑️ Item removido');
 }
 
 function renderCC(){
   const total=S.ccItems.reduce((s,i)=>s+i.valor,0);
+  const totalEl=document.getElementById('cc-saldo-total');
+  totalEl.textContent=fmt(total);
+  totalEl.style.background='linear-gradient(135deg,var(--accent2),#8b5cf6)';
+  totalEl.style['-webkit-background-clip']='text';
+  totalEl.style['-webkit-text-fill-color']='transparent';
 
-  document.getElementById('cc-saldo-total').textContent=fmt(total);
   document.getElementById('cc-saldo-meta').textContent=
-    S.ccItems.length?`${S.ccItems.length} item(s) · atualizado agora`:'Nenhum item cadastrado';
-  document.getElementById('cc-items-count').textContent=S.ccItems.length+' item(s)';
+    S.ccItems.length?S.ccItems.length+' item(s) compondo o saldo':'Nenhum item cadastrado';
 
   const list=document.getElementById('cc-items-list');
   if(!S.ccItems.length){
-    list.innerHTML=`<div class="cch-empty">
-      <div class="cch-empty-ico">🏦</div>
-      <h3>Nenhum item cadastrado</h3>
-      <p>Adicione itens para compor o saldo da conta corrente.<br>Ex: "Saldo livre R$ 500", "Reserva médica R$ 200"</p>
-    </div>`;
+    list.innerHTML=`<div class="empty"><div class="empty-ico">🏦</div>
+      <h3>Nenhum item ainda</h3>
+      <p>Adicione itens para compor o saldo da conta corrente.<br>Ex: "Saldo livre R$ 500", "Reserva médica R$ 200"</p></div>`;
     return;
   }
-
-  list.innerHTML=`<div class="cch-grid">${S.ccItems.map((it,i)=>{
-    const theme=CC_ITEM_THEMES[i%CC_ITEM_THEMES.length];
-    // Usa data-id para passar o ID de forma segura, sem depender de template literal numérico
-    return`<div class="cch-item cchi-${theme}">
-      <div class="cch-item-top">
-        <div class="cch-item-icon-wrap">${it.icon}</div>
-        <div class="cch-item-actions">
-          <button class="btn btn-edit btn-sm" data-id="${it.id}" onclick="openEditCCItem(this.dataset.id)" style="padding:4px 9px">✏️</button>
-          <button class="btn btn-danger btn-sm" data-id="${it.id}" onclick="delCCItem(this.dataset.id)" style="padding:4px 9px">✕</button>
+  // percentage of total for each item
+  list.innerHTML=`<div class="cc-items-grid">${S.ccItems.map(it=>{
+    const pct=total>0?Math.round((it.valor/total)*100):0;
+    return`<div class="cc-item">
+      <div class="cc-item-icon" style="background:rgba(0,153,255,.12)">${it.icon}</div>
+      <div class="cc-item-info">
+        <div class="cc-item-desc">${it.desc}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+          <div style="flex:1;height:4px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden">
+            <div style="width:${pct}%;height:100%;background:var(--accent2);border-radius:99px"></div>
+          </div>
+          <span class="cc-item-sub">${pct}%</span>
         </div>
       </div>
-      <div class="cch-item-name">${it.desc}</div>
-      <div class="cch-item-amount">${fmt(it.valor)}</div>
+      <div class="cc-item-val" style="color:var(--accent2)">${fmt(it.valor)}</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <button class="btn btn-edit btn-sm" onclick="openEditCCItem(${it.id})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="delCCItem(${it.id})">✕</button>
+      </div>
     </div>`;
   }).join('')}</div>`;
 }
