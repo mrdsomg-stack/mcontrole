@@ -292,7 +292,6 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
     <button onclick="showPage('panorama',this)">📊 Panorama</button>
     <button onclick="showPage('historico',this)">🗓️ Histórico</button>
   </nav>
-  <!-- CLOUD SYNC INDICATOR -->
   <div id="sync-indicator" style="display:flex;align-items:center;gap:8px;flex-shrink:0">
     <span style="color:var(--text2);font-size:.75rem;font-weight:500">💾 Só local</span>
     <button onclick="openCloudModal()" style="background:rgba(0,153,255,.12);border:1px solid rgba(0,153,255,.2);color:var(--accent2);padding:4px 10px;border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">☁️ Nuvem</button>
@@ -864,10 +863,8 @@ function load(){
   });
 }
 
-// ── Original save (localStorage only) ──
 function _localSave(){localStorage.setItem('ff5',JSON.stringify(S));}
 
-// ── save() will be overridden below to also push to cloud ──
 function save(){
   _localSave();
   CLOUD.schedulePush(S);
@@ -994,7 +991,7 @@ function limiteComprometido(cartao){
 load();
 
 // ════════════════════════════════════════════
-//  CLOUD SYNC — JSONBin.io
+//  CLOUD SYNC — JSONBin.io  (CORRIGIDO)
 // ════════════════════════════════════════════
 const CLOUD = {
   apiKey: null,
@@ -1032,6 +1029,9 @@ const CLOUD = {
     this.syncing = true;
     updateSyncStatus('syncing');
     try {
+      // Carimba o momento exato do envio para comparação entre dispositivos
+      const ts = Date.now();
+      const payload = { ...data, lastModified: ts };
       const res = await fetch(`https://api.jsonbin.io/v3/b/${this.binId}`, {
         method: 'PUT',
         headers: {
@@ -1039,9 +1039,11 @@ const CLOUD = {
           'X-Master-Key': this.apiKey,
           'X-Bin-Versioning': 'false'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error('HTTP ' + res.status);
+      // Registra localmente o timestamp do último push bem-sucedido
+      localStorage.setItem('ff5_lastModified', String(ts));
       updateSyncStatus('ok');
     } catch(e) {
       updateSyncStatus('error');
@@ -1063,6 +1065,29 @@ const CLOUD = {
     } catch(e) {
       console.error('Cloud pull error:', e);
       return null;
+    }
+  },
+
+  // Verifica se a nuvem tem dados mais novos e aplica automaticamente
+  async syncIfNewer(silent = false) {
+    if (!this.isConfigured()) return;
+    const remote = await this.pull();
+    if (!remote || remote.cartoes === undefined) return;
+
+    const localTs  = parseInt(localStorage.getItem('ff5_lastModified') || '0', 10);
+    const remoteTs = parseInt(remote.lastModified || '0', 10);
+
+    if (remoteTs > localTs) {
+      // Remove o campo de controle antes de aplicar ao estado
+      const { lastModified, ...dados } = remote;
+      Object.assign(S, dados);
+      _localSave();
+      localStorage.setItem('ff5_lastModified', String(remoteTs));
+      renderAll(); renderCC();
+      updateSyncStatus('ok');
+      if (!silent) toast('☁️ Dados atualizados da nuvem!');
+    } else {
+      updateSyncStatus('ok');
     }
   },
 
@@ -1151,8 +1176,10 @@ async function pullFromCloud() {
   updateSyncStatus('syncing');
   const remote = await CLOUD.pull();
   if (remote && remote.cartoes !== undefined) {
-    Object.assign(S, remote);
+    const { lastModified, ...dados } = remote;
+    Object.assign(S, dados);
     _localSave();
+    if (lastModified) localStorage.setItem('ff5_lastModified', String(lastModified));
     renderAll(); renderCC();
     updateSyncStatus('ok');
     toast('☁️ Dados carregados da nuvem com sucesso!');
@@ -2095,26 +2122,18 @@ function renderAll(){updateMB();renderCartoes();renderDP();renderPanorama();rend
   CLOUD.init();
   if(CLOUD.isConfigured()){
     updateSyncStatus('syncing');
-    // Auto-pull on load: if cloud has more data, offer to load
-    CLOUD.pull().then(remote=>{
-      if(remote&&remote.cartoes!==undefined){
-        const localLen=JSON.stringify(S).length;
-        const remoteLen=JSON.stringify(remote).length;
-        if(remoteLen>localLen+50){
-          // Cloud has significantly more data — auto-load silently
-          Object.assign(S,remote);
-          _localSave();
-          renderAll();renderCC();
-          toast('☁️ Dados sincronizados da nuvem!');
-        }
-        updateSyncStatus('ok');
-      } else {
-        updateSyncStatus('ok');
-      }
-    }).catch(()=>updateSyncStatus('error'));
+    // Ao carregar: puxa nuvem se tiver dados mais recentes (compara lastModified)
+    CLOUD.syncIfNewer(true).catch(()=>updateSyncStatus('error'));
   } else {
     updateSyncStatus('offline');
   }
+
+  // Sincroniza automaticamente toda vez que o usuário volta para esta aba/app
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && CLOUD.isConfigured()) {
+      CLOUD.syncIfNewer(false);
+    }
+  });
 })();
 
 renderAll();
