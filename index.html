@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -230,6 +231,23 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 }
 .cc-hero-label{font-size:.81rem;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;}
 .cc-hero-amount{font-family:'Syne',sans-serif;font-weight:800;font-size:2.8rem;letter-spacing:-1.5px;}
+.cc-accounts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:24px;}
+.cc-account-card{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s;overflow:hidden;}
+.cc-account-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--account-color,var(--accent2));opacity:.65;}
+.cc-account-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.14);}
+.cc-account-card.sel{border-color:var(--account-color,var(--accent2));box-shadow:0 0 0 2px color-mix(in srgb,var(--account-color,var(--accent2)) 14%,transparent);}
+.cc-account-top{display:flex;align-items:flex-start;gap:10px;}
+.cc-account-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0;background:color-mix(in srgb,var(--account-color,var(--accent2)) 13%,transparent);}
+.cc-account-info{flex:1;min-width:0;}
+.cc-account-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cc-account-bank{font-size:.73rem;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cc-account-balance{font-family:'Syne',sans-serif;font-weight:700;font-size:1.2rem;margin-top:14px;}
+.cc-account-meta{font-size:.72rem;color:var(--text2);margin-top:3px;}
+.cc-account-actions{display:flex;gap:6px;margin-top:12px;position:relative;z-index:2;}
+.cc-selected-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;}
+.cc-selected-hdr{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.cc-selected-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;}
+.cc-selected-sub{font-size:.76rem;color:var(--text2);margin-top:3px;}
 .cc-item{
   display:flex;align-items:center;gap:14px;
   padding:14px;border-radius:12px;
@@ -414,17 +432,29 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 </header>
 
 <main>
-  <div style="max-width:680px;margin:0 auto">
+  <div style="max-width:850px;margin:0 auto">
     <div class="cc-hero">
-      <div class="cc-hero-label">Saldo da conta corrente</div>
+      <div class="cc-hero-label">Saldo total nas contas</div>
       <div class="cc-hero-amount" id="cc-saldo-total">R$ 0,00</div>
-      <div style="font-size:.82rem;color:var(--text2);margin-top:6px" id="cc-saldo-meta">Nenhum item cadastrado</div>
+      <div style="font-size:.82rem;color:var(--text2);margin-top:6px" id="cc-saldo-meta">Nenhuma conta cadastrada</div>
     </div>
+
     <div class="sec-hdr">
-      <div class="sec-title">Composição do Saldo <small>Itens que formam o saldo total</small></div>
-      <button class="btn btn-primary" onclick="openModal('m-cc-item')">+ Adicionar item</button>
+      <div class="sec-title">Minhas Contas <small>Selecione uma conta para ver e editar sua composição</small></div>
+      <button class="btn btn-primary" onclick="openNewCCAccount()">+ Nova Conta</button>
     </div>
-    <div id="cc-items-list"></div>
+    <div class="cc-accounts-grid" id="cc-accounts-list"></div>
+
+    <div class="cc-selected-box" id="cc-selected-box">
+      <div class="cc-selected-hdr">
+        <div>
+          <div class="cc-selected-title" id="cc-selected-title">Composição do Saldo</div>
+          <div class="cc-selected-sub" id="cc-selected-sub">Itens da conta selecionada</div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openCCItemModal()">+ Adicionar item</button>
+      </div>
+      <div id="cc-items-list"></div>
+    </div>
   </div>
 </main>
 
@@ -767,9 +797,48 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 
 <!-- MODAIS: CONTA CORRENTE -->
 
+<div class="mo" id="m-cc-account">
+  <div class="modal">
+    <div class="m-title">🏦 Nova Conta Corrente</div>
+    <div class="fg"><label>Nome da conta</label><input type="text" id="cca-nome" placeholder="Ex: Nubank, Banco do Brasil, Conta salário..."/></div>
+    <div class="fg"><label>Banco / instituição (opcional)</label><input type="text" id="cca-banco" placeholder="Ex: Nubank, Itaú, Caixa..."/></div>
+    <div class="fg"><label>Cor da conta</label>
+      <select id="cca-color">
+        <option value="blue">🔵 Azul</option><option value="green">🟢 Verde</option>
+        <option value="purple">🟣 Roxo</option><option value="orange">🟠 Laranja</option>
+        <option value="pink">🩷 Rosa</option><option value="red">🔴 Vermelho</option>
+      </select>
+    </div>
+    <div class="m-footer">
+      <button class="btn btn-secondary" onclick="closeModal('m-cc-account')">Cancelar</button>
+      <button class="btn btn-primary" onclick="addCCAccount()">Adicionar conta</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo" id="m-ed-cc-account">
+  <div class="modal">
+    <div class="m-title">✏️ Editar Conta</div>
+    <div class="fg"><label>Nome da conta</label><input type="text" id="ed-cca-nome"/></div>
+    <div class="fg"><label>Banco / instituição (opcional)</label><input type="text" id="ed-cca-banco"/></div>
+    <div class="fg"><label>Cor da conta</label>
+      <select id="ed-cca-color">
+        <option value="blue">🔵 Azul</option><option value="green">🟢 Verde</option>
+        <option value="purple">🟣 Roxo</option><option value="orange">🟠 Laranja</option>
+        <option value="pink">🩷 Rosa</option><option value="red">🔴 Vermelho</option>
+      </select>
+    </div>
+    <div class="m-footer">
+      <button class="btn btn-secondary" onclick="closeModal('m-ed-cc-account')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEditCCAccount()">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <div class="mo" id="m-cc-item">
   <div class="modal">
     <div class="m-title">💳 Novo Item da Conta</div>
+    <div style="font-size:.78rem;color:var(--text2);margin:-10px 0 16px" id="cci-account-label"></div>
     <div class="fg"><label>Descrição</label><input type="text" id="cci-desc" placeholder="Ex: Saldo livre, Reserva médica..."/></div>
     <div class="fg"><label>Valor (R$)</label><input type="number" id="cci-val" placeholder="0,00" min="0" step="0.01"/></div>
     <div class="fg"><label>Ícone / categoria</label>
@@ -828,7 +897,10 @@ let S={
   cartoes:[],
   months:{},
   outrasDespesas:[],
-  ccItems:[],
+  ccItems:[], // legado: migrado automaticamente para ccContas
+  ccContas:[],
+  selCCConta:null,
+  editCCContaId:null,
   categorias:[],
   editDespId:null,
   editODId:null,
@@ -843,14 +915,48 @@ let S={
   antParSels:[]
 };
 
-function load(){
-  try{const d=localStorage.getItem('ff5');if(d)Object.assign(S,JSON.parse(d));}catch(e){}
+function normalizeCCState(){
+  if(!Array.isArray(S.ccItems))S.ccItems=[];
+  if(!Array.isArray(S.ccContas))S.ccContas=[];
+
+  // Migração automática da versão antiga, que possuía uma única lista S.ccItems.
+  if(S.ccItems.length){
+    if(!S.ccContas.length){
+      S.ccContas.push({id:1,nome:'Conta Principal',banco:'',color:'blue',items:[]});
+    }
+    const destino=S.ccContas[0];
+    if(!Array.isArray(destino.items))destino.items=[];
+    const ids=new Set(destino.items.map(i=>String(i.id)));
+    S.ccItems.forEach(i=>{if(!ids.has(String(i.id)))destino.items.push(i);});
+    S.ccItems=[];
+  }
+
+  // Mantém uma conta inicial para quem já usava o módulo antigo.
+  if(!S.ccContas.length){
+    S.ccContas.push({id:1,nome:'Conta Principal',banco:'',color:'blue',items:[]});
+  }
+
+  S.ccContas.forEach((c,idx)=>{
+    if(c.id===undefined||c.id===null)c.id=Date.now()+idx;
+    if(!c.nome)c.nome='Conta '+(idx+1);
+    if(c.banco===undefined)c.banco='';
+    if(!CHEX[c.color])c.color='blue';
+    if(!Array.isArray(c.items))c.items=[];
+  });
+
+  if(!S.ccContas.some(c=>String(c.id)===String(S.selCCConta))){
+    S.selCCConta=S.ccContas[0].id;
+  }
+  if(S.editCCContaId===undefined)S.editCCContaId=null;
+}
+
+function normalizeState(){
   if(!S.outrasDespesas)S.outrasDespesas=[];
-  if(!S.ccItems)S.ccItems=[];
   if(!S.cartoes)S.cartoes=[];
   if(!S.months)S.months={};
   if(!S.categorias)S.categorias=[];
   if(!S.antParSels)S.antParSels=[];
+  normalizeCCState();
   S.cartoes.forEach(c=>{
     (c.despesas||[]).forEach(d=>{
       if(!d.overrides)d.overrides={};
@@ -861,6 +967,11 @@ function load(){
     if(!d.overrides)d.overrides={};
     if(!d.excluidos)d.excluidos=[];
   });
+}
+
+function load(){
+  try{const d=localStorage.getItem('ff5');if(d)Object.assign(S,JSON.parse(d));}catch(e){}
+  normalizeState();
 }
 
 function _localSave(){localStorage.setItem('ff5',JSON.stringify(S));}
@@ -1081,6 +1192,7 @@ const CLOUD = {
       // Remove o campo de controle antes de aplicar ao estado
       const { lastModified, ...dados } = remote;
       Object.assign(S, dados);
+      normalizeState();
       _localSave();
       localStorage.setItem('ff5_lastModified', String(remoteTs));
       renderAll(); renderCC();
@@ -1178,6 +1290,7 @@ async function pullFromCloud() {
   if (remote && remote.cartoes !== undefined) {
     const { lastModified, ...dados } = remote;
     Object.assign(S, dados);
+    normalizeState();
     _localSave();
     if (lastModified) localStorage.setItem('ff5_lastModified', String(lastModified));
     renderAll(); renderCC();
@@ -1909,22 +2022,97 @@ function renderHistorico(){
 }
 
 // ════════════════════════════════════════════
-//  CONTA CORRENTE
+//  CONTA CORRENTE — MÚLTIPLAS CONTAS
 // ════════════════════════════════════════════
+function esc(v){
+  return String(v??'').replace(/[&<>"']/g,ch=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+  }[ch]));
+}
+function getCCAccount(id=S.selCCConta){
+  return S.ccContas.find(c=>String(c.id)===String(id))||null;
+}
+function ccAccountTotal(c){
+  return (c&&Array.isArray(c.items)?c.items:[]).reduce((s,i)=>s+Number(i.valor||0),0);
+}
+function openNewCCAccount(){
+  document.getElementById('cca-nome').value='';
+  document.getElementById('cca-banco').value='';
+  document.getElementById('cca-color').value='blue';
+  openModal('m-cc-account');
+  setTimeout(()=>document.getElementById('cca-nome').focus(),50);
+}
+function addCCAccount(){
+  const nome=document.getElementById('cca-nome').value.trim();
+  const banco=document.getElementById('cca-banco').value.trim();
+  const color=document.getElementById('cca-color').value;
+  if(!nome){toast('⚠️ Informe o nome da conta');return;}
+  const id=Date.now();
+  S.ccContas.push({id,nome,banco,color:CHEX[color]?color:'blue',items:[]});
+  S.selCCConta=id;
+  save();closeModal('m-cc-account');renderCC();toast('✅ Conta "'+nome+'" adicionada!');
+}
+function selectCCAccount(id){
+  if(!getCCAccount(id))return;
+  S.selCCConta=id;
+  _localSave();
+  renderCC();
+}
+function openEditCCAccount(id,event){
+  if(event)event.stopPropagation();
+  const c=getCCAccount(id);if(!c)return;
+  S.editCCContaId=c.id;
+  document.getElementById('ed-cca-nome').value=c.nome||'';
+  document.getElementById('ed-cca-banco').value=c.banco||'';
+  document.getElementById('ed-cca-color').value=CHEX[c.color]?c.color:'blue';
+  openModal('m-ed-cc-account');
+}
+function saveEditCCAccount(){
+  const c=getCCAccount(S.editCCContaId);if(!c)return;
+  const nome=document.getElementById('ed-cca-nome').value.trim();
+  const banco=document.getElementById('ed-cca-banco').value.trim();
+  const color=document.getElementById('ed-cca-color').value;
+  if(!nome){toast('⚠️ Informe o nome da conta');return;}
+  c.nome=nome;c.banco=banco;c.color=CHEX[color]?color:'blue';
+  save();closeModal('m-ed-cc-account');renderCC();toast('✅ Conta atualizada!');
+}
+function delCCAccount(id,event){
+  if(event)event.stopPropagation();
+  const c=getCCAccount(id);if(!c)return;
+  if(S.ccContas.length<=1){toast('⚠️ Mantenha pelo menos uma conta cadastrada');return;}
+  const saldo=ccAccountTotal(c);
+  const aviso=c.items.length
+    ?`
+
+Esta conta possui ${c.items.length} item(ns), totalizando ${fmt(saldo)}. Eles também serão excluídos.`:'';
+  if(!confirm('Excluir a conta "'+c.nome+'"?'+aviso))return;
+  S.ccContas=S.ccContas.filter(x=>String(x.id)!==String(id));
+  if(String(S.selCCConta)===String(id))S.selCCConta=S.ccContas[0].id;
+  save();renderCC();toast('🗑️ Conta removida');
+}
+function openCCItemModal(){
+  const c=getCCAccount();
+  if(!c){toast('⚠️ Selecione uma conta');return;}
+  document.getElementById('cci-account-label').textContent='Conta: '+c.nome+(c.banco?' · '+c.banco:'');
+  openModal('m-cc-item');
+}
 function addCCItem(){
+  const c=getCCAccount();
+  if(!c){toast('⚠️ Selecione uma conta');return;}
   const desc=document.getElementById('cci-desc').value.trim();
   const valor=parseFloat(document.getElementById('cci-val').value);
   const icon=document.getElementById('cci-icon').value;
   if(!desc){toast('⚠️ Informe a descrição');return;}
   if(!valor||valor<=0){toast('⚠️ Valor inválido');return;}
-  S.ccItems.push({id:Date.now(),desc,valor,icon});
+  c.items.push({id:Date.now(),desc,valor,icon});
   save();closeModal('m-cc-item');
   document.getElementById('cci-desc').value='';
   document.getElementById('cci-val').value='';
-  renderCC();toast('✅ Item adicionado!');
+  renderCC();toast('✅ Item adicionado em '+c.nome+'!');
 }
 function openEditCCItem(id){
-  const it=S.ccItems.find(x=>x.id===id);if(!it)return;
+  const c=getCCAccount();if(!c)return;
+  const it=c.items.find(x=>String(x.id)===String(id));if(!it)return;
   S.editCCIId=id;
   document.getElementById('ed-cci-desc').value=it.desc;
   document.getElementById('ed-cci-val').value=it.valor;
@@ -1932,7 +2120,8 @@ function openEditCCItem(id){
   openModal('m-ed-cci');
 }
 function saveEditCCItem(){
-  const it=S.ccItems.find(x=>x.id===S.editCCIId);if(!it)return;
+  const c=getCCAccount();if(!c)return;
+  const it=c.items.find(x=>String(x.id)===String(S.editCCIId));if(!it)return;
   const desc=document.getElementById('ed-cci-desc').value.trim();
   const valor=parseFloat(document.getElementById('ed-cci-val').value);
   const icon=document.getElementById('ed-cci-icon').value;
@@ -1942,12 +2131,15 @@ function saveEditCCItem(){
   save();closeModal('m-ed-cci');renderCC();toast('✅ Item atualizado!');
 }
 function delCCItem(id){
-  S.ccItems=S.ccItems.filter(x=>x.id!==id);
+  const c=getCCAccount();if(!c)return;
+  c.items=c.items.filter(x=>String(x.id)!==String(id));
   save();renderCC();toast('🗑️ Item removido');
 }
 
 function renderCC(){
-  const total=S.ccItems.reduce((s,i)=>s+i.valor,0);
+  normalizeCCState();
+  const total=S.ccContas.reduce((s,c)=>s+ccAccountTotal(c),0);
+  const totalItens=S.ccContas.reduce((s,c)=>s+c.items.length,0);
   const totalEl=document.getElementById('cc-saldo-total');
   totalEl.textContent=fmt(total);
   totalEl.style.background='linear-gradient(135deg,var(--accent2),#8b5cf6)';
@@ -1955,32 +2147,64 @@ function renderCC(){
   totalEl.style['-webkit-text-fill-color']='transparent';
 
   document.getElementById('cc-saldo-meta').textContent=
-    S.ccItems.length?S.ccItems.length+' item(s) compondo o saldo':'Nenhum item cadastrado';
+    S.ccContas.length+' conta(s) · '+totalItens+' item(ns) no total';
 
+  const contasEl=document.getElementById('cc-accounts-list');
+  contasEl.innerHTML=S.ccContas.map(c=>{
+    const saldo=ccAccountTotal(c);
+    const sel=String(c.id)===String(S.selCCConta);
+    const color=CHEX[c.color]||CHEX.blue;
+    return`<div class="cc-account-card ${sel?'sel':''}" style="--account-color:${color}" onclick="selectCCAccount(${JSON.stringify(c.id)})">
+      <div class="cc-account-top">
+        <div class="cc-account-icon">🏦</div>
+        <div class="cc-account-info">
+          <div class="cc-account-name">${esc(c.nome)}</div>
+          <div class="cc-account-bank">${esc(c.banco||'Conta corrente')}</div>
+        </div>
+        ${sel?'<span class="badge bg-blue">Selecionada</span>':''}
+      </div>
+      <div class="cc-account-balance" style="color:${color}">${fmt(saldo)}</div>
+      <div class="cc-account-meta">${c.items.length} item(ns) compondo o saldo</div>
+      <div class="cc-account-actions">
+        <button class="btn btn-edit btn-sm" onclick="openEditCCAccount(${JSON.stringify(c.id)},event)">✏️ Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="delCCAccount(${JSON.stringify(c.id)},event)">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  const c=getCCAccount();
+  const box=document.getElementById('cc-selected-box');
+  if(!c){box.style.display='none';return;}
+  box.style.display='block';
+  document.getElementById('cc-selected-title').textContent='Composição — '+c.nome;
+  document.getElementById('cc-selected-sub').textContent=(c.banco?c.banco+' · ':'')+fmt(ccAccountTotal(c))+' nesta conta';
+
+  const saldoConta=ccAccountTotal(c);
   const list=document.getElementById('cc-items-list');
-  if(!S.ccItems.length){
+  if(!c.items.length){
     list.innerHTML=`<div class="empty"><div class="empty-ico">🏦</div>
-      <h3>Nenhum item ainda</h3>
-      <p>Adicione itens para compor o saldo da conta corrente.<br>Ex: "Saldo livre R$ 500", "Reserva médica R$ 200"</p></div>`;
+      <h3>Nenhum item nesta conta</h3>
+      <p>Adicione itens para compor o saldo de <strong>${esc(c.nome)}</strong>.<br>Ex: "Saldo livre R$ 500", "Reserva médica R$ 200"</p></div>`;
     return;
   }
-  list.innerHTML=`<div class="cc-items-grid">${S.ccItems.map(it=>{
-    const pct=total>0?Math.round((it.valor/total)*100):0;
+  const color=CHEX[c.color]||CHEX.blue;
+  list.innerHTML=`<div class="cc-items-grid">${c.items.map(it=>{
+    const pct=saldoConta>0?Math.round((Number(it.valor||0)/saldoConta)*100):0;
     return`<div class="cc-item">
-      <div class="cc-item-icon" style="background:rgba(0,153,255,.12)">${it.icon}</div>
+      <div class="cc-item-icon" style="background:${color}1f">${esc(it.icon||'💰')}</div>
       <div class="cc-item-info">
-        <div class="cc-item-desc">${it.desc}</div>
+        <div class="cc-item-desc">${esc(it.desc)}</div>
         <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
           <div style="flex:1;height:4px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden">
-            <div style="width:${pct}%;height:100%;background:var(--accent2);border-radius:99px"></div>
+            <div style="width:${pct}%;height:100%;background:${color};border-radius:99px"></div>
           </div>
           <span class="cc-item-sub">${pct}%</span>
         </div>
       </div>
-      <div class="cc-item-val" style="color:var(--accent2)">${fmt(it.valor)}</div>
+      <div class="cc-item-val" style="color:${color}">${fmt(it.valor)}</div>
       <div style="display:flex;flex-direction:column;gap:5px">
-        <button class="btn btn-edit btn-sm" onclick="openEditCCItem(${it.id})">✏️</button>
-        <button class="btn btn-danger btn-sm" onclick="delCCItem(${it.id})">✕</button>
+        <button class="btn btn-edit btn-sm" onclick="openEditCCItem(${JSON.stringify(it.id)})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="delCCItem(${JSON.stringify(it.id)})">✕</button>
       </div>
     </div>`;
   }).join('')}</div>`;
