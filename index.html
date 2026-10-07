@@ -296,9 +296,27 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   .mod-btn{padding:7px 14px;font-size:.78rem;}
   .cch-amount{font-size:2.2rem;}
 }
+
+
+/* ── MCLOUD: modo conta única (sem persistir dados financeiros no navegador) ── */
+.auth-gate{position:fixed;inset:0;z-index:2000;background:rgba(7,10,18,.96);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;padding:22px}
+.auth-gate-card{width:100%;max-width:430px;background:var(--surface);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,.55);text-align:center}
+.auth-gate-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.45rem;margin-bottom:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.auth-gate-text{font-size:.86rem;color:var(--text2);line-height:1.65;margin-bottom:20px}
+
 </style>
 </head>
 <body>
+
+<div class="auth-gate" id="auth-gate">
+  <div class="auth-gate-card">
+    <div class="auth-gate-logo">FinanceFlow</div>
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.15rem;margin-bottom:8px">Entre na sua conta</div>
+    <div class="auth-gate-text">Os dados financeiros ficam vinculados ao seu usuário no MCloud. Esta versão não salva cartões, despesas, salários ou contas no armazenamento permanente do navegador.</div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="openCloudModal()">👤 Entrar ou criar conta</button>
+  </div>
+</div>
+
 
 <!-- MODULE: GESTÃO FINANCEIRA -->
 <div class="module active" id="mod-gf">
@@ -313,7 +331,7 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 
   <button onclick="openModal('m-backup')" style="background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.22);color:#a78bfa;padding:4px 10px;border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">💾 Backup</button>
   <div id="sync-indicator" style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-    <span style="color:var(--text2);font-size:.75rem;font-weight:500">💾 Só local</span>
+    <span style="color:var(--text2);font-size:.75rem;font-weight:500">🔐 Entrar</span>
     <button onclick="openCloudModal()" style="background:rgba(0,153,255,.12);border:1px solid rgba(0,153,255,.2);color:var(--accent2);padding:4px 10px;border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">👤 Entrar</button>
   </div>
 </header>
@@ -479,7 +497,7 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 
     <div style="background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.18);border-radius:10px;padding:14px;margin-bottom:18px;font-size:.82rem;line-height:1.65;color:var(--text2)">
       <strong style="color:#a78bfa">Exportar dados</strong> cria um arquivo <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px">.json</code> com todos os dados do FinanceFlow.<br><br>
-      <strong style="color:#a78bfa">Importar dados</strong> restaura um arquivo exportado anteriormente. Senhas e tokens de login não fazem parte do backup.
+      <strong style="color:#a78bfa">Importar dados</strong> envia um arquivo exportado anteriormente para a conta MCloud atualmente conectada. Senhas e tokens de login não fazem parte do backup.
     </div>
 
     <div id="backup-status-box" style="display:none;padding:10px 14px;border-radius:9px;margin-bottom:14px;font-size:.82rem"></div>
@@ -534,7 +552,7 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
       </div>
 
       <div style="font-size:.74rem;color:var(--text2);text-align:center;margin-top:14px;line-height:1.5">
-        Você pode continuar usando o FinanceFlow localmente sem entrar. A nuvem só é ativada após o login.
+        Nesta versão, é necessário entrar para usar o FinanceFlow. Os dados financeiros ficam vinculados à sua conta MCloud.
       </div>
 
       <div class="m-footer">
@@ -553,14 +571,14 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
           </div>
           <span id="mcloud-version-label" class="badge bg-blue">Versão —</span>
         </div>
-        <div style="color:var(--text2);font-size:.79rem;margin-top:10px;line-height:1.5">As alterações são salvas neste dispositivo e sincronizadas automaticamente com sua conta.</div>
+        <div style="color:var(--text2);font-size:.79rem;margin-top:10px;line-height:1.5">Os dados financeiros ficam na sua conta MCloud. O navegador mantém apenas a sessão enquanto esta aba estiver aberta.</div>
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
         <button onclick="manualSync()" class="btn btn-edit" style="justify-content:center">🔄 Sincronizar</button>
         <button onclick="pullFromCloud()" class="btn btn-warn" style="justify-content:center">⬇️ Carregar nuvem</button>
       </div>
-      <button onclick="forcePushFromThisDevice()" class="btn btn-secondary" style="width:100%;justify-content:center;margin-bottom:12px">⬆️ Enviar este dispositivo para a nuvem</button>
+      
 
       <div class="m-footer">
         <button class="btn btn-danger" onclick="mcloudLogoutUI()">Sair da conta</button>
@@ -1030,15 +1048,21 @@ function normalizeState(){
 }
 
 function load(){
-  try{const d=localStorage.getItem('ff5');if(d)Object.assign(S,JSON.parse(d));}catch(e){}
+  // Modo MCloud: os dados financeiros não são carregados do armazenamento permanente do navegador.
   normalizeState();
 }
 
-function _localSave(){localStorage.setItem('ff5',JSON.stringify(S));}
+function _localSave(){
+  // Intencionalmente vazio. O estado financeiro existe apenas em memória enquanto a página está aberta.
+}
 
 function save(){
-  _localSave();
-  CLOUD.schedulePush(S);
+  if(!CLOUD || !CLOUD.isConfigured()){
+    toast('⚠️ Entre na sua conta para salvar alterações.');
+    updateAuthGate();
+    return;
+  }
+  CLOUD.schedulePush(JSON.parse(JSON.stringify(S)));
 }
 
 function mdata(y,m){
@@ -1176,6 +1200,26 @@ function escapeHTML(v){
   return String(v ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 }
 
+
+function updateAuthGate(){
+  const gate=document.getElementById('auth-gate');
+  if(!gate)return;
+  gate.style.display=CLOUD?.isConfigured?.()?'none':'flex';
+}
+
+function purgeLegacyBrowserData(){
+  // Só remove cópias antigas depois que os dados estiverem confirmados no MCloud.
+  localStorage.removeItem('ff5');
+  localStorage.removeItem('ff5_cloud');
+  localStorage.removeItem('ff5_lastModified');
+}
+
+function replaceStateFromCloud(data){
+  Object.keys(S).forEach(k=>delete S[k]);
+  Object.assign(S,JSON.parse(JSON.stringify(data||{})));
+  normalizeState();
+}
+
 function hasMeaningfulLocalData(){
   if((S.cartoes||[]).length || (S.outrasDespesas||[]).length || (S.categorias||[]).length) return true;
   if((S.ccContas||[]).some(c => (c.items||[]).length)) return true;
@@ -1198,10 +1242,10 @@ const CLOUD = {
   conflict: false,
 
   init(){
-    this.token = localStorage.getItem(MCLOUD_KEYS.token) || null;
-    try { this.user = JSON.parse(localStorage.getItem(MCLOUD_KEYS.user) || 'null'); } catch(e) { this.user = null; }
-    this.version = parseInt(localStorage.getItem(MCLOUD_KEYS.version) || '0', 10) || 0;
-    this.updatedAt = parseInt(localStorage.getItem(MCLOUD_KEYS.updatedAt) || '0', 10) || 0;
+    this.token = sessionStorage.getItem(MCLOUD_KEYS.token) || null;
+    try { this.user = JSON.parse(sessionStorage.getItem(MCLOUD_KEYS.user) || 'null'); } catch(e) { this.user = null; }
+    this.version = parseInt(sessionStorage.getItem(MCLOUD_KEYS.version) || '0', 10) || 0;
+    this.updatedAt = parseInt(sessionStorage.getItem(MCLOUD_KEYS.updatedAt) || '0', 10) || 0;
   },
 
   isConfigured(){ return !!this.token; },
@@ -1209,8 +1253,8 @@ const CLOUD = {
   setSession(token, user){
     this.token = token;
     this.user = user || null;
-    localStorage.setItem(MCLOUD_KEYS.token, token);
-    if(user) localStorage.setItem(MCLOUD_KEYS.user, JSON.stringify(user));
+    sessionStorage.setItem(MCLOUD_KEYS.token, token);
+    if(user) sessionStorage.setItem(MCLOUD_KEYS.user, JSON.stringify(user));
   },
 
   clearSession(){
@@ -1219,17 +1263,17 @@ const CLOUD = {
     this.version = 0;
     this.updatedAt = 0;
     this.conflict = false;
-    Object.values(MCLOUD_KEYS).forEach(k => localStorage.removeItem(k));
+    Object.values(MCLOUD_KEYS).forEach(k => sessionStorage.removeItem(k));
   },
 
   saveMeta(version, updatedAt){
     if(Number.isFinite(Number(version))){
       this.version = Number(version);
-      localStorage.setItem(MCLOUD_KEYS.version, String(this.version));
+      sessionStorage.setItem(MCLOUD_KEYS.version, String(this.version));
     }
     if(updatedAt){
       this.updatedAt = Number(updatedAt);
-      localStorage.setItem(MCLOUD_KEYS.updatedAt, String(this.updatedAt));
+      sessionStorage.setItem(MCLOUD_KEYS.updatedAt, String(this.updatedAt));
     }
   },
 
@@ -1269,7 +1313,7 @@ const CLOUD = {
   async me(){
     const r = await this.request('/v1/auth/me');
     this.user = r.user;
-    localStorage.setItem(MCLOUD_KEYS.user, JSON.stringify(r.user));
+    sessionStorage.setItem(MCLOUD_KEYS.user, JSON.stringify(r.user));
     return r.user;
   },
 
@@ -1319,7 +1363,6 @@ const CLOUD = {
   async syncIfNewer(silent=false){
     if(!this.isConfigured()) return;
     try{
-      const localCloudTs = parseInt(localStorage.getItem(MCLOUD_KEYS.updatedAt)||'0',10) || 0;
       const remote = await this.pull();
       if(!remote) return;
       if(isEmptyCloudData(remote.data)){
@@ -1327,18 +1370,16 @@ const CLOUD = {
         updateSyncStatus('ok');
         return;
       }
-      if(!localCloudTs || (remote.updatedAt && Number(remote.updatedAt) > localCloudTs)){
-        Object.assign(S, remote.data);
-        normalizeState();
-        _localSave();
+      if(!this.updatedAt || (remote.updatedAt && Number(remote.updatedAt) > Number(this.updatedAt))){
+        replaceStateFromCloud(remote.data);
         renderAll(); renderCC();
         this.saveMeta(remote.version, remote.updatedAt);
+        purgeLegacyBrowserData();
         updateSyncStatus('ok');
         if(!silent) toast('☁️ Dados atualizados do MCloud!');
       }else{
-        // Mantém a versão remota conhecida para a próxima gravação, sem sobrescrever o estado local.
         this.version = Number(remote.version)||this.version;
-        localStorage.setItem(MCLOUD_KEYS.version,String(this.version));
+        sessionStorage.setItem(MCLOUD_KEYS.version,String(this.version));
         updateSyncStatus('ok');
       }
     } catch(e){
@@ -1362,7 +1403,7 @@ function updateSyncStatus(status){
     syncing:'<span style="color:var(--accent4);font-size:.75rem;font-weight:500">⏳ Sincronizando…</span>',
     error:'<span style="color:var(--accent3);font-size:.75rem;font-weight:500">⚠️ Erro na nuvem</span>',
     conflict:'<span style="color:var(--accent4);font-size:.75rem;font-weight:500">⚠️ Conflito</span>',
-    offline:'<span style="color:var(--text2);font-size:.75rem;font-weight:500">💾 Só local</span>'
+    offline:'<span style="color:var(--text2);font-size:.75rem;font-weight:500">🔐 Entrar</span>'
   };
   let label='👤 Entrar';
   if(CLOUD.isConfigured()){
@@ -1421,8 +1462,8 @@ async function afterMCloudAuth(isNewAccount=false){
       updateSyncStatus('ok');
       showCloudMsg('ok','✅ Conta conectada. Para trazer seus dados antigos, use Backup → Importar dados.');
     }else if(remote && !isEmptyCloudData(remote.data)){
-      Object.assign(S,remote.data);normalizeState();_localSave();renderAll();renderCC();
-      CLOUD.saveMeta(remote.version,remote.updatedAt);updateSyncStatus('ok');
+      replaceStateFromCloud(remote.data);renderAll();renderCC();
+      CLOUD.saveMeta(remote.version,remote.updatedAt);purgeLegacyBrowserData();updateSyncStatus('ok');
       showCloudMsg('ok','✅ Conta conectada e dados carregados do MCloud.');
     }
   }catch(e){
@@ -1430,6 +1471,7 @@ async function afterMCloudAuth(isNewAccount=false){
     showCloudMsg('error','❌ '+e.message);
   }
   updateMCloudAccountUI();
+  updateAuthGate();
 }
 
 async function mcloudLoginUI(){
@@ -1464,22 +1506,20 @@ async function mcloudRegisterUI(){
 }
 
 async function mcloudLogoutUI(){
-  if(!confirm('Sair da sua conta MCloud?\n\nOs dados locais deste navegador serão mantidos.'))return;
+  if(!confirm('Sair da sua conta MCloud?'))return;
   await CLOUD.logout();
-  updateSyncStatus('offline');
-  updateMCloudAccountUI();
-  showCloudMsg('info','Você saiu da conta. Os dados locais continuam neste navegador.');
-  toast('👋 Sessão encerrada');
+  // Recarrega para limpar imediatamente os dados financeiros que estão apenas em memória.
+  location.reload();
 }
 
 async function pullFromCloud(){
   if(!CLOUD.isConfigured()){showMCloudAuthTab('login');openCloudModal();return;}
-  if(!confirm('Carregar os dados do MCloud?\n\nIsso substituirá os dados locais deste navegador pelo que está salvo na sua conta.'))return;
+  if(!confirm('Carregar os dados do MCloud?\n\nIsso substituirá os dados atualmente exibidos pelo que está salvo na sua conta.'))return;
   updateSyncStatus('syncing');
   try{
     const remote=await CLOUD.pull();
     if(remote && !isEmptyCloudData(remote.data)){
-      Object.assign(S,remote.data);normalizeState();_localSave();renderAll();renderCC();
+      replaceStateFromCloud(remote.data);renderAll();renderCC();purgeLegacyBrowserData();
       CLOUD.saveMeta(remote.version,remote.updatedAt);CLOUD.conflict=false;
       updateSyncStatus('ok');updateMCloudAccountUI();
       toast('☁️ Dados carregados do MCloud!');closeModal('m-cloud');
@@ -1499,7 +1539,7 @@ async function forcePushFromThisDevice(){
   if(!CLOUD.isConfigured()){openCloudModal();return;}
   if(!confirm('Enviar os dados DESTE DISPOSITIVO para o MCloud?\n\nIsso substituirá o conteúdo atual salvo na nuvem. Use esta opção apenas quando tiver certeza de que os dados deste dispositivo são os corretos.'))return;
   const r=await CLOUD.push(S,{force:true,silent:false});
-  if(r){toast('☁️ Nuvem substituída pelos dados deste dispositivo.');showCloudMsg('ok','✅ Dados deste dispositivo enviados ao MCloud.');}
+  if(r){purgeLegacyBrowserData();toast('☁️ Dados enviados ao MCloud.');showCloudMsg('ok','✅ Dados enviados ao MCloud.');}
 }
 
 // Compatibilidade com chamadas antigas, caso existam em alguma cópia do HTML.
@@ -1567,6 +1607,7 @@ function backupSummary(data){
 async function importFinanceFlowData(input){
   const file=input?.files?.[0];
   if(!file)return;
+  if(!CLOUD.isConfigured()){showBackupMsg('error','❌ Entre na sua conta MCloud antes de importar.');openCloudModal();input.value='';return;}
   showBackupMsg('info','⏳ Lendo arquivo de backup...');
   try{
     const text=await file.text();
@@ -1575,23 +1616,22 @@ async function importFinanceFlowData(input){
     if(!isFinanceFlowState(data))throw new Error('Arquivo não reconhecido como backup do FinanceFlow.');
     const resumo=backupSummary(data);
     const origem=parsed?.exportedAt?new Date(parsed.exportedAt).toLocaleString('pt-BR'):'data não informada';
-    const destino=CLOUD.isConfigured()?'este navegador e sua conta MCloud':'somente este navegador (faça login depois para enviar ao MCloud)';
+    const destino='sua conta MCloud';
     if(!confirm(`Importar este backup?\n\nExportado em: ${origem}\nConteúdo: ${resumo}\n\nDestino: ${destino}\n\nOs dados atuais serão substituídos.`)){
       showBackupMsg('info','Importação cancelada.');return;
     }
     Object.keys(S).forEach(k=>delete S[k]);
     Object.assign(S,JSON.parse(JSON.stringify(data)));
-    normalizeState();_localSave();renderAll();renderCC();
+    normalizeState();renderAll();renderCC();
     if(CLOUD.isConfigured()){
       showBackupMsg('info','⏳ Backup restaurado. Enviando para sua conta MCloud...');
       const r=await CLOUD.push(S,{force:true,silent:true});
       if(!r)throw new Error('Os dados foram restaurados localmente, mas não foi possível enviá-los ao MCloud. Tente sincronizar novamente.');
-      updateSyncStatus('ok');updateMCloudAccountUI();
-      showBackupMsg('ok','✅ Backup importado e vinculado à sua conta MCloud.');
+      purgeLegacyBrowserData();updateSyncStatus('ok');updateMCloudAccountUI();
+      showBackupMsg('ok','✅ Backup importado e salvo na sua conta MCloud.');
       toast('📥 Backup importado para o MCloud!');
     }else{
-      showBackupMsg('ok','✅ Backup importado neste navegador. Entre na sua conta MCloud para sincronizar.');
-      toast('📥 Dados restaurados localmente!');
+      throw new Error('Entre na sua conta MCloud antes de importar.');
     }
   }catch(e){
     console.error('Erro ao importar backup:',e);
@@ -2625,18 +2665,21 @@ function renderAll(){updateMB();renderCartoes();renderDP();renderPanorama();rend
   populateCatSelects();
 
   CLOUD.init();
+  updateAuthGate();
   if(CLOUD.isConfigured()){
     updateSyncStatus('syncing');
     CLOUD.me()
       .then(()=>CLOUD.syncIfNewer(true))
-      .then(()=>updateMCloudAccountUI())
+      .then(()=>{updateMCloudAccountUI();updateAuthGate();})
       .catch(e=>{
         console.warn('Sessão MCloud:',e);
         if(!CLOUD.isConfigured())updateSyncStatus('offline');
         else updateSyncStatus('error');
+        updateAuthGate();
       });
   }else{
     updateSyncStatus('offline');
+    updateAuthGate();
   }
 
   // Ao voltar para a aba, verifica se a conta recebeu dados mais novos de outro dispositivo.
