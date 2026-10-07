@@ -314,7 +314,7 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   <button onclick="openModal('m-backup')" style="background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.22);color:#a78bfa;padding:4px 10px;border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">💾 Backup</button>
   <div id="sync-indicator" style="display:flex;align-items:center;gap:8px;flex-shrink:0">
     <span style="color:var(--text2);font-size:.75rem;font-weight:500">💾 Só local</span>
-    <button onclick="openCloudModal()" style="background:rgba(0,153,255,.12);border:1px solid rgba(0,153,255,.2);color:var(--accent2);padding:4px 10px;border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">☁️ Nuvem</button>
+    <button onclick="openCloudModal()" style="background:rgba(0,153,255,.12);border:1px solid rgba(0,153,255,.2);color:var(--accent2);padding:4px 10px;border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">👤 Entrar</button>
   </div>
 </header>
 
@@ -500,44 +500,72 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   </div>
 </div>
 
-<!-- ══ MODAL: CLOUD SYNC ══ -->
+<!-- ══ MODAL: CONTA / MCLOUD ══ -->
 <div class="mo" id="m-cloud">
-  <div class="modal" style="max-width:520px">
-    <div class="m-title">☁️ Sincronização na Nuvem</div>
-
-    <div style="background:rgba(0,153,255,.07);border:1px solid rgba(0,153,255,.15);border-radius:10px;padding:14px;margin-bottom:18px;font-size:.82rem;line-height:1.7;color:var(--text2)">
-      <strong style="color:var(--accent2)">Como funciona:</strong><br>
-      Seus dados ficam no <strong style="color:var(--text)">JSONBin.io</strong> (gratuito) e carregam em qualquer dispositivo/navegador.<br><br>
-      <strong style="color:var(--text)">Passos:</strong><br>
-      1. Acesse <a href="https://jsonbin.io" target="_blank" style="color:var(--accent2)">jsonbin.io</a> → crie uma conta grátis<br>
-      2. <strong>API Keys</strong> → copie a <em>Master Key</em><br>
-      3. <strong>Bins</strong> → crie um Bin com <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px">{}</code> → copie o <em>Bin ID</em><br>
-      4. Cole abaixo e clique <strong>Conectar</strong>
-    </div>
+  <div class="modal" style="max-width:540px">
+    <div class="m-title">☁️ Conta FinanceFlow</div>
 
     <div id="cloud-status-box" style="display:none;padding:10px 14px;border-radius:9px;margin-bottom:14px;font-size:.82rem;"></div>
 
-    <div id="cloud-connected-info" style="display:none;background:rgba(0,229,160,.07);border:1px solid rgba(0,229,160,.15);border-radius:9px;padding:14px;margin-bottom:16px;">
-      <div style="color:var(--accent);font-weight:600;margin-bottom:6px;font-size:.9rem">✅ Conectado ao JSONBin</div>
-      <div style="color:var(--text2);font-size:.81rem">Dados sincronizando automaticamente. Acessível em qualquer navegador com as mesmas credenciais.</div>
-      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-        <button onclick="manualSync()" class="btn btn-edit btn-sm">🔄 Sincronizar agora</button>
-        <button onclick="pullFromCloud()" class="btn btn-warn btn-sm">⬇️ Carregar da nuvem</button>
-        <button onclick="disconnectCloud()" class="btn btn-danger btn-sm">🔌 Desconectar</button>
+    <!-- NÃO AUTENTICADO -->
+    <div id="mcloud-logged-out">
+      <div style="background:rgba(0,153,255,.07);border:1px solid rgba(0,153,255,.15);border-radius:10px;padding:14px;margin-bottom:18px;font-size:.82rem;line-height:1.65;color:var(--text2)">
+        <strong style="color:var(--accent2)">MCloud</strong><br>
+        Entre com sua conta para salvar seus dados na nuvem e acessá-los em outros dispositivos. Cada usuário possui seu próprio espaço privado.
+      </div>
+
+      <div style="display:flex;gap:6px;background:var(--surface2);padding:5px;border-radius:10px;margin-bottom:18px">
+        <button id="mcloud-tab-login" class="btn btn-primary" style="flex:1;justify-content:center" onclick="showMCloudAuthTab('login')">Entrar</button>
+        <button id="mcloud-tab-register" class="btn btn-secondary" style="flex:1;justify-content:center" onclick="showMCloudAuthTab('register')">Criar conta</button>
+      </div>
+
+      <div id="mcloud-login-panel">
+        <div class="fg"><label>E-mail</label><input type="email" id="mcloud-login-email" placeholder="voce@email.com" autocomplete="email"/></div>
+        <div class="fg"><label>Senha</label><input type="password" id="mcloud-login-password" placeholder="Sua senha" autocomplete="current-password"/></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="mcloudLoginUI()">🔐 Entrar</button>
+      </div>
+
+      <div id="mcloud-register-panel" style="display:none">
+        <div class="fg"><label>Nome</label><input type="text" id="mcloud-register-name" placeholder="Seu nome" autocomplete="name" maxlength="100"/></div>
+        <div class="fg"><label>E-mail</label><input type="email" id="mcloud-register-email" placeholder="voce@email.com" autocomplete="email"/></div>
+        <div class="fg"><label>Senha</label><input type="password" id="mcloud-register-password" placeholder="Mínimo 8 caracteres" autocomplete="new-password"/></div>
+        <div class="fg"><label>Confirmar senha</label><input type="password" id="mcloud-register-password2" placeholder="Repita a senha" autocomplete="new-password"/></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="mcloudRegisterUI()">✨ Criar minha conta</button>
+      </div>
+
+      <div style="font-size:.74rem;color:var(--text2);text-align:center;margin-top:14px;line-height:1.5">
+        Você pode continuar usando o FinanceFlow localmente sem entrar. A nuvem só é ativada após o login.
+      </div>
+
+      <div class="m-footer">
+        <button class="btn btn-secondary" onclick="closeModal('m-cloud')">Fechar</button>
       </div>
     </div>
 
-    <div class="fg"><label>Master Key (X-Master-Key)</label>
-      <input type="password" id="cloud-apikey" placeholder="$2a$10$..." autocomplete="off"/>
-    </div>
-    <div class="fg"><label>Bin ID</label>
-      <input type="text" id="cloud-binid" placeholder="64abc123e3a795..." autocomplete="off"/>
-    </div>
+    <!-- AUTENTICADO -->
+    <div id="mcloud-logged-in" style="display:none">
+      <div style="background:rgba(0,229,160,.07);border:1px solid rgba(0,229,160,.15);border-radius:12px;padding:16px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div>
+            <div style="color:var(--accent);font-weight:700;font-size:.95rem">✅ Conectado ao MCloud</div>
+            <div id="mcloud-user-name" style="font-weight:600;margin-top:5px">—</div>
+            <div id="mcloud-user-email" style="color:var(--text2);font-size:.8rem;margin-top:2px">—</div>
+          </div>
+          <span id="mcloud-version-label" class="badge bg-blue">Versão —</span>
+        </div>
+        <div style="color:var(--text2);font-size:.79rem;margin-top:10px;line-height:1.5">As alterações são salvas neste dispositivo e sincronizadas automaticamente com sua conta.</div>
+      </div>
 
-    <div class="m-footer">
-      <button class="btn btn-secondary" onclick="closeModal('m-cloud')">Fechar</button>
-      <button class="btn btn-edit" onclick="testCloudConnection()">🔍 Testar</button>
-      <button class="btn btn-primary" onclick="connectCloud()">☁️ Conectar e enviar dados</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <button onclick="manualSync()" class="btn btn-edit" style="justify-content:center">🔄 Sincronizar</button>
+        <button onclick="pullFromCloud()" class="btn btn-warn" style="justify-content:center">⬇️ Carregar nuvem</button>
+      </div>
+      <button onclick="forcePushFromThisDevice()" class="btn btn-secondary" style="width:100%;justify-content:center;margin-bottom:12px">⬆️ Enviar este dispositivo para a nuvem</button>
+
+      <div class="m-footer">
+        <button class="btn btn-danger" onclick="mcloudLogoutUI()">Sair da conta</button>
+        <button class="btn btn-secondary" onclick="closeModal('m-cloud')">Fechar</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1134,221 +1162,350 @@ function limiteComprometido(cartao){
 load();
 
 // ════════════════════════════════════════════
-//  CLOUD SYNC — JSONBin.io  (CORRIGIDO)
+//  MCLOUD — autenticação + sincronização por usuário
 // ════════════════════════════════════════════
+const MCLOUD_API = 'https://mcloud-api.mrdsomg.workers.dev';
+const MCLOUD_KEYS = {
+  token: 'ff5_mcloud_token',
+  user: 'ff5_mcloud_user',
+  version: 'ff5_mcloud_version',
+  updatedAt: 'ff5_mcloud_updatedAt'
+};
+
+function escapeHTML(v){
+  return String(v ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
+
+function hasMeaningfulLocalData(){
+  if((S.cartoes||[]).length || (S.outrasDespesas||[]).length || (S.categorias||[]).length) return true;
+  if((S.ccContas||[]).some(c => (c.items||[]).length)) return true;
+  return Object.values(S.months||{}).some(m =>
+    Number(m?.salario||0) !== 0 || (m?.outraRendas||[]).length || (m?.od||[]).length
+  );
+}
+
+function isEmptyCloudData(data){
+  return !data || typeof data !== 'object' || Array.isArray(data) || Object.keys(data).length === 0;
+}
+
 const CLOUD = {
-  apiKey: null,
-  binId: null,
+  token: null,
+  user: null,
+  version: 0,
+  updatedAt: 0,
   syncTimer: null,
   syncing: false,
+  conflict: false,
 
-  init() {
-    try {
-      const stored = localStorage.getItem('ff5_cloud');
-      if (stored) {
-        const cfg = JSON.parse(stored);
-        this.apiKey = cfg.apiKey;
-        this.binId = cfg.binId;
+  init(){
+    this.token = localStorage.getItem(MCLOUD_KEYS.token) || null;
+    try { this.user = JSON.parse(localStorage.getItem(MCLOUD_KEYS.user) || 'null'); } catch(e) { this.user = null; }
+    this.version = parseInt(localStorage.getItem(MCLOUD_KEYS.version) || '0', 10) || 0;
+    this.updatedAt = parseInt(localStorage.getItem(MCLOUD_KEYS.updatedAt) || '0', 10) || 0;
+  },
+
+  isConfigured(){ return !!this.token; },
+
+  setSession(token, user){
+    this.token = token;
+    this.user = user || null;
+    localStorage.setItem(MCLOUD_KEYS.token, token);
+    if(user) localStorage.setItem(MCLOUD_KEYS.user, JSON.stringify(user));
+  },
+
+  clearSession(){
+    this.token = null;
+    this.user = null;
+    this.version = 0;
+    this.updatedAt = 0;
+    this.conflict = false;
+    Object.values(MCLOUD_KEYS).forEach(k => localStorage.removeItem(k));
+  },
+
+  saveMeta(version, updatedAt){
+    if(Number.isFinite(Number(version))){
+      this.version = Number(version);
+      localStorage.setItem(MCLOUD_KEYS.version, String(this.version));
+    }
+    if(updatedAt){
+      this.updatedAt = Number(updatedAt);
+      localStorage.setItem(MCLOUD_KEYS.updatedAt, String(this.updatedAt));
+    }
+  },
+
+  async request(path, options={}){
+    const headers = {'Content-Type':'application/json', ...(options.headers||{})};
+    if(this.token) headers.Authorization = `Bearer ${this.token}`;
+    const res = await fetch(MCLOUD_API + path, {...options, headers});
+    const body = await res.json().catch(() => ({}));
+    if(!res.ok){
+      const err = new Error(body.error || `Erro HTTP ${res.status}`);
+      err.status = res.status;
+      err.payload = body;
+      if(res.status === 401 && path !== '/v1/auth/login'){
+        this.clearSession();
+        updateSyncStatus('offline');
       }
-    } catch(e) {}
+      throw err;
+    }
+    return body;
   },
 
-  isConfigured() { return !!(this.apiKey && this.binId); },
-
-  saveConfig(apiKey, binId) {
-    this.apiKey = apiKey;
-    this.binId = binId;
-    localStorage.setItem('ff5_cloud', JSON.stringify({ apiKey, binId }));
+  async register(name,email,password){
+    const r = await this.request('/v1/auth/register', {method:'POST', body:JSON.stringify({name,email,password})});
+    this.setSession(r.token, r.user);
+    this.version = 1;
+    this.updatedAt = 0;
+    this.saveMeta(1, 0);
+    return r.user;
   },
 
-  clearConfig() {
-    this.apiKey = null;
-    this.binId = null;
-    localStorage.removeItem('ff5_cloud');
+  async login(email,password){
+    const r = await this.request('/v1/auth/login', {method:'POST', body:JSON.stringify({email,password})});
+    this.setSession(r.token, r.user);
+    return r.user;
   },
 
-  async push(data) {
-    if (!this.isConfigured() || this.syncing) return;
+  async me(){
+    const r = await this.request('/v1/auth/me');
+    this.user = r.user;
+    localStorage.setItem(MCLOUD_KEYS.user, JSON.stringify(r.user));
+    return r.user;
+  },
+
+  async logout(){
+    try { if(this.token) await this.request('/v1/auth/logout', {method:'POST'}); }
+    catch(e) { console.warn('Logout remoto:', e); }
+    this.clearSession();
+  },
+
+  async pull(){
+    if(!this.isConfigured()) return null;
+    return await this.request('/v1/data');
+  },
+
+  async push(data, {force=false, silent=false}={}){
+    if(!this.isConfigured() || this.syncing) return null;
     this.syncing = true;
-    updateSyncStatus('syncing');
+    if(!silent) updateSyncStatus('syncing');
     try {
-      // Carimba o momento exato do envio para comparação entre dispositivos
-      const ts = Date.now();
-      const payload = { ...data, lastModified: ts };
-      const res = await fetch(`https://api.jsonbin.io/v3/b/${this.binId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Master-Key': this.apiKey,
-          'X-Bin-Versioning': 'false'
-        },
-        body: JSON.stringify(payload)
+      const expectedVersion = force ? null : (this.version || null);
+      const r = await this.request('/v1/data', {
+        method:'PUT',
+        body:JSON.stringify({data, expectedVersion})
       });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      // Registra localmente o timestamp do último push bem-sucedido
-      localStorage.setItem('ff5_lastModified', String(ts));
+      this.conflict = false;
+      this.saveMeta(r.version, r.updatedAt);
       updateSyncStatus('ok');
-    } catch(e) {
-      updateSyncStatus('error');
-      console.error('Cloud push error:', e);
+      updateMCloudAccountUI();
+      return r;
+    } catch(e){
+      if(e.status === 409){
+        this.conflict = true;
+        if(e.payload?.currentVersion) this.version = Number(e.payload.currentVersion);
+        updateSyncStatus('conflict');
+        if(!silent) toast('⚠️ Dados alterados em outro dispositivo. Abra sua conta para escolher o que fazer.');
+      } else {
+        updateSyncStatus('error');
+        if(!silent) toast('⚠️ Não foi possível sincronizar com a nuvem');
+      }
+      console.error('MCloud push error:', e);
+      return null;
     } finally {
       this.syncing = false;
     }
   },
 
-  async pull() {
-    if (!this.isConfigured()) return null;
-    try {
-      const res = await fetch(`https://api.jsonbin.io/v3/b/${this.binId}/latest`, {
-        headers: { 'X-Master-Key': this.apiKey }
-      });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const json = await res.json();
-      return json.record;
-    } catch(e) {
-      console.error('Cloud pull error:', e);
-      return null;
+  async syncIfNewer(silent=false){
+    if(!this.isConfigured()) return;
+    try{
+      const localCloudTs = parseInt(localStorage.getItem(MCLOUD_KEYS.updatedAt)||'0',10) || 0;
+      const remote = await this.pull();
+      if(!remote) return;
+      if(isEmptyCloudData(remote.data)){
+        this.saveMeta(remote.version, remote.updatedAt);
+        updateSyncStatus('ok');
+        return;
+      }
+      if(!localCloudTs || (remote.updatedAt && Number(remote.updatedAt) > localCloudTs)){
+        Object.assign(S, remote.data);
+        normalizeState();
+        _localSave();
+        renderAll(); renderCC();
+        this.saveMeta(remote.version, remote.updatedAt);
+        updateSyncStatus('ok');
+        if(!silent) toast('☁️ Dados atualizados do MCloud!');
+      }else{
+        // Mantém a versão remota conhecida para a próxima gravação, sem sobrescrever o estado local.
+        this.version = Number(remote.version)||this.version;
+        localStorage.setItem(MCLOUD_KEYS.version,String(this.version));
+        updateSyncStatus('ok');
+      }
+    } catch(e){
+      console.error('MCloud sync error:',e);
+      if(e.status !== 401) updateSyncStatus('error');
     }
   },
 
-  // Verifica se a nuvem tem dados mais novos e aplica automaticamente
-  async syncIfNewer(silent = false) {
-    if (!this.isConfigured()) return;
-    const remote = await this.pull();
-    if (!remote || remote.cartoes === undefined) return;
-
-    const localTs  = parseInt(localStorage.getItem('ff5_lastModified') || '0', 10);
-    const remoteTs = parseInt(remote.lastModified || '0', 10);
-
-    if (remoteTs > localTs) {
-      // Remove o campo de controle antes de aplicar ao estado
-      const { lastModified, ...dados } = remote;
-      Object.assign(S, dados);
-      normalizeState();
-      _localSave();
-      localStorage.setItem('ff5_lastModified', String(remoteTs));
-      renderAll(); renderCC();
-      updateSyncStatus('ok');
-      if (!silent) toast('☁️ Dados atualizados da nuvem!');
-    } else {
-      updateSyncStatus('ok');
-    }
-  },
-
-  schedulePush(data) {
-    if (!this.isConfigured()) return;
+  schedulePush(data){
+    if(!this.isConfigured()) return;
     clearTimeout(this.syncTimer);
-    this.syncTimer = setTimeout(() => this.push(data), 1500);
+    this.syncTimer = setTimeout(() => this.push(data,{silent:true}), 1200);
   }
 };
 
-function updateSyncStatus(status) {
-  const el = document.getElementById('sync-indicator');
-  if (!el) return;
-  const states = {
-    ok:      '<span style="color:var(--accent);font-size:.75rem;font-weight:500">☁️ Salvo na nuvem</span>',
-    syncing: '<span style="color:var(--accent4);font-size:.75rem;font-weight:500">⏳ Sincronizando…</span>',
-    error:   '<span style="color:var(--accent3);font-size:.75rem;font-weight:500">⚠️ Erro na nuvem</span>',
-    offline: '<span style="color:var(--text2);font-size:.75rem;font-weight:500">💾 Só local</span>',
+function updateSyncStatus(status){
+  const el=document.getElementById('sync-indicator');
+  if(!el)return;
+  const states={
+    ok:'<span style="color:var(--accent);font-size:.75rem;font-weight:500">☁️ Sincronizado</span>',
+    syncing:'<span style="color:var(--accent4);font-size:.75rem;font-weight:500">⏳ Sincronizando…</span>',
+    error:'<span style="color:var(--accent3);font-size:.75rem;font-weight:500">⚠️ Erro na nuvem</span>',
+    conflict:'<span style="color:var(--accent4);font-size:.75rem;font-weight:500">⚠️ Conflito</span>',
+    offline:'<span style="color:var(--text2);font-size:.75rem;font-weight:500">💾 Só local</span>'
   };
-  const btn = `<button onclick="openCloudModal()" style="background:rgba(0,153,255,.12);border:1px solid rgba(0,153,255,.2);color:var(--accent2);padding:4px 10px;border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">☁️ Nuvem</button>`;
-  el.innerHTML = (states[status] || states.offline) + ' ' + btn;
+  let label='👤 Entrar';
+  if(CLOUD.isConfigured()){
+    const nome=(CLOUD.user?.name||'Conta').trim().split(/\s+/)[0];
+    label='👤 '+escapeHTML(nome);
+  }
+  const btn=`<button onclick="openCloudModal()" style="background:rgba(0,153,255,.12);border:1px solid rgba(0,153,255,.2);color:var(--accent2);padding:4px 10px;border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">${label}</button>`;
+  el.innerHTML=(states[status]||states.offline)+' '+btn;
 }
 
-function openCloudModal() {
-  const connBox = document.getElementById('cloud-connected-info');
-  if (CLOUD.isConfigured()) {
-    connBox.style.display = 'block';
-    document.getElementById('cloud-apikey').value = CLOUD.apiKey || '';
-    document.getElementById('cloud-binid').value = CLOUD.binId || '';
-  } else {
-    connBox.style.display = 'none';
+function showCloudMsg(type,msg){
+  const el=document.getElementById('cloud-status-box');if(!el)return;
+  const bg={ok:'rgba(0,229,160,.08)',error:'rgba(255,107,107,.08)',info:'rgba(0,153,255,.08)'};
+  const bd={ok:'rgba(0,229,160,.2)',error:'rgba(255,107,107,.2)',info:'rgba(0,153,255,.2)'};
+  el.style.display='block';el.style.background=bg[type]||bg.info;el.style.border='1px solid '+(bd[type]||bd.info);el.textContent=msg;
+}
+
+function showMCloudAuthTab(tab){
+  const login=tab==='login';
+  document.getElementById('mcloud-login-panel').style.display=login?'block':'none';
+  document.getElementById('mcloud-register-panel').style.display=login?'none':'block';
+  document.getElementById('mcloud-tab-login').className='btn '+(login?'btn-primary':'btn-secondary');
+  document.getElementById('mcloud-tab-register').className='btn '+(login?'btn-secondary':'btn-primary');
+}
+
+function updateMCloudAccountUI(){
+  const logged=CLOUD.isConfigured();
+  const out=document.getElementById('mcloud-logged-out');
+  const inn=document.getElementById('mcloud-logged-in');
+  if(out)out.style.display=logged?'none':'block';
+  if(inn)inn.style.display=logged?'block':'none';
+  if(logged){
+    const n=document.getElementById('mcloud-user-name');if(n)n.textContent=CLOUD.user?.name||'Usuário';
+    const e=document.getElementById('mcloud-user-email');if(e)e.textContent=CLOUD.user?.email||'';
+    const v=document.getElementById('mcloud-version-label');if(v)v.textContent='Versão '+(CLOUD.version||'—');
   }
-  document.getElementById('cloud-status-box').style.display = 'none';
+}
+
+async function openCloudModal(){
+  document.getElementById('cloud-status-box').style.display='none';
+  if(CLOUD.isConfigured()){
+    try{await CLOUD.me();}catch(e){}
+  }
+  updateMCloudAccountUI();
+  showMCloudAuthTab('login');
   openModal('m-cloud');
 }
 
-function showCloudMsg(type, msg) {
-  const el = document.getElementById('cloud-status-box');
-  if (!el) return;
-  const bg = { ok:'rgba(0,229,160,.08)', error:'rgba(255,107,107,.08)', info:'rgba(0,153,255,.08)' };
-  const bd = { ok:'rgba(0,229,160,.2)', error:'rgba(255,107,107,.2)', info:'rgba(0,153,255,.2)' };
-  el.style.display = 'block';
-  el.style.background = bg[type] || bg.info;
-  el.style.border = '1px solid ' + (bd[type] || bd.info);
-  el.textContent = msg;
-}
-
-async function connectCloud() {
-  const apiKey = document.getElementById('cloud-apikey').value.trim();
-  const binId  = document.getElementById('cloud-binid').value.trim();
-  if (!apiKey || !binId) { toast('⚠️ Preencha a Master Key e o Bin ID'); return; }
-  CLOUD.saveConfig(apiKey, binId);
-  showCloudMsg('info', '⏳ Conectando e enviando seus dados para a nuvem...');
-  await CLOUD.push(S);
-  showCloudMsg('ok', '✅ Dados enviados! Conectado com sucesso ao JSONBin.');
-  updateSyncStatus('ok');
-  document.getElementById('cloud-connected-info').style.display = 'block';
-  toast('✅ Nuvem conectada! Dados salvos.');
-}
-
-async function testCloudConnection() {
-  const apiKey = document.getElementById('cloud-apikey').value.trim();
-  const binId  = document.getElementById('cloud-binid').value.trim();
-  if (!apiKey || !binId) { toast('⚠️ Preencha os campos'); return; }
-  showCloudMsg('info', '⏳ Testando conexão com o JSONBin...');
-  try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
-      headers: { 'X-Master-Key': apiKey }
-    });
-    if (!res.ok) throw new Error('Erro HTTP ' + res.status + '. Verifique Master Key e Bin ID.');
-    const json = await res.json();
-    const hasData = json.record && Object.keys(json.record).length > 2;
-    if (hasData) {
-      showCloudMsg('ok', '✅ Conexão OK! Bin tem dados. Use "Carregar da nuvem" para importar, ou "Conectar" para sobrescrever com seus dados atuais.');
-    } else {
-      showCloudMsg('ok', '✅ Conexão OK! Bin está vazio. Clique em "Conectar" para salvar seus dados na nuvem.');
-    }
-  } catch(e) {
-    showCloudMsg('error', '❌ ' + e.message);
-  }
-}
-
-async function pullFromCloud() {
-  if (!CLOUD.isConfigured()) { toast('⚠️ Configure a nuvem primeiro'); return; }
-  if (!confirm('Carregar dados da nuvem?\n\nIsso substituirá seus dados locais pelos dados salvos no JSONBin.')) return;
+async function afterMCloudAuth(isNewAccount=false){
+  updateMCloudAccountUI();
   updateSyncStatus('syncing');
-  const remote = await CLOUD.pull();
-  if (remote && remote.cartoes !== undefined) {
-    const { lastModified, ...dados } = remote;
-    Object.assign(S, dados);
-    normalizeState();
-    _localSave();
-    if (lastModified) localStorage.setItem('ff5_lastModified', String(lastModified));
-    renderAll(); renderCC();
-    updateSyncStatus('ok');
-    toast('☁️ Dados carregados da nuvem com sucesso!');
-    closeModal('m-cloud');
-  } else {
+  try{
+    const remote=await CLOUD.pull();
+    if(remote && isEmptyCloudData(remote.data)){
+      CLOUD.saveMeta(remote.version,remote.updatedAt);
+      updateSyncStatus('ok');
+      showCloudMsg('ok','✅ Conta conectada. Para trazer seus dados antigos, use Backup → Importar dados.');
+    }else if(remote && !isEmptyCloudData(remote.data)){
+      Object.assign(S,remote.data);normalizeState();_localSave();renderAll();renderCC();
+      CLOUD.saveMeta(remote.version,remote.updatedAt);updateSyncStatus('ok');
+      showCloudMsg('ok','✅ Conta conectada e dados carregados do MCloud.');
+    }
+  }catch(e){
     updateSyncStatus('error');
-    toast('⚠️ Não foi possível carregar da nuvem. Verifique as credenciais.');
+    showCloudMsg('error','❌ '+e.message);
   }
+  updateMCloudAccountUI();
 }
 
-async function manualSync() {
-  if (!CLOUD.isConfigured()) { toast('⚠️ Configure a nuvem primeiro'); return; }
-  await CLOUD.push(S);
-  toast('☁️ Dados sincronizados!');
+async function mcloudLoginUI(){
+  const email=document.getElementById('mcloud-login-email').value.trim();
+  const password=document.getElementById('mcloud-login-password').value;
+  if(!email||!password){showCloudMsg('error','Informe e-mail e senha.');return;}
+  showCloudMsg('info','⏳ Entrando...');
+  try{
+    await CLOUD.login(email,password);
+    document.getElementById('mcloud-login-password').value='';
+    await afterMCloudAuth(false);
+    toast('✅ Login realizado!');
+  }catch(e){showCloudMsg('error','❌ '+e.message);}
 }
 
-function disconnectCloud() {
-  if (!confirm('Desconectar da nuvem?\n\nSeus dados locais são mantidos, mas não serão mais sincronizados automaticamente.')) return;
-  CLOUD.clearConfig();
+async function mcloudRegisterUI(){
+  const name=document.getElementById('mcloud-register-name').value.trim();
+  const email=document.getElementById('mcloud-register-email').value.trim();
+  const password=document.getElementById('mcloud-register-password').value;
+  const password2=document.getElementById('mcloud-register-password2').value;
+  if(!name||!email||!password){showCloudMsg('error','Preencha nome, e-mail e senha.');return;}
+  if(password.length<8){showCloudMsg('error','A senha precisa ter pelo menos 8 caracteres.');return;}
+  if(password!==password2){showCloudMsg('error','As senhas não coincidem.');return;}
+  showCloudMsg('info','⏳ Criando sua conta...');
+  try{
+    await CLOUD.register(name,email,password);
+    document.getElementById('mcloud-register-password').value='';
+    document.getElementById('mcloud-register-password2').value='';
+    await afterMCloudAuth(true);
+    toast('✅ Conta criada!');
+  }catch(e){showCloudMsg('error','❌ '+e.message);}
+}
+
+async function mcloudLogoutUI(){
+  if(!confirm('Sair da sua conta MCloud?\n\nOs dados locais deste navegador serão mantidos.'))return;
+  await CLOUD.logout();
   updateSyncStatus('offline');
-  document.getElementById('cloud-connected-info').style.display = 'none';
-  showCloudMsg('info', 'Desconectado. Configure novamente para reativar a sincronização.');
-  toast('🔌 Desconectado da nuvem');
+  updateMCloudAccountUI();
+  showCloudMsg('info','Você saiu da conta. Os dados locais continuam neste navegador.');
+  toast('👋 Sessão encerrada');
 }
+
+async function pullFromCloud(){
+  if(!CLOUD.isConfigured()){showMCloudAuthTab('login');openCloudModal();return;}
+  if(!confirm('Carregar os dados do MCloud?\n\nIsso substituirá os dados locais deste navegador pelo que está salvo na sua conta.'))return;
+  updateSyncStatus('syncing');
+  try{
+    const remote=await CLOUD.pull();
+    if(remote && !isEmptyCloudData(remote.data)){
+      Object.assign(S,remote.data);normalizeState();_localSave();renderAll();renderCC();
+      CLOUD.saveMeta(remote.version,remote.updatedAt);CLOUD.conflict=false;
+      updateSyncStatus('ok');updateMCloudAccountUI();
+      toast('☁️ Dados carregados do MCloud!');closeModal('m-cloud');
+    }else{
+      updateSyncStatus('ok');showCloudMsg('info','Sua conta ainda não possui dados na nuvem.');
+    }
+  }catch(e){updateSyncStatus('error');showCloudMsg('error','❌ '+e.message);}
+}
+
+async function manualSync(){
+  if(!CLOUD.isConfigured()){openCloudModal();return;}
+  const r=await CLOUD.push(S,{silent:false});
+  if(r)toast('☁️ Dados sincronizados!');
+}
+
+async function forcePushFromThisDevice(){
+  if(!CLOUD.isConfigured()){openCloudModal();return;}
+  if(!confirm('Enviar os dados DESTE DISPOSITIVO para o MCloud?\n\nIsso substituirá o conteúdo atual salvo na nuvem. Use esta opção apenas quando tiver certeza de que os dados deste dispositivo são os corretos.'))return;
+  const r=await CLOUD.push(S,{force:true,silent:false});
+  if(r){toast('☁️ Nuvem substituída pelos dados deste dispositivo.');showCloudMsg('ok','✅ Dados deste dispositivo enviados ao MCloud.');}
+}
+
+// Compatibilidade com chamadas antigas, caso existam em alguma cópia do HTML.
+function disconnectCloud(){ return mcloudLogoutUI(); }
+function connectCloud(){ return mcloudLoginUI(); }
+function testCloudConnection(){ return CLOUD.isConfigured() ? CLOUD.me() : Promise.reject(new Error('Entre na sua conta.')); }
 
 
 // ════════════════════════════════════════════
@@ -1418,14 +1575,24 @@ async function importFinanceFlowData(input){
     if(!isFinanceFlowState(data))throw new Error('Arquivo não reconhecido como backup do FinanceFlow.');
     const resumo=backupSummary(data);
     const origem=parsed?.exportedAt?new Date(parsed.exportedAt).toLocaleString('pt-BR'):'data não informada';
-    if(!confirm(`Importar este backup?\n\nExportado em: ${origem}\nConteúdo: ${resumo}\n\nOs dados atuais deste navegador serão substituídos.`)){
+    const destino=CLOUD.isConfigured()?'este navegador e sua conta MCloud':'somente este navegador (faça login depois para enviar ao MCloud)';
+    if(!confirm(`Importar este backup?\n\nExportado em: ${origem}\nConteúdo: ${resumo}\n\nDestino: ${destino}\n\nOs dados atuais serão substituídos.`)){
       showBackupMsg('info','Importação cancelada.');return;
     }
     Object.keys(S).forEach(k=>delete S[k]);
     Object.assign(S,JSON.parse(JSON.stringify(data)));
     normalizeState();_localSave();renderAll();renderCC();
-    showBackupMsg('ok','✅ Backup importado com sucesso.');
-    toast('📥 Dados restaurados!');
+    if(CLOUD.isConfigured()){
+      showBackupMsg('info','⏳ Backup restaurado. Enviando para sua conta MCloud...');
+      const r=await CLOUD.push(S,{force:true,silent:true});
+      if(!r)throw new Error('Os dados foram restaurados localmente, mas não foi possível enviá-los ao MCloud. Tente sincronizar novamente.');
+      updateSyncStatus('ok');updateMCloudAccountUI();
+      showBackupMsg('ok','✅ Backup importado e vinculado à sua conta MCloud.');
+      toast('📥 Backup importado para o MCloud!');
+    }else{
+      showBackupMsg('ok','✅ Backup importado neste navegador. Entre na sua conta MCloud para sincronizar.');
+      toast('📥 Dados restaurados localmente!');
+    }
   }catch(e){
     console.error('Erro ao importar backup:',e);
     showBackupMsg('error','❌ '+(e.message||'Não foi possível importar o arquivo.'));
@@ -2457,21 +2624,24 @@ function renderAll(){updateMB();renderCartoes();renderDP();renderPanorama();rend
   });
   populateCatSelects();
 
-  // Init cloud sync
   CLOUD.init();
   if(CLOUD.isConfigured()){
     updateSyncStatus('syncing');
-    // Ao carregar: puxa nuvem se tiver dados mais recentes (compara lastModified)
-    CLOUD.syncIfNewer(true).catch(()=>updateSyncStatus('error'));
-  } else {
+    CLOUD.me()
+      .then(()=>CLOUD.syncIfNewer(true))
+      .then(()=>updateMCloudAccountUI())
+      .catch(e=>{
+        console.warn('Sessão MCloud:',e);
+        if(!CLOUD.isConfigured())updateSyncStatus('offline');
+        else updateSyncStatus('error');
+      });
+  }else{
     updateSyncStatus('offline');
   }
 
-  // Sincroniza automaticamente toda vez que o usuário volta para esta aba/app
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && CLOUD.isConfigured()) {
-      CLOUD.syncIfNewer(false);
-    }
+  // Ao voltar para a aba, verifica se a conta recebeu dados mais novos de outro dispositivo.
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible'&&CLOUD.isConfigured())CLOUD.syncIfNewer(false);
   });
 })();
 
