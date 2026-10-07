@@ -1373,13 +1373,19 @@ const CLOUD = {
         updateSyncStatus('ok');
         return;
       }
-      if(!this.updatedAt || (remote.updatedAt && Number(remote.updatedAt) > Number(this.updatedAt))){
+      // Em modo cloud-only, o estado financeiro existe apenas em memória.
+      // Após recarregar a página, S volta ao estado inicial mesmo que a sessão/versionamento
+      // continuem no sessionStorage. Por isso, se não houver dados financeiros em memória,
+      // SEMPRE restauramos o conteúdo da conta MCloud, ainda que updatedAt seja igual.
+      const memoriaSemDados = !hasMeaningfulLocalData();
+      if(memoriaSemDados || !this.updatedAt || (remote.updatedAt && Number(remote.updatedAt) > Number(this.updatedAt))){
         replaceStateFromCloud(remote.data);
+        populateCatSelects();
         renderAll(); renderCC();
         this.saveMeta(remote.version, remote.updatedAt);
         purgeLegacyBrowserData();
         updateSyncStatus('ok');
-        if(!silent) toast('☁️ Dados atualizados do MCloud!');
+        if(!silent && !memoriaSemDados) toast('☁️ Dados atualizados do MCloud!');
       }else{
         this.version = Number(remote.version)||this.version;
         sessionStorage.setItem(MCLOUD_KEYS.version,String(this.version));
