@@ -310,6 +310,8 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
     <button onclick="showPage('panorama',this)">📊 Panorama</button>
     <button onclick="showPage('historico',this)">🗓️ Histórico</button>
   </nav>
+
+  <button onclick="openModal('m-backup')" style="background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.22);color:#a78bfa;padding:4px 10px;border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">💾 Backup</button>
   <div id="sync-indicator" style="display:flex;align-items:center;gap:8px;flex-shrink:0">
     <span style="color:var(--text2);font-size:.75rem;font-weight:500">💾 Só local</span>
     <button onclick="openCloudModal()" style="background:rgba(0,153,255,.12);border:1px solid rgba(0,153,255,.2);color:var(--accent2);padding:4px 10px;border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">☁️ Nuvem</button>
@@ -467,6 +469,36 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
   <button class="mod-btn" onclick="switchModule('cc',this)">🏦 Conta Corrente</button>
 </div>
 
+
+
+
+<!-- ══ MODAL: BACKUP / RESTAURAÇÃO ══ -->
+<div class="mo" id="m-backup">
+  <div class="modal" style="max-width:520px">
+    <div class="m-title">💾 Backup e Restauração</div>
+
+    <div style="background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.18);border-radius:10px;padding:14px;margin-bottom:18px;font-size:.82rem;line-height:1.65;color:var(--text2)">
+      <strong style="color:#a78bfa">Exportar dados</strong> cria um arquivo <code style="background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px">.json</code> com todos os dados do FinanceFlow.<br><br>
+      <strong style="color:#a78bfa">Importar dados</strong> restaura um arquivo exportado anteriormente. Senhas e tokens de login não fazem parte do backup.
+    </div>
+
+    <div id="backup-status-box" style="display:none;padding:10px 14px;border-radius:9px;margin-bottom:14px;font-size:.82rem"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="btn btn-primary" style="justify-content:center" onclick="exportFinanceFlowData()">📤 Exportar dados</button>
+      <button class="btn btn-edit" style="justify-content:center" onclick="document.getElementById('backup-file-input').click()">📥 Importar dados</button>
+    </div>
+    <input id="backup-file-input" type="file" accept=".json,application/json" style="display:none" onchange="importFinanceFlowData(this)"/>
+
+    <div style="margin-top:14px;font-size:.75rem;color:var(--text2);line-height:1.55">
+      Recomendação: guarde o arquivo exportado antes de trocar de versão do sistema ou restaurar outro backup.
+    </div>
+
+    <div class="m-footer">
+      <button class="btn btn-secondary" onclick="closeModal('m-backup')">Fechar</button>
+    </div>
+  </div>
+</div>
 
 <!-- ══ MODAL: CLOUD SYNC ══ -->
 <div class="mo" id="m-cloud">
@@ -1317,6 +1349,89 @@ function disconnectCloud() {
   showCloudMsg('info', 'Desconectado. Configure novamente para reativar a sincronização.');
   toast('🔌 Desconectado da nuvem');
 }
+
+
+// ════════════════════════════════════════════
+//  BACKUP / RESTAURAÇÃO — arquivo JSON
+// ════════════════════════════════════════════
+function showBackupMsg(type,msg){
+  const el=document.getElementById('backup-status-box');if(!el)return;
+  const bg={ok:'rgba(0,229,160,.08)',error:'rgba(255,107,107,.08)',info:'rgba(0,153,255,.08)'};
+  const bd={ok:'rgba(0,229,160,.2)',error:'rgba(255,107,107,.2)',info:'rgba(0,153,255,.2)'};
+  el.style.display='block';el.style.background=bg[type]||bg.info;el.style.border='1px solid '+(bd[type]||bd.info);el.textContent=msg;
+}
+
+function financeFlowBackupPayload(){
+  normalizeState();
+  return {
+    format:'FinanceFlowBackup',
+    backupVersion:1,
+    app:'FinanceFlow',
+    exportedAt:new Date().toISOString(),
+    data:JSON.parse(JSON.stringify(S))
+  };
+}
+
+function exportFinanceFlowData(){
+  try{
+    const payload=financeFlowBackupPayload();
+    const json=JSON.stringify(payload,null,2);
+    const blob=new Blob([json],{type:'application/json;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    const d=new Date();
+    const pad=n=>String(n).padStart(2,'0');
+    const nome=`financeflow-backup-${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}.json`;
+    a.href=url;a.download=nome;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    showBackupMsg('ok','✅ Backup exportado com sucesso: '+nome);
+    toast('📤 Backup exportado!');
+  }catch(e){
+    console.error('Erro ao exportar backup:',e);
+    showBackupMsg('error','❌ Não foi possível exportar os dados.');
+  }
+}
+
+function isFinanceFlowState(obj){
+  if(!obj||typeof obj!=='object'||Array.isArray(obj))return false;
+  return Array.isArray(obj.cartoes) && obj.months && typeof obj.months==='object' && Array.isArray(obj.outrasDespesas);
+}
+
+function backupSummary(data){
+  const cartoes=(data.cartoes||[]).length;
+  const despesasCartao=(data.cartoes||[]).reduce((s,c)=>s+(c.despesas||[]).length,0);
+  const avulsas=(data.outrasDespesas||[]).length;
+  const contas=(data.ccContas||[]).length;
+  const meses=Object.keys(data.months||{}).length;
+  return `${cartoes} cartão(ões), ${despesasCartao} despesa(s) de cartão, ${avulsas} despesa(s) avulsa(s), ${contas} conta(s) e ${meses} mês(es) com dados`;
+}
+
+
+async function importFinanceFlowData(input){
+  const file=input?.files?.[0];
+  if(!file)return;
+  showBackupMsg('info','⏳ Lendo arquivo de backup...');
+  try{
+    const text=await file.text();
+    const parsed=JSON.parse(text);
+    const data=parsed?.format==='FinanceFlowBackup'?parsed.data:parsed;
+    if(!isFinanceFlowState(data))throw new Error('Arquivo não reconhecido como backup do FinanceFlow.');
+    const resumo=backupSummary(data);
+    const origem=parsed?.exportedAt?new Date(parsed.exportedAt).toLocaleString('pt-BR'):'data não informada';
+    if(!confirm(`Importar este backup?\n\nExportado em: ${origem}\nConteúdo: ${resumo}\n\nOs dados atuais deste navegador serão substituídos.`)){
+      showBackupMsg('info','Importação cancelada.');return;
+    }
+    Object.keys(S).forEach(k=>delete S[k]);
+    Object.assign(S,JSON.parse(JSON.stringify(data)));
+    normalizeState();_localSave();renderAll();renderCC();
+    showBackupMsg('ok','✅ Backup importado com sucesso.');
+    toast('📥 Dados restaurados!');
+  }catch(e){
+    console.error('Erro ao importar backup:',e);
+    showBackupMsg('error','❌ '+(e.message||'Não foi possível importar o arquivo.'));
+  }finally{input.value='';}
+}
+
 
 // ════════════════════════════════════════════
 //  MODULE SWITCHER
