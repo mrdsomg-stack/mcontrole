@@ -303,6 +303,9 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .auth-gate-card{width:100%;max-width:430px;background:var(--surface);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,.55);text-align:center}
 .auth-gate-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.45rem;margin-bottom:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .auth-gate-text{font-size:.86rem;color:var(--text2);line-height:1.65;margin-bottom:20px}
+/* O modal de login precisa ficar acima da tela de bloqueio inicial. */
+#m-cloud{z-index:2100;}
+
 
 </style>
 </head>
@@ -1443,13 +1446,18 @@ function updateMCloudAccountUI(){
 }
 
 async function openCloudModal(){
-  document.getElementById('cloud-status-box').style.display='none';
+  const modal=document.getElementById('m-cloud');
+  const status=document.getElementById('cloud-status-box');
+  if(status)status.style.display='none';
+  // A tela inicial de autenticação usa z-index alto. Garante que o modal fique acima dela.
+  if(modal)modal.style.zIndex='2100';
   if(CLOUD.isConfigured()){
     try{await CLOUD.me();}catch(e){}
   }
   updateMCloudAccountUI();
   showMCloudAuthTab('login');
   openModal('m-cloud');
+  setTimeout(()=>document.getElementById('mcloud-login-email')?.focus(),50);
 }
 
 async function afterMCloudAuth(isNewAccount=false){
