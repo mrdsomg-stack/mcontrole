@@ -305,7 +305,20 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
 .auth-gate-text{font-size:.86rem;color:var(--text2);line-height:1.65;margin-bottom:20px}
 /* O modal de login precisa ficar acima da tela de bloqueio inicial. */
 #m-cloud{z-index:2100;}
+#m-reset-password{z-index:2200;}
 
+
+
+/* ── ÁREA DA CONTA ── */
+.account-hero{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(0,229,160,.07),rgba(0,153,255,.07));border:1px solid rgba(0,229,160,.14);border-radius:14px;padding:16px;margin-bottom:16px}
+.account-avatar{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#071018;font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem}
+.account-name{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem}
+.account-email{color:var(--text2);font-size:.8rem;margin-top:3px;word-break:break-all}
+.account-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:8px}
+.account-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.account-password-box{display:none;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:14px}
+.account-password-box.open{display:block}
+@media(max-width:520px){.account-action-grid{grid-template-columns:1fr}}
 
 </style>
 </head>
@@ -544,6 +557,7 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
         <div class="fg"><label>E-mail</label><input type="email" id="mcloud-login-email" placeholder="voce@email.com" autocomplete="email"/></div>
         <div class="fg"><label>Senha</label><input type="password" id="mcloud-login-password" placeholder="Sua senha" autocomplete="current-password"/></div>
         <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="mcloudLoginUI()">🔐 Entrar</button>
+        <button class="btn btn-secondary" style="width:100%;justify-content:center;margin-top:8px" onclick="openForgotPassword()">Esqueci minha senha</button>
       </div>
 
       <div id="mcloud-register-panel" style="display:none">
@@ -552,6 +566,13 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
         <div class="fg"><label>Senha</label><input type="password" id="mcloud-register-password" placeholder="Mínimo 8 caracteres" autocomplete="new-password"/></div>
         <div class="fg"><label>Confirmar senha</label><input type="password" id="mcloud-register-password2" placeholder="Repita a senha" autocomplete="new-password"/></div>
         <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="mcloudRegisterUI()">✨ Criar minha conta</button>
+      </div>
+
+      <div id="mcloud-forgot-panel" style="display:none">
+        <div style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:15px">Informe o e-mail da sua conta. Se ele estiver cadastrado, você receberá um link para criar uma nova senha.</div>
+        <div class="fg"><label>E-mail</label><input type="email" id="mcloud-forgot-email" placeholder="voce@email.com" autocomplete="email"/></div>
+        <button class="btn btn-primary" id="mcloud-forgot-btn" style="width:100%;justify-content:center" onclick="mcloudForgotPasswordUI()">📧 Enviar link de recuperação</button>
+        <button class="btn btn-secondary" style="width:100%;justify-content:center;margin-top:8px" onclick="showMCloudAuthTab('login')">← Voltar para entrar</button>
       </div>
 
       <div style="font-size:.74rem;color:var(--text2);text-align:center;margin-top:14px;line-height:1.5">
@@ -587,6 +608,69 @@ main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:28px 22p
         <button class="btn btn-danger" onclick="mcloudLogoutUI()">Sair da conta</button>
         <button class="btn btn-secondary" onclick="closeModal('m-cloud')">Fechar</button>
       </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ MODAL: REDEFINIR SENHA ══ -->
+<div class="mo" id="m-reset-password">
+  <div class="modal" style="max-width:480px">
+    <div class="m-title">🔐 Criar nova senha</div>
+    <div id="reset-password-status" style="display:none;padding:10px 14px;border-radius:9px;margin-bottom:14px;font-size:.82rem"></div>
+    <div style="font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:16px">Digite uma nova senha para sua conta FinanceFlow. O link de recuperação só pode ser usado uma vez.</div>
+    <div class="fg"><label>Nova senha</label><input type="password" id="reset-new-password" autocomplete="new-password" placeholder="Mínimo 8 caracteres"/></div>
+    <div class="fg"><label>Confirmar nova senha</label><input type="password" id="reset-new-password2" autocomplete="new-password" placeholder="Repita a nova senha"/></div>
+    <div class="m-footer">
+      <button class="btn btn-secondary" onclick="cancelPasswordReset()">Cancelar</button>
+      <button class="btn btn-primary" id="reset-password-btn" onclick="submitPasswordReset()">Salvar nova senha</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ MODAL: ÁREA DA CONTA ══ -->
+<div class="mo" id="m-account">
+  <div class="modal" style="max-width:520px">
+    <div class="m-title">👤 Minha conta</div>
+
+    <div id="account-status-box" style="display:none;padding:10px 14px;border-radius:9px;margin-bottom:14px;font-size:.82rem"></div>
+
+    <div class="account-hero">
+      <div class="account-avatar" id="account-avatar">U</div>
+      <div style="min-width:0;flex:1">
+        <div class="account-name" id="account-user-name">Usuário</div>
+        <div class="account-email" id="account-user-email">—</div>
+        <div class="account-meta">
+          <span class="badge bg-green">☁️ MCloud conectado</span>
+          <span class="badge bg-blue" id="account-version-label">Versão —</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="account-action-grid">
+      <button class="btn btn-secondary" style="justify-content:center" onclick="toggleAccountPassword(true)">🔐 Alterar senha</button>
+      <button class="btn btn-secondary" style="justify-content:center" onclick="exportFinanceFlowData()">📤 Exportar backup</button>
+    </div>
+
+    <div class="account-password-box" id="account-password-box">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:13px">Alterar senha</div>
+      <div class="fg"><label>Senha atual</label><input type="password" id="account-current-password" autocomplete="current-password" placeholder="Sua senha atual"/></div>
+      <div class="fg"><label>Nova senha</label><input type="password" id="account-new-password" autocomplete="new-password" placeholder="Mínimo 8 caracteres"/></div>
+      <div class="fg"><label>Confirmar nova senha</label><input type="password" id="account-new-password2" autocomplete="new-password" placeholder="Repita a nova senha"/></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="toggleAccountPassword(false)">Cancelar</button>
+        <button class="btn btn-primary btn-sm" id="account-change-password-btn" onclick="changeAccountPassword()">Salvar nova senha</button>
+      </div>
+    </div>
+
+    <div style="font-size:.76rem;color:var(--text2);line-height:1.55;margin-top:14px">
+      Seus dados financeiros ficam vinculados a esta conta MCloud. O backup exportado não inclui sua senha nem o token de sessão.
+    </div>
+
+    <div class="m-footer">
+      <button class="btn btn-danger" onclick="mcloudLogoutUI()">Sair da conta</button>
+      <button class="btn btn-secondary" onclick="closeModal('m-account')">Fechar</button>
     </div>
   </div>
 </div>
@@ -1320,6 +1404,27 @@ const CLOUD = {
     return r.user;
   },
 
+  async changePassword(currentPassword,newPassword){
+    return await this.request('/v1/auth/change-password', {
+      method:'POST',
+      body:JSON.stringify({currentPassword,newPassword})
+    });
+  },
+
+  async forgotPassword(email){
+    return await this.request('/v1/auth/forgot-password', {
+      method:'POST',
+      body:JSON.stringify({email})
+    });
+  },
+
+  async resetPassword(token,newPassword){
+    return await this.request('/v1/auth/reset-password', {
+      method:'POST',
+      body:JSON.stringify({token,newPassword})
+    });
+  },
+
   async logout(){
     try { if(this.token) await this.request('/v1/auth/logout', {method:'POST'}); }
     catch(e) { console.warn('Logout remoto:', e); }
@@ -1419,7 +1524,8 @@ function updateSyncStatus(status){
     const nome=(CLOUD.user?.name||'Conta').trim().split(/\s+/)[0];
     label='👤 '+escapeHTML(nome);
   }
-  const btn=`<button onclick="openCloudModal()" style="background:rgba(0,153,255,.12);border:1px solid rgba(0,153,255,.2);color:var(--accent2);padding:4px 10px;border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">${label}</button>`;
+  const action=CLOUD.isConfigured()?'openAccountModal()':'openCloudModal()';
+  const btn=`<button onclick="${action}" style="background:rgba(0,153,255,.12);border:1px solid rgba(0,153,255,.2);color:var(--accent2);padding:4px 10px;border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">${label}</button>`;
   el.innerHTML=(states[status]||states.offline)+' '+btn;
 }
 
@@ -1432,10 +1538,95 @@ function showCloudMsg(type,msg){
 
 function showMCloudAuthTab(tab){
   const login=tab==='login';
+  const register=tab==='register';
+  const forgot=tab==='forgot';
   document.getElementById('mcloud-login-panel').style.display=login?'block':'none';
-  document.getElementById('mcloud-register-panel').style.display=login?'none':'block';
+  document.getElementById('mcloud-register-panel').style.display=register?'block':'none';
+  document.getElementById('mcloud-forgot-panel').style.display=forgot?'block':'none';
   document.getElementById('mcloud-tab-login').className='btn '+(login?'btn-primary':'btn-secondary');
-  document.getElementById('mcloud-tab-register').className='btn '+(login?'btn-secondary':'btn-primary');
+  document.getElementById('mcloud-tab-register').className='btn '+(register?'btn-primary':'btn-secondary');
+  const tabs=document.getElementById('mcloud-tab-login')?.parentElement;
+  if(tabs)tabs.style.display=forgot?'none':'flex';
+}
+
+function openForgotPassword(){
+  const loginEmail=document.getElementById('mcloud-login-email')?.value.trim()||'';
+  const forgotEmail=document.getElementById('mcloud-forgot-email');
+  if(forgotEmail && loginEmail)forgotEmail.value=loginEmail;
+  showMCloudAuthTab('forgot');
+  const status=document.getElementById('cloud-status-box');if(status)status.style.display='none';
+  setTimeout(()=>document.getElementById('mcloud-forgot-email')?.focus(),50);
+}
+
+async function mcloudForgotPasswordUI(){
+  const email=document.getElementById('mcloud-forgot-email').value.trim();
+  if(!email){showCloudMsg('error','Informe seu e-mail.');return;}
+  const btn=document.getElementById('mcloud-forgot-btn');
+  if(btn){btn.disabled=true;btn.textContent='Enviando…';}
+  showCloudMsg('info','⏳ Enviando link de recuperação...');
+  try{
+    await CLOUD.forgotPassword(email);
+    showCloudMsg('ok','✅ Se existir uma conta com esse e-mail, o link de recuperação foi enviado. Verifique também a caixa de spam.');
+  }catch(e){
+    showCloudMsg('error','❌ '+(e.message||'Não foi possível solicitar a recuperação.'));
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='📧 Enviar link de recuperação';}
+  }
+}
+
+let PASSWORD_RESET_TOKEN=null;
+
+function showResetPasswordMsg(type,msg){
+  const el=document.getElementById('reset-password-status');if(!el)return;
+  const bg={ok:'rgba(0,229,160,.08)',error:'rgba(255,107,107,.08)',info:'rgba(0,153,255,.08)'};
+  const bd={ok:'rgba(0,229,160,.2)',error:'rgba(255,107,107,.2)',info:'rgba(0,153,255,.2)'};
+  el.style.display='block';el.style.background=bg[type]||bg.info;el.style.border='1px solid '+(bd[type]||bd.info);el.textContent=msg;
+}
+
+function openPasswordResetFromUrl(){
+  const params=new URLSearchParams(location.search);
+  const token=params.get('reset');
+  if(!token)return false;
+  PASSWORD_RESET_TOKEN=token;
+  const status=document.getElementById('reset-password-status');if(status)status.style.display='none';
+  openModal('m-reset-password');
+  setTimeout(()=>document.getElementById('reset-new-password')?.focus(),50);
+  return true;
+}
+
+function clearPasswordResetUrl(){
+  const url=new URL(location.href);
+  url.searchParams.delete('reset');
+  history.replaceState({},'',url.pathname+url.search+url.hash);
+  PASSWORD_RESET_TOKEN=null;
+}
+
+function cancelPasswordReset(){
+  clearPasswordResetUrl();
+  closeModal('m-reset-password');
+}
+
+async function submitPasswordReset(){
+  const p1=document.getElementById('reset-new-password').value;
+  const p2=document.getElementById('reset-new-password2').value;
+  if(!PASSWORD_RESET_TOKEN){showResetPasswordMsg('error','Link de recuperação inválido.');return;}
+  if(p1.length<8){showResetPasswordMsg('error','A nova senha precisa ter pelo menos 8 caracteres.');return;}
+  if(p1!==p2){showResetPasswordMsg('error','As senhas não coincidem.');return;}
+  const btn=document.getElementById('reset-password-btn');
+  if(btn){btn.disabled=true;btn.textContent='Salvando…';}
+  showResetPasswordMsg('info','⏳ Redefinindo sua senha...');
+  try{
+    await CLOUD.resetPassword(PASSWORD_RESET_TOKEN,p1);
+    document.getElementById('reset-new-password').value='';
+    document.getElementById('reset-new-password2').value='';
+    showResetPasswordMsg('ok','✅ Senha redefinida. Agora você pode entrar com a nova senha.');
+    clearPasswordResetUrl();
+    setTimeout(()=>{closeModal('m-reset-password');openCloudModal();showMCloudAuthTab('login');},900);
+  }catch(e){
+    showResetPasswordMsg('error','❌ '+(e.message||'Não foi possível redefinir a senha.'));
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Salvar nova senha';}
+  }
 }
 
 function updateMCloudAccountUI(){
@@ -1448,6 +1639,67 @@ function updateMCloudAccountUI(){
     const n=document.getElementById('mcloud-user-name');if(n)n.textContent=CLOUD.user?.name||'Usuário';
     const e=document.getElementById('mcloud-user-email');if(e)e.textContent=CLOUD.user?.email||'';
     const v=document.getElementById('mcloud-version-label');if(v)v.textContent='Versão '+(CLOUD.version||'—');
+  }
+  updateAccountAreaUI();
+}
+
+function updateAccountAreaUI(){
+  if(!CLOUD.isConfigured())return;
+  const name=CLOUD.user?.name||'Usuário';
+  const email=CLOUD.user?.email||'';
+  const n=document.getElementById('account-user-name');if(n)n.textContent=name;
+  const e=document.getElementById('account-user-email');if(e)e.textContent=email;
+  const a=document.getElementById('account-avatar');if(a)a.textContent=(name.trim().charAt(0)||'U').toUpperCase();
+  const v=document.getElementById('account-version-label');if(v)v.textContent='Versão '+(CLOUD.version||'—');
+}
+
+function showAccountMsg(type,msg){
+  const el=document.getElementById('account-status-box');if(!el)return;
+  const bg={ok:'rgba(0,229,160,.08)',error:'rgba(255,107,107,.08)',info:'rgba(0,153,255,.08)'};
+  const bd={ok:'rgba(0,229,160,.2)',error:'rgba(255,107,107,.2)',info:'rgba(0,153,255,.2)'};
+  el.style.display='block';el.style.background=bg[type]||bg.info;el.style.border='1px solid '+(bd[type]||bd.info);el.textContent=msg;
+}
+
+async function openAccountModal(){
+  if(!CLOUD.isConfigured()){openCloudModal();return;}
+  try{await CLOUD.me();}catch(e){openCloudModal();return;}
+  updateMCloudAccountUI();
+  toggleAccountPassword(false);
+  const status=document.getElementById('account-status-box');if(status)status.style.display='none';
+  openModal('m-account');
+}
+
+function toggleAccountPassword(open){
+  const box=document.getElementById('account-password-box');if(!box)return;
+  box.classList.toggle('open',!!open);
+  if(!open){
+    ['account-current-password','account-new-password','account-new-password2'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  }else{
+    setTimeout(()=>document.getElementById('account-current-password')?.focus(),50);
+  }
+}
+
+async function changeAccountPassword(){
+  if(!CLOUD.isConfigured()){openCloudModal();return;}
+  const currentPassword=document.getElementById('account-current-password').value;
+  const newPassword=document.getElementById('account-new-password').value;
+  const newPassword2=document.getElementById('account-new-password2').value;
+  if(!currentPassword||!newPassword||!newPassword2){showAccountMsg('error','Preencha os três campos de senha.');return;}
+  if(newPassword.length<8){showAccountMsg('error','A nova senha precisa ter pelo menos 8 caracteres.');return;}
+  if(newPassword!==newPassword2){showAccountMsg('error','A confirmação da nova senha não confere.');return;}
+  if(currentPassword===newPassword){showAccountMsg('error','A nova senha precisa ser diferente da senha atual.');return;}
+  const btn=document.getElementById('account-change-password-btn');
+  if(btn){btn.disabled=true;btn.textContent='Salvando…';}
+  showAccountMsg('info','⏳ Alterando sua senha...');
+  try{
+    await CLOUD.changePassword(currentPassword,newPassword);
+    toggleAccountPassword(false);
+    showAccountMsg('ok','✅ Senha alterada com sucesso. As outras sessões da sua conta foram encerradas.');
+    toast('✅ Senha alterada!');
+  }catch(e){
+    showAccountMsg('error','❌ '+(e.message||'Não foi possível alterar a senha.'));
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Salvar nova senha';}
   }
 }
 
@@ -2680,6 +2932,7 @@ function renderAll(){updateMB();renderCartoes();renderDP();renderPanorama();rend
 
   CLOUD.init();
   updateAuthGate();
+  const hasResetLink=openPasswordResetFromUrl();
   if(CLOUD.isConfigured()){
     updateSyncStatus('syncing');
     CLOUD.me()
